@@ -229,4 +229,19 @@ public final class Constants {
 
         }
 
+        public static final class Shooter {
+                public static final int bottomShooterID = 16;
+                public static final int topShooterID = 17;
+                public static final double shooterConversionVelocityFactor = 1; //TODO change value
+                public static final double shooterConversionPositionFactor = 1; //TODO change value
+                public static final double shooterKP = 1;
+                public static final double shooterKI = 0;
+                public static final double shooterKD = 0;
+                public static final double shooterKFF = 0;
+                public static final double voltageComp = 12;
+                public static final IdleMode shooterIdleMode = IdleMode.kCoast;
+                public static final int shooterContinuousCurrentLimit = 30;
+        }
+
+
 }

@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.LimelightVision;
@@ -23,6 +24,8 @@ public class RobotContainer {
 
   private final Joystick driver = new Joystick(0);
   private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
+  private final JoystickButton resetGyro = new JoystickButton(driver, XboxController.Button.kY.value);
+
   /* Drive Controls */
   private final int translationAxis = XboxController.Axis.kLeftY.value;
   private final int strafeAxis = XboxController.Axis.kLeftX.value;
@@ -39,7 +42,7 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-
+      resetGyro.onTrue(new InstantCommand(()->m_swerve.zeroGyro()));
   }
 
   private void setDefaultCommands() {
@@ -49,7 +52,7 @@ public class RobotContainer {
             m_swerve,
             () -> -driver.getRawAxis(translationAxis),
             () -> -driver.getRawAxis(strafeAxis),
-            () -> -driver.getRawAxis(rotationAxis) / 3,
+            () -> -driver.getRawAxis(rotationAxis) / 6,
             () -> robotCentric.getAsBoolean()));
   }
 
