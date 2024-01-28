@@ -16,7 +16,6 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.Distance;
 import edu.wpi.first.units.Measure;
 import frc.lib.config.SwerveModuleConstants;
-import frc.robot.subsystems.vision.VisionCamera.Resolution;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -158,8 +157,8 @@ public final class Constants {
                                 new ReplanningConfig());
 
                 public void addVisionMeasurement(Pose2d robPose2d, double fpgaTimestamp) {
-                    // TODO Auto-generated method stub
-                    throw new UnsupportedOperationException("Unimplemented method 'addVisionMeasurement'");
+                        // TODO Auto-generated method stub
+                        throw new UnsupportedOperationException("Unimplemented method 'addVisionMeasurement'");
                 }
         }
 
@@ -191,8 +190,8 @@ public final class Constants {
         }
 
         public static final class CameraConstants {
-                public static final String leftCamName = "ELP1MP";
-                public static final String rightCamName = "ELP2MP";
+                public static final String leftCamName = "ELP_1_MP";
+                public static final String rightCamName = "ELP_2_MP";
 
                 public static final double POSE_AMBIGUITY_CUTOFF = 0.05;
                 public static final double DISTANCE_CUTOFF = 4.0;
@@ -206,42 +205,61 @@ public final class Constants {
                                                           // half a meter up
                                                           // from center.
 
-                public static final String CAMERA_A_NAME = "cameraA";
-                public static final Transform3d CAMERA_A_LOCATION = new Transform3d(
-                                new Translation3d(0.0, 0.0, 0.5),
-                                new Rotation3d(0.0, 0.0, 0.0));
-                public static final Resolution CAMERA_A_RESOLUTION = Resolution.RES_1280_720;
-                public static final Rotation2d CAMERA_A_FOV = Rotation2d.fromDegrees(79.7);
+                // public static final String CAMERA_A_NAME = "cameraA";
+                // public static final Transform3d CAMERA_A_LOCATION = new Transform3d(
+                // new Translation3d(0.0, 0.0, 0.5),
+                // new Rotation3d(0.0, 0.0, 0.0));
+                // public static final Resolution CAMERA_A_RESOLUTION = Resolution.RES_1280_720;
+                // public static final Rotation2d CAMERA_A_FOV = Rotation2d.fromDegrees(79.7);
 
-                public static final String CAMERA_B_NAME = "cameraB";
-                public static final Transform3d CAMERA_B_LOCATION = new Transform3d(
-                                new Translation3d(0.0, 0.0, 0.5),
-                                new Rotation3d(0.0, 0.0, Math.toRadians(+120.0)));
-                public static final Resolution CAMERA_B_RESOLUTION = Resolution.RES_1280_720;
-                public static final Rotation2d CAMERA_B_FOV = Rotation2d.fromDegrees(79.7);
+                // public static final String CAMERA_B_NAME = "cameraB";
+                // public static final Transform3d CAMERA_B_LOCATION = new Transform3d(
+                // new Translation3d(0.0, 0.0, 0.5),
+                // new Rotation3d(0.0, 0.0, Math.toRadians(+120.0)));
+                // public static final Resolution CAMERA_B_RESOLUTION = Resolution.RES_1280_720;
+                // public static final Rotation2d CAMERA_B_FOV = Rotation2d.fromDegrees(79.7);
 
-                public static final String CAMERA_C_NAME = "cameraC";
-                public static final Transform3d CAMERA_C_LOCATION = new Transform3d(
-                                new Translation3d(0.0, 0.0, 0.5),
-                                new Rotation3d(0.0, 0.0, Math.toRadians(-120.0)));
-                public static final Resolution CAMERA_C_RESOLUTION = Resolution.RES_1280_720;
-                public static final Rotation2d CAMERA_C_FOV = Rotation2d.fromDegrees(79.7);
+                // public static final String CAMERA_C_NAME = "cameraC";
+                // public static final Transform3d CAMERA_C_LOCATION = new Transform3d(
+                // new Translation3d(0.0, 0.0, 0.5),
+                // new Rotation3d(0.0, 0.0, Math.toRadians(-120.0)));
+                // public static final Resolution CAMERA_C_RESOLUTION = Resolution.RES_1280_720;
+                // public static final Rotation2d CAMERA_C_FOV = Rotation2d.fromDegrees(79.7);
 
         }
 
         public static final class Shooter {
                 public static final int bottomShooterID = 16;
                 public static final int topShooterID = 17;
-                public static final double shooterConversionVelocityFactor = 1; //TODO change value
-                public static final double shooterConversionPositionFactor = 1; //TODO change value
-                public static final double shooterKP = 1;
+                public static final double maxShooterMotorRPM = 5700;
+                public static final double shooterConversionVelocityFactor = 1; // TODO change value
+                public static final double shooterConversionPositionFactor = 1; // TODO change value
+                public static final double shooterKP = .001;
                 public static final double shooterKI = 0;
                 public static final double shooterKD = 0;
-                public static final double shooterKFF = 0;
+                public static final double shooterKFF = 1 / maxShooterMotorRPM;
                 public static final double voltageComp = 12;
                 public static final IdleMode shooterIdleMode = IdleMode.kCoast;
                 public static final int shooterContinuousCurrentLimit = 30;
+
         }
 
+        public static final class Intake {
+                public static final int intakeID = 18;
+                public static final double maxIntakeMotorRPM = 5700;
+                public static final double intakeConversionVelocityFactor = 1; // TODO change value
+                public static final double intakeConversionPositionFactor = 1; // TODO change value
+                public static final double intakeKP = .001;
+                public static final double intakeKI = 0;
+                public static final double intakeKD = 0;
+                public static final double intakeKFF = 1 / maxIntakeMotorRPM;
+                public static final double voltageComp = 12;
+                public static final IdleMode intakeIdleMode = IdleMode.kCoast;
+                public static final int intakeContinuousCurrentLimit = 30;
 
+        }
+
+        public static final double[][] speedAngleValues
+
+                        = { { 1, 2 }, { 3, 4 } };
 }

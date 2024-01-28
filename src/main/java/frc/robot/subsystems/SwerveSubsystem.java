@@ -2,7 +2,13 @@ package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.FollowPathHolonomic;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.PathPlannerLogging;
+import com.pathplanner.lib.util.ReplanningConfig;
+
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -17,25 +23,25 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class Swerve extends SubsystemBase {
+public class SwerveSubsystem extends SubsystemBase {
   // The gyro sensor
 
   private final AHRS gyro;
 
   private SwerveDrivePoseEstimator swervePoseEstimator;
 
-  
   private SwerveModule[] mSwerveMods;
 
   private Field2d field;
 
-  public Swerve() {
+  public SwerveSubsystem() {
     gyro = new AHRS(SPI.Port.kMXP, (byte) 100);
     zeroGyro();
-    SmartDashboard.putString("Hello ", "world 1");
+    
     mSwerveMods = new SwerveModule[] {
         new SwerveModule(0, Constants.Swerve.Mod0.constants),
         new SwerveModule(1, Constants.Swerve.Mod1.constants),
@@ -79,10 +85,7 @@ public class Swerve extends SubsystemBase {
     // Set up custom logging to add the current path to a field 2d widget
     PathPlannerLogging.setLogActivePathCallback((poses) -> field.getObject("path").setPoses(poses));
 
-    
   }
-
- 
 
   public void driveFieldRelative(ChassisSpeeds fieldRelativeSpeeds) {
     driveRobotRelative(ChassisSpeeds.fromFieldRelativeSpeeds(fieldRelativeSpeeds, getPose().getRotation()));
@@ -145,7 +148,7 @@ public class Swerve extends SubsystemBase {
     swervePoseEstimator.resetPosition(getYaw(), getPositions(), pose);
   }
 
-  public SwerveDrivePoseEstimator getPoseEstimator(){
+  public SwerveDrivePoseEstimator getPoseEstimator() {
     return swervePoseEstimator;
   }
 
@@ -174,14 +177,13 @@ public class Swerve extends SubsystemBase {
         : Rotation2d.fromDegrees(gyro.getYaw());
   }
 
-  public float getPitch(){
+  public float getPitch() {
     return gyro.getPitch();
   }
-  public float getRoll(){
+
+  public float getRoll() {
     return gyro.getRoll();
   }
-
-
 
   public double getHeadingDegrees() {
     return -Math.IEEEremainder((gyro.getAngle()), 360);
@@ -191,18 +193,49 @@ public class Swerve extends SubsystemBase {
     return Constants.Swerve.swerveKinematics.toChassisSpeeds(getStates());
   }
 
-  public void addVisionMeasurement(Pose2d pose, double timestamp){
-    swervePoseEstimator.addVisionMeasurement(pose,timestamp );
+  public void addVisionMeasurement(Pose2d pose, double timestamp) {
+    swervePoseEstimator.addVisionMeasurement(pose, timestamp);
+  }
+
+  public Command followPathCommand(String pathName) {
+    PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+
+    return new FollowPathHolonomic(
+        path,
+        this::getPose, // Robot pose supplier
+        this::getSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+        this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+        new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+            new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+            new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
+            4.5, // Max module speed, in m/s
+            0.4, // Drive base radius in meters. Distance from robot center to furthest module.
+            new ReplanningConfig() // Default path replanning config. See the API for the options here
+        ),
+        () -> {
+          // Boolean supplier that controls when the path will be mirrored for the red
+          // alliance
+          // This will flip the path being followed to the red side of the field.
+          // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+          var alliance = DriverStation.getAlliance();
+          if (alliance.isPresent()) {
+            return alliance.get() == DriverStation.Alliance.Red;
+          }
+          return false;
+        },
+        this // Reference to this subsystem to set requirements
+    );
   }
 
   @Override
   public void periodic() {
 
- 
-
     swervePoseEstimator.update(getYaw(), getPositions());
-    // swervePoseEstimator.addVisionMeasurement(previousposeleft, timestampsecondsl);
-    // swervePoseEstimator.addVisionMeasurement(previousposeright, timestampsecondsr);
+    // swervePoseEstimator.addVisionMeasurement(previousposeleft,
+    // timestampsecondsl);
+    // swervePoseEstimator.addVisionMeasurement(previousposeright,
+    // timestampsecondsr);
 
     field.setRobotPose(getPose());
     SmartDashboard.putNumber("X Meters", round2dp(getX(), 2));
@@ -210,18 +243,13 @@ public class Swerve extends SubsystemBase {
     SmartDashboard.putNumber("Est Pose Heaading", round2dp(getPoseHeading(), 2));
 
     SmartDashboard.putNumber("Yaw", round2dp(getHeadingDegrees(), 2));
-
-   // putStates();
+    SmartDashboard.putNumberArray("Odometry",
+        new double[] { getPose().getX(), getPose().getY(), getPose().getRotation().getDegrees() });
+    // putStates();
 
   }
 
   private void putStates() {
-   
-        SmartDashboard.putNumberArray("Odometry",
-        new double[] { getPose().getX(), getPose().getY(), getPose().getRotation().getDegrees() });
-
-
-
 
     double[] realStates = {
         mSwerveMods[0].getState().angle.getDegrees(),

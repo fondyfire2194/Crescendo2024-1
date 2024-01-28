@@ -10,12 +10,15 @@ import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.CANSparkMaxUtil;
 import frc.lib.util.CANSparkMaxUtil.Usage;
 import frc.robot.Constants;
+import frc.robot.Pref;
 
-public class Shooter extends SubsystemBase {
+public class ShooterSubsystem extends SubsystemBase {
 
   CANSparkMax bottomRoller;
   CANSparkMax topRoller;
@@ -23,9 +26,11 @@ public class Shooter extends SubsystemBase {
   SparkPIDController topController;
   RelativeEncoder topEncoder;
   RelativeEncoder bottomEncoder;
+  double topRollerCommandRPM = 500;
+  double bottomRollerCommandRPM = 500;
 
   /** Creates a new Shooter. */
-  public Shooter() {
+  public ShooterSubsystem() {
     bottomRoller = new CANSparkMax(Constants.Shooter.bottomShooterID, MotorType.kBrushless);
     topRoller = new CANSparkMax(Constants.Shooter.topShooterID, MotorType.kBrushless);
     bottomController = bottomRoller.getPIDController();
@@ -36,7 +41,7 @@ public class Shooter extends SubsystemBase {
     configMotor(topRoller, topEncoder, topController, false);
   }
 
-private void configMotor(CANSparkMax motor, RelativeEncoder encoder, SparkPIDController controller, boolean reverse) {
+  private void configMotor(CANSparkMax motor, RelativeEncoder encoder, SparkPIDController controller, boolean reverse) {
     motor.restoreFactoryDefaults();
     CANSparkMaxUtil.setCANSparkMaxBusUsage(motor, Usage.kAll);
     motor.setSmartCurrentLimit(Constants.Shooter.shooterContinuousCurrentLimit);
@@ -63,6 +68,22 @@ private void configMotor(CANSparkMax motor, RelativeEncoder encoder, SparkPIDCon
     bottomRoller.stopMotor();
     bottomController.setReference(0, ControlType.kVelocity);
     topController.setReference(0, ControlType.kVelocity);
+  }
+
+  public Command runTopRollerCommand() {
+    return this.run(() -> topController.setReference(topRollerCommandRPM, ControlType.kVelocity));
+  }
+
+  public Command runBottomRollerCommand() {
+    return this.run(() -> bottomController.setReference(bottomRollerCommandRPM, ControlType.kVelocity));
+  }
+
+  public Command runBothRollers() {
+    return new ParallelCommandGroup(runTopRollerCommand(), runBottomRollerCommand());
+  }
+
+  public Command stopShootersCommand() {
+    return this.runOnce(() -> stopMotors());
   }
 
   public double getRPMBottom() {

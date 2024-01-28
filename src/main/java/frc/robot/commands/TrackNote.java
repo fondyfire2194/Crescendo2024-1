@@ -7,15 +7,15 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.LimelightHelpers;
 import frc.robot.subsystems.LimelightVision;
-import frc.robot.subsystems.Swerve;
+import frc.robot.subsystems.SwerveSubsystem;
 
 public class TrackNote extends Command {
   /** Creates a new TrackNote. */
   private final LimelightVision m_llv;
-  private final Swerve m_drive;
+  private final SwerveSubsystem m_drive;
   private final String m_llname;
 
-  public TrackNote(LimelightVision llv, String llname,Swerve drive) {
+  public TrackNote(LimelightVision llv, String llname,SwerveSubsystem drive) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_llv = llv;
     m_drive = drive;

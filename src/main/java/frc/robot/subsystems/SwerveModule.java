@@ -164,17 +164,17 @@ public class SwerveModule extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber(Constants.Swerve.modNames[moduleNumber] + "angle deg",
-        round2dp(getAngle().getDegrees(), 2));
-    SmartDashboard.putNumber(Constants.Swerve.modNames[moduleNumber] + "distance m",
-        round2dp(driveEncoder.getPosition(), 2));
-    SmartDashboard.putNumber(Constants.Swerve.modNames[moduleNumber] + "velocity mps",
-        round2dp(driveEncoder.getVelocity(), 2));
+    // SmartDashboard.putNumber(Constants.Swerve.modNames[moduleNumber] + "angle deg",
+    //     round2dp(getAngle().getDegrees(), 2));
+    // SmartDashboard.putNumber(Constants.Swerve.modNames[moduleNumber] + "distance m",
+    //     round2dp(driveEncoder.getPosition(), 2));
+    // SmartDashboard.putNumber(Constants.Swerve.modNames[moduleNumber] + "velocity mps",
+    //     round2dp(driveEncoder.getVelocity(), 2));
 
-    SmartDashboard.putNumber(Constants.Swerve.modNames[moduleNumber] + "cancoder",
-        round2dp(m_turnCancoder.getPosition().getValueAsDouble(), 2));
-    SmartDashboard.putNumber(Constants.Swerve.modNames[moduleNumber] + "cancoderAbs",
-        round2dp(m_turnCancoder.getAbsolutePosition().getValueAsDouble(), 2));
+    // SmartDashboard.putNumber(Constants.Swerve.modNames[moduleNumber] + "cancoder",
+    //     round2dp(m_turnCancoder.getPosition().getValueAsDouble(), 2));
+    // SmartDashboard.putNumber(Constants.Swerve.modNames[moduleNumber] + "cancoderAbs",
+    //     round2dp(m_turnCancoder.getAbsolutePosition().getValueAsDouble(), 2));
 
   }
 
