@@ -4,14 +4,58 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkPIDController;
+
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.util.CANSparkMaxUtil;
+import frc.lib.util.CANSparkMaxUtil.Usage;
+import frc.robot.Constants;
+import frc.robot.commands.DoNothing;
 
 public class ArmSubsystem extends SubsystemBase {
+
+  CANSparkMax armMotor;
+  SparkPIDController armController;
+  RelativeEncoder armEncoder;
   /** Creates a new Arm. */
-  public ArmSubsystem() {}
+  public ArmSubsystem() {
+
+ armMotor = new CANSparkMax(Constants.ArmConstants.armID, MotorType.kBrushless);
+    armController = armMotor.getPIDController();
+    armEncoder = armMotor.getEncoder();
+    configMotor(armMotor, armEncoder, armController, true);
+
+
+  }
+
+   private void configMotor(CANSparkMax motor, RelativeEncoder encoder, SparkPIDController controller,
+      boolean reverse) {
+    motor.restoreFactoryDefaults();
+    CANSparkMaxUtil.setCANSparkMaxBusUsage(motor, Usage.kAll);
+    motor.setSmartCurrentLimit(Constants.ArmConstants.armContinuousCurrentLimit);
+    motor.setInverted(reverse);
+    motor.setIdleMode(Constants.ArmConstants.armIdleMode);
+    encoder.setVelocityConversionFactor(Constants.ArmConstants.armConversionVelocityFactor);
+    encoder.setPositionConversionFactor(Constants.ArmConstants.armConversionPositionFactor);
+    controller.setP(Constants.ArmConstants.armKP);
+    controller.setI(Constants.ArmConstants.armKI);
+    controller.setD(Constants.ArmConstants.armKD);
+    controller.setFF(Constants.ArmConstants.armKFF);
+    motor.enableVoltageCompensation(Constants.ArmConstants.voltageComp);
+    motor.burnFlash();
+    encoder.setPosition(0.0);
+  }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+  }
+
+  public Command positionArmCommand(double degrees){
+    return new DoNothing();
   }
 }

@@ -247,7 +247,7 @@ public class SwerveSubsystem extends SubsystemBase {
         new double[] { getPose().getX(), getPose().getY(), getPose().getRotation().getDegrees() });
     // putStates();
 
-  }
+     }
 
   private void putStates() {
 
@@ -279,11 +279,16 @@ public class SwerveSubsystem extends SubsystemBase {
 
   public static double round2dp(double number, int dp) {
     double temp = Math.pow(10, dp);
-    SmartDashboard.putNumber("temp", temp);
+    
     double temp1 = Math.round(number * temp);
-    SmartDashboard.putNumber("temp1", temp1);
+   
 
     return temp1 / temp;
   }
+
+public boolean isStopped() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'isStopped'");
+}
 
 }

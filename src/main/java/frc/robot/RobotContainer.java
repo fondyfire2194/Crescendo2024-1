@@ -14,6 +14,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.proto.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -21,12 +22,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.CommandFactory;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.commands.TrackAprilTags3D;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
-
 
 public class RobotContainer {
   /* Subsystems */
@@ -36,12 +37,17 @@ public class RobotContainer {
 
   final ShooterSubsystem m_shooter = new ShooterSubsystem();
 
-  public final CommandFactory m_cf= new CommandFactory(m_swerve, m_intake, m_shooter);
+  final LimelightSubsystem m_llv1 = new LimelightSubsystem("limelight");
+
+  final LimelightSubsystem m_llv2 = new LimelightSubsystem("limelight_1");
+
+  final LimelightSubsystem m_llv3 = new LimelightSubsystem("limelight_2");
+
+  public final AutoFactory m_cf = new AutoFactory(m_swerve, m_intake, m_shooter);
 
   private BooleanSupplier robotCentric = () -> true;
-  
+
   private final CommandXboxController driver = new CommandXboxController(0);
-  
 
   private final CommandXboxController codriver = new CommandXboxController(1);
 
@@ -49,14 +55,16 @@ public class RobotContainer {
 
   public RobotContainer() {
 
-    // String[] llnames = { "limelight", "limelight-1" };
+    Pref.deleteUnused();
 
-    // m_llv = new LimelightVision(llnames);
+    Pref.addMissing();
 
     setDefaultCommands();
 
     registerNamedCommands();
+
     configureBindings();
+
     autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
     SmartDashboard.putData("Auto Mode", autoChooser);
   }
@@ -72,14 +80,12 @@ public class RobotContainer {
             () -> robotCentric.getAsBoolean()));
 
     m_intake.setDefaultCommand(Commands.runOnce(() -> m_intake.stopMotor(), m_intake));
+    m_shooter.setDefaultCommand(Commands.runOnce(() -> m_shooter.stopMotors(), m_shooter));
+    m_llv1.setDefaultCommand(new TrackAprilTags3D(m_llv1, m_swerve));
+    m_llv2.setDefaultCommand(new TrackAprilTags3D(m_llv2, m_swerve));
   }
 
   private void registerNamedCommands() {
-    NamedCommands.registerCommand("runintake", Commands.print("Passed marker 1"));
-    NamedCommands.registerCommand("shootspeedone", Commands.print("Passed marker 2"));
-    NamedCommands.registerCommand("shootspeedtwo", Commands.print("hello"));
-    NamedCommands.registerCommand("shootspeedthree", Commands.print("hello"));
-    NamedCommands.registerCommand("stopshooter", Commands.print("hello"));
 
   }
 
@@ -91,7 +97,8 @@ public class RobotContainer {
 
     codriver.leftTrigger().onTrue(m_intake.stopIntakeCommand());
 
-    codriver.rightBumper().onTrue(m_shooter.runBothRollers());
+    codriver.rightBumper().onTrue(m_shooter.runTopRollerCommand())
+        .onTrue(m_shooter.runBottomRollerCommand());
 
     codriver.rightTrigger().onTrue(m_shooter.stopShootersCommand());
 
@@ -134,7 +141,5 @@ public class RobotContainer {
       AutoBuilder.followPath(path).schedule();
     }));
   }
-
-  
 
 }

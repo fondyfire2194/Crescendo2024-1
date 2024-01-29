@@ -32,11 +32,11 @@ public class Pref {
 
   static {
 
-    
-       // intake values
+    // intake values
     prefDict.put("IntakeRPM", 470.);
 
-    
+    // shooter values
+    prefDict.put("ShooterRPM", 470.);
 
   }
 

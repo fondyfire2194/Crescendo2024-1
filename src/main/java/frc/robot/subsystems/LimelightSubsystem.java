@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
 
-public class LimelightVision extends SubsystemBase {
+public class LimelightSubsystem extends SubsystemBase {
   /** Creates a new LimelightVision. */
 
   public Pose2d visionPoseEstimatedData;
@@ -21,9 +21,9 @@ public class LimelightVision extends SubsystemBase {
 
   public int fiducialId;
 
-  public double[] llHeartbeat = { 0, 0 };
+  public double llHeartbeat = 0;
 
-  public double[] llHeartbeatLast = { 0, 0 };
+  public double llHeartbeatLast = 0;
 
   public boolean allianceBlue;
 
@@ -70,26 +70,19 @@ public class LimelightVision extends SubsystemBase {
   public pipelinetype currentPipelineType;
   public pipelines currentPipeline;
 
-  private int[] samples = { 0, 0 };
+  private int samples = 0;
 
-  public boolean[] limelightExists = { false, false };
+  public boolean limelightExists = false;
 
   public String limelighttypename = "fiducial";
 
-  private String[] m_name = new String[2];
+  private String m_name = new String();
 
-  private int numCameras = 2;
+  private boolean limelightExist;
 
-  public int activeLimelight;
-
-  public String activeName;
-
-  public LimelightVision(String[] name) {
+  public LimelightSubsystem(String name) {
     currentPipeline = pipelines.APRILTAG3D;
-    m_name[0] = name[0];
-    m_name[1] = name[1];
-
-    activeLimelight = 0;
+    m_name = name;
 
   }
 
@@ -99,43 +92,33 @@ public class LimelightVision extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("ActLL", activeLimelight);
-    activeName = m_name[activeLimelight];
-    SmartDashboard.putString("LLAN", activeName);
-    if (RobotBase.isReal()) {
-      for (int i = 0; i < numCameras; i++) {
-        llHeartbeat[i] = LimelightHelpers.getLimelightNTDouble(m_name[i], "hb");
-        if (llHeartbeat[i] == llHeartbeatLast[i]) {
-          samples[i] += 1;
-        } else {
-          samples[i] = 0;
-          llHeartbeatLast[i] = llHeartbeat[i];
-          limelightExists[i] = true;
-        }
-        if (samples[i] > 5)
-          limelightExists[i] = false;
-      }
+
+    llHeartbeat = LimelightHelpers.getLimelightNTDouble(m_name, "hb");
+    if (llHeartbeat == llHeartbeatLast) {
+      samples += 1;
+    } else {
+      samples = 0;
+      llHeartbeatLast = llHeartbeat;
+      limelightExists = true;
     }
-    // SmartDashboard.putBoolean("LLExists", limelightExists);
+    if (samples > 5)
+      limelightExist = false;
 
-    if (RobotBase.isReal()) {
+    fiducialId = (int) LimelightHelpers.getFiducialID(m_name);
 
-      fiducialId = (int) LimelightHelpers.getFiducialID(m_name[activeLimelight]);
-      SmartDashboard.putNumber("FIDID", fiducialId);
-      currentPipelineIndex = (int) LimelightHelpers.getCurrentPipelineIndex(m_name[activeLimelight]);
+    currentPipelineIndex = (int) LimelightHelpers.getCurrentPipelineIndex(m_name);
 
-      currentPipeline = pipelines.values[currentPipelineIndex];
+    currentPipeline = pipelines.values[currentPipelineIndex];
 
-      currentPipelineType = currentPipeline.type;
+    currentPipelineType = currentPipeline.type;
 
-      limelighttypename = getCurrentPipelineTypeName();
-    }
+    limelighttypename = getCurrentPipelineTypeName();
   }
 
-  public void setActiveCamera(int activeCam) {
-    activeLimelight = activeCam;
-    activeName = m_name[activeLimelight];
+  public String getLLName(){
+    return m_name;
   }
+
 
   public double round2dp(double number) {
     number = Math.round(number * 100);
@@ -160,23 +143,23 @@ public class LimelightVision extends SubsystemBase {
   }
 
   public void setAprilTag_0_Pipeline() {
-    if (limelightExists[activeLimelight])
-      LimelightHelpers.setPipelineIndex(activeName, pipelines.APRILTAG.ordinal());
+    if (limelightExists)
+      LimelightHelpers.setPipelineIndex(m_name, pipelines.APRILTAG.ordinal());
   }
 
   public void setAprilTag3D_Pipeline() {
-    if (limelightExists[activeLimelight])
-      LimelightHelpers.setPipelineIndex(activeName, pipelines.APRILTAG3D.ordinal());
+
+    LimelightHelpers.setPipelineIndex(m_name, pipelines.APRILTAG3D.ordinal());
   }
 
   public void setNoteDetectorPipeline() {
-    if (limelightExists[activeLimelight])
-      LimelightHelpers.setPipelineIndex(activeName, pipelines.NOTE_DETECT.ordinal());
+
+    LimelightHelpers.setPipelineIndex(m_name, pipelines.NOTE_DETECT.ordinal());
   }
 
   public double getSpeakerDistance() {
 
-    //ll3 Field-of-View: 63.3 x 49.7 degrees
+    // ll3 Field-of-View: 63.3 x 49.7 degrees
 
     double targetOffsetAngle_Vertical = LimelightHelpers.getTY("limelight");
 

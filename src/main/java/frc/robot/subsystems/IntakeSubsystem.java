@@ -28,7 +28,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   /** Creates a new Intake. */
   public IntakeSubsystem() {
-    intakeMotor = new CANSparkMax(Constants.Intake.intakeID, MotorType.kBrushless);
+    intakeMotor = new CANSparkMax(Constants.IntakeConstants.intakeID, MotorType.kBrushless);
     intakeController = intakeMotor.getPIDController();
     intakeEncoder = intakeMotor.getEncoder();
     configMotor(intakeMotor, intakeEncoder, intakeController, true);
@@ -38,23 +38,23 @@ public class IntakeSubsystem extends SubsystemBase {
       boolean reverse) {
     motor.restoreFactoryDefaults();
     CANSparkMaxUtil.setCANSparkMaxBusUsage(motor, Usage.kAll);
-    motor.setSmartCurrentLimit(Constants.Intake.intakeContinuousCurrentLimit);
+    motor.setSmartCurrentLimit(Constants.IntakeConstants.intakeContinuousCurrentLimit);
     motor.setInverted(reverse);
-    motor.setIdleMode(Constants.Intake.intakeIdleMode);
-    encoder.setVelocityConversionFactor(Constants.Intake.intakeConversionVelocityFactor);
-    encoder.setPositionConversionFactor(Constants.Intake.intakeConversionPositionFactor);
-    controller.setP(Constants.Intake.intakeKP);
-    controller.setI(Constants.Intake.intakeKI);
-    controller.setD(Constants.Intake.intakeKD);
-    controller.setFF(Constants.Intake.intakeKFF);
-    motor.enableVoltageCompensation(Constants.Intake.voltageComp);
+    motor.setIdleMode(Constants.IntakeConstants.intakeIdleMode);
+    encoder.setVelocityConversionFactor(Constants.IntakeConstants.intakeConversionVelocityFactor);
+    encoder.setPositionConversionFactor(Constants.IntakeConstants.intakeConversionPositionFactor);
+    controller.setP(Constants.IntakeConstants.intakeKP);
+    controller.setI(Constants.IntakeConstants.intakeKI);
+    controller.setD(Constants.IntakeConstants.intakeKD);
+    controller.setFF(Constants.IntakeConstants.intakeKFF);
+    motor.enableVoltageCompensation(Constants.IntakeConstants.voltageComp);
     motor.burnFlash();
     encoder.setPosition(0.0);
   }
 
   public void stopMotor() {
-    intakeMotor.stopMotor();
     intakeController.setReference(0, ControlType.kVelocity);
+    intakeMotor.stopMotor();
   }
 
   public double getRPM() {
@@ -62,6 +62,10 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command runIntakeCommand() {
+    return this.run(() -> intakeController.setReference(Pref.getPref("IntakeRPM"), ControlType.kVelocity));
+  }
+
+  public Command feedShooterCommand() {
     return this.run(() -> intakeController.setReference(Pref.getPref("IntakeRPM"), ControlType.kVelocity));
   }
 
@@ -73,6 +77,8 @@ public class IntakeSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("IntakeRPM", getRPM());
+    SmartDashboard.putNumber("IntakeCANVer", intakeMotor.getFirmwareVersion());
+
   }
 
   public void jog(double speed) {
