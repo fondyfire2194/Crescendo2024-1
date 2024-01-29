@@ -9,6 +9,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.CommandFactory;
 import frc.robot.commands.DoNothing;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -23,6 +24,8 @@ public class AutoFactory {
 
     private final ShooterSubsystem m_shooter;
 
+    private final CommandFactory m_cf;
+
     public final SendableChooser<Integer> m_ampStartChooser = new SendableChooser<Integer>();
 
     public final SendableChooser<Integer> m_centerStartChooser = new SendableChooser<Integer>();
@@ -31,12 +34,25 @@ public class AutoFactory {
 
     public final SendableChooser<Double> m_startDelayChooser = new SendableChooser<Double>();
 
+    private SequentialCommandGroup ampChoice1 = new SequentialCommandGroup(new DoNothing(), new DoNothing());
+    private SequentialCommandGroup ampChoice2 = new SequentialCommandGroup(new DoNothing(), new DoNothing());
+    private SequentialCommandGroup ampChoice3 = new SequentialCommandGroup(new DoNothing(), new DoNothing());
+
+    private Command centerChoice1 = new DoNothing();
+    private SequentialCommandGroup centerChoice2 = new SequentialCommandGroup(new DoNothing(), new DoNothing());
+    private SequentialCommandGroup centerChoice3 = new SequentialCommandGroup(new DoNothing(), new DoNothing());
+
+    private SequentialCommandGroup sourceChoice1 = new SequentialCommandGroup(new DoNothing(), new DoNothing());
+    private SequentialCommandGroup sourceChoice2 = new SequentialCommandGroup(new DoNothing(), new DoNothing());
+    private SequentialCommandGroup sourceChoice3 = new SequentialCommandGroup(new DoNothing(), new DoNothing());
+
     int finalChoice = 0;
 
-    public AutoFactory(SwerveSubsystem swerve, IntakeSubsystem intake, ShooterSubsystem shooter) {
+    public AutoFactory(CommandFactory cf, SwerveSubsystem swerve, IntakeSubsystem intake, ShooterSubsystem shooter) {
         m_swerve = swerve;
         m_intake = intake;
         m_shooter = shooter;
+        m_cf = cf;
 
         m_startDelayChooser.setDefaultOption("Zero Seconds", 0.);
         m_startDelayChooser.addOption("One Second", 1.);
@@ -56,6 +72,8 @@ public class AutoFactory {
         m_sourceStartChooser.setDefaultOption("Not Used", 20);
         m_sourceStartChooser.addOption("Choice 1", 21);
         m_sourceStartChooser.addOption("Choice 2", 22);
+
+        centerChoice2 = m_cf.centerChoice2;
 
     }
 
@@ -78,18 +96,6 @@ public class AutoFactory {
 
         return new DoNothing();
     }
-
-    private SequentialCommandGroup ampChoice1 = new SequentialCommandGroup(new DoNothing(), new DoNothing());
-    private SequentialCommandGroup ampChoice2 = new SequentialCommandGroup(new DoNothing(), new DoNothing());
-    private SequentialCommandGroup ampChoice3 = new SequentialCommandGroup(new DoNothing(), new DoNothing());
-
-    private SequentialCommandGroup centerChoice1 = new SequentialCommandGroup(new DoNothing(), new DoNothing());
-    private SequentialCommandGroup centerChoice2 = new SequentialCommandGroup(new DoNothing(), new DoNothing());
-    private SequentialCommandGroup centerChoice3 = new SequentialCommandGroup(new DoNothing(), new DoNothing());
-
-    private SequentialCommandGroup sourceChoice1 = new SequentialCommandGroup(new DoNothing(), new DoNothing());
-    private SequentialCommandGroup sourceChoice2 = new SequentialCommandGroup(new DoNothing(), new DoNothing());
-    private SequentialCommandGroup sourceChoice3 = new SequentialCommandGroup(new DoNothing(), new DoNothing());
 
     private Command finalCommand() {
 
@@ -123,11 +129,11 @@ public class AutoFactory {
         return finalCommand();
     }
 
-    public PathPlannerPath getPath(String pathname){
+    public PathPlannerPath getPath(String pathname) {
         return PathPlannerPath.fromPathFile(pathname);
     }
 
-    public void followPath(String pathName){
+    public void followPath(String pathName) {
         m_swerve.followPathCommand(pathName);
     }
 

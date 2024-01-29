@@ -43,7 +43,7 @@ public class RobotContainer {
 
   final LimelightSubsystem m_llv3 = new LimelightSubsystem("limelight_2");
 
-  public final AutoFactory m_cf = new AutoFactory(m_swerve, m_intake, m_shooter);
+  public final AutoFactory m_cf = new AutoFactory(null, m_swerve, m_intake, m_shooter);
 
   private BooleanSupplier robotCentric = () -> true;
 

@@ -33,8 +33,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
   /** Creates a new Shooter. */
   public ShooterSubsystem() {
-    bottomRoller = new CANSparkMax(Constants.ShooterConstants.bottomShooterID, MotorType.kBrushless);
-    topRoller = new CANSparkMax(Constants.ShooterConstants.topShooterID, MotorType.kBrushless);
+    bottomRoller = new CANSparkMax(Constants.CANIDConstants.bottomShooterID, MotorType.kBrushless);
+    topRoller = new CANSparkMax(Constants.CANIDConstants.topShooterID, MotorType.kBrushless);
     bottomController = bottomRoller.getPIDController();
     topController = topRoller.getPIDController();
     topEncoder = topRoller.getEncoder();

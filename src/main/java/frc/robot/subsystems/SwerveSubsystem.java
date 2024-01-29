@@ -8,6 +8,8 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
+import com.playingwithfusion.TimeOfFlight;
+import com.playingwithfusion.TimeOfFlight.RangingMode;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -26,6 +28,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.CANIDConstants;
 
 public class SwerveSubsystem extends SubsystemBase {
   // The gyro sensor
@@ -38,19 +41,27 @@ public class SwerveSubsystem extends SubsystemBase {
 
   private Field2d field;
 
+  private final TimeOfFlight m_rearLeftSensor = new TimeOfFlight(CANIDConstants.rearLeftSensor);
+  private final TimeOfFlight m_rearRightSensor = new TimeOfFlight(CANIDConstants.rearRightSensor);
+
   public SwerveSubsystem() {
     gyro = new AHRS(SPI.Port.kMXP, (byte) 100);
     zeroGyro();
-    
+
+    // Configure time of flight sensor for short ranging mode and sample
+    // distance every 40 ms
+    m_rearLeftSensor.setRangingMode(RangingMode.Short, 40);
+    m_rearRightSensor.setRangingMode(RangingMode.Short, 40);
+
     mSwerveMods = new SwerveModule[] {
-        new SwerveModule(0, Constants.Swerve.Mod0.constants),
-        new SwerveModule(1, Constants.Swerve.Mod1.constants),
-        new SwerveModule(2, Constants.Swerve.Mod2.constants),
-        new SwerveModule(3, Constants.Swerve.Mod3.constants)
+        new SwerveModule(0, Constants.SwerveConstants.Mod0.constants),
+        new SwerveModule(1, Constants.SwerveConstants.Mod1.constants),
+        new SwerveModule(2, Constants.SwerveConstants.Mod2.constants),
+        new SwerveModule(3, Constants.SwerveConstants.Mod3.constants)
     };
 
     swervePoseEstimator = new SwerveDrivePoseEstimator(
-        Constants.Swerve.swerveKinematics,
+        Constants.SwerveConstants.swerveKinematics,
         getYaw(),
         getPositions(),
         new Pose2d(),
@@ -67,7 +78,7 @@ public class SwerveSubsystem extends SubsystemBase {
         this::resetPoseEstimator,
         this::getSpeeds,
         this::driveRobotRelative,
-        Constants.Swerve.pathFollowerConfig,
+        Constants.SwerveConstants.pathFollowerConfig,
         () -> {
           // Boolean supplier that controls when the path will be mirrored for the red
           // alliance
@@ -93,19 +104,19 @@ public class SwerveSubsystem extends SubsystemBase {
 
   public void driveRobotRelative(ChassisSpeeds robotRelativeSpeeds) {
     ChassisSpeeds targetSpeeds = ChassisSpeeds.discretize(robotRelativeSpeeds, 0.02);
-    SwerveModuleState[] targetStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(targetSpeeds);
+    SwerveModuleState[] targetStates = Constants.SwerveConstants.swerveKinematics.toSwerveModuleStates(targetSpeeds);
     setStates(targetStates);
   }
 
   public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
-    SwerveModuleState[] swerveModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(
+    SwerveModuleState[] swerveModuleStates = Constants.SwerveConstants.swerveKinematics.toSwerveModuleStates(
 
         fieldRelative
             ? ChassisSpeeds.fromFieldRelativeSpeeds(
                 translation.getX(), translation.getY(), rotation, getYaw())
             : new ChassisSpeeds(translation.getX(), translation.getY(), rotation));
 
-    SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed);
+    SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.SwerveConstants.maxSpeed);
 
     for (SwerveModule mod : mSwerveMods) {
       mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop);
@@ -115,7 +126,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
   /* Used by SwerveControllerCommand in Auto */
   public void setStates(SwerveModuleState[] desiredStates) {
-    SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.Swerve.maxSpeed);
+    SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.SwerveConstants.maxSpeed);
     for (SwerveModule mod : mSwerveMods) {
       mod.setDesiredState(desiredStates[mod.moduleNumber], false);
     }
@@ -173,7 +184,7 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public Rotation2d getYaw() {
-    return (Constants.Swerve.invertGyro) ? Rotation2d.fromDegrees(360 - gyro.getYaw())
+    return (Constants.SwerveConstants.invertGyro) ? Rotation2d.fromDegrees(360 - gyro.getYaw())
         : Rotation2d.fromDegrees(gyro.getYaw());
   }
 
@@ -190,11 +201,27 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public ChassisSpeeds getSpeeds() {
-    return Constants.Swerve.swerveKinematics.toChassisSpeeds(getStates());
+    return Constants.SwerveConstants.swerveKinematics.toChassisSpeeds(getStates());
   }
 
   public void addVisionMeasurement(Pose2d pose, double timestamp) {
     swervePoseEstimator.addVisionMeasurement(pose, timestamp);
+  }
+
+  public double getRearLeftSensorMM() {
+    return m_rearLeftSensor.getRange();
+  }
+
+  public double getRearRightSensorMM() {
+    return m_rearRightSensor.getRange();
+  }
+
+  public double getRearLeftSensorStdDevMM() {
+    return m_rearLeftSensor.getRangeSigma();
+  }
+
+  public double getRearRightSensorStdDevMM() {
+    return m_rearRightSensor.getRangeSigma();
   }
 
   public Command followPathCommand(String pathName) {
@@ -226,10 +253,15 @@ public class SwerveSubsystem extends SubsystemBase {
         },
         this // Reference to this subsystem to set requirements
     );
+
   }
 
   @Override
   public void periodic() {
+    SmartDashboard.putNumber("LeftInches",
+    round2dp( Units.metersToInches(getRearLeftSensorMM() / 1000),1));
+    SmartDashboard.putNumber("RightInches",
+     round2dp(Units.metersToInches(getRearRightSensorMM() / 1000),1));
 
     swervePoseEstimator.update(getYaw(), getPositions());
     // swervePoseEstimator.addVisionMeasurement(previousposeleft,
@@ -247,7 +279,7 @@ public class SwerveSubsystem extends SubsystemBase {
         new double[] { getPose().getX(), getPose().getY(), getPose().getRotation().getDegrees() });
     // putStates();
 
-     }
+  }
 
   private void putStates() {
 
@@ -279,16 +311,15 @@ public class SwerveSubsystem extends SubsystemBase {
 
   public static double round2dp(double number, int dp) {
     double temp = Math.pow(10, dp);
-    
+
     double temp1 = Math.round(number * temp);
-   
 
     return temp1 / temp;
   }
 
-public boolean isStopped() {
+  public boolean isStopped() {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'isStopped'");
-}
+  }
 
 }

@@ -21,7 +21,20 @@ import static edu.wpi.first.units.Units.*;
 
 public final class Constants {
 
-        public static final class Swerve {
+        public static final class CANIDConstants {
+                // can ids 4 through 15 aee]used for swerve modules see SwerveConstants
+                public static final int bottomShooterID = 16;
+                public static final int topShooterID = 17;
+
+                public static final int intakeID = 18;
+                public static final int armID = 19;
+
+                public static final int rearLeftSensor=20;
+                public static final int rearRightSensor=21;
+
+        }
+
+        public static final class SwerveConstants {
 
                 public static final double stickDeadband = 0.1;
 
@@ -156,10 +169,6 @@ public final class Constants {
                                 flModuleOffset.getNorm(), // Drive base radius (distance from center to furthest module)
                                 new ReplanningConfig());
 
-                public void addVisionMeasurement(Pose2d robPose2d, double fpgaTimestamp) {
-                        // TODO Auto-generated method stub
-                        throw new UnsupportedOperationException("Unimplemented method 'addVisionMeasurement'");
-                }
         }
 
         public static final class FieldConstants {
@@ -214,33 +223,10 @@ public final class Constants {
                                 new Rotation3d(0, 0, 0)); // Cam mounted facing forward, half a meter forward of center,
                                                           // half a meter up
                                                           // from center.
-
-                // public static final String CAMERA_A_NAME = "cameraA";
-                // public static final Transform3d CAMERA_A_LOCATION = new Transform3d(
-                // new Translation3d(0.0, 0.0, 0.5),
-                // new Rotation3d(0.0, 0.0, 0.0));
-                // public static final Resolution CAMERA_A_RESOLUTION = Resolution.RES_1280_720;
-                // public static final Rotation2d CAMERA_A_FOV = Rotation2d.fromDegrees(79.7);
-
-                // public static final String CAMERA_B_NAME = "cameraB";
-                // public static final Transform3d CAMERA_B_LOCATION = new Transform3d(
-                // new Translation3d(0.0, 0.0, 0.5),
-                // new Rotation3d(0.0, 0.0, Math.toRadians(+120.0)));
-                // public static final Resolution CAMERA_B_RESOLUTION = Resolution.RES_1280_720;
-                // public static final Rotation2d CAMERA_B_FOV = Rotation2d.fromDegrees(79.7);
-
-                // public static final String CAMERA_C_NAME = "cameraC";
-                // public static final Transform3d CAMERA_C_LOCATION = new Transform3d(
-                // new Translation3d(0.0, 0.0, 0.5),
-                // new Rotation3d(0.0, 0.0, Math.toRadians(-120.0)));
-                // public static final Resolution CAMERA_C_RESOLUTION = Resolution.RES_1280_720;
-                // public static final Rotation2d CAMERA_C_FOV = Rotation2d.fromDegrees(79.7);
-
         }
 
         public static final class ShooterConstants {
-                public static final int bottomShooterID = 16;
-                public static final int topShooterID = 17;
+
                 public static final double maxShooterMotorRPM = 5700;
                 public static final double shooterConversionVelocityFactor = 1; // TODO change value
                 public static final double shooterConversionPositionFactor = 1; // TODO change value
@@ -252,16 +238,15 @@ public final class Constants {
                 public static final IdleMode shooterIdleMode = IdleMode.kCoast;
                 public static final int shooterContinuousCurrentLimit = 30;
 
-                public static final double closeShootSpeed =1000;
-                public static final double dist1ShootSpeed =1000;
-                public static final double dist2ShootSpeed =1000;
-                public static final double dist3ShootSpeed =1000;
-                
+                public static final double closeShootSpeed = 1000;
+                public static final double dist1ShootSpeed = 1000;
+                public static final double dist2ShootSpeed = 1000;
+                public static final double dist3ShootSpeed = 1000;
 
         }
 
         public static final class IntakeConstants {
-                public static final int intakeID = 18;
+
                 public static final double maxIntakeMotorRPM = 5700;
                 public static final double intakeConversionVelocityFactor = 1; // TODO change value
                 public static final double intakeConversionPositionFactor = 1; // TODO change value
@@ -273,11 +258,10 @@ public final class Constants {
                 public static final IdleMode intakeIdleMode = IdleMode.kCoast;
                 public static final int intakeContinuousCurrentLimit = 30;
 
-
         }
 
         public static final class ArmConstants {
-                public static final int armID = 18;
+
                 public static final double maxArmMotorRPM = 5700;
                 public static final double armConversionVelocityFactor = 1; // TODO change value
                 public static final double armConversionPositionFactor = 1; // TODO change value
@@ -289,10 +273,8 @@ public final class Constants {
                 public static final IdleMode armIdleMode = IdleMode.kCoast;
                 public static final int armContinuousCurrentLimit = 30;
 
-
                 public static double armPositionToIntakeDegrees = 10;
                 public static double armPositionToShootClose = 30;
-
 
         }
 

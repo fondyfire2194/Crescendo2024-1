@@ -74,7 +74,7 @@ public class SwerveModule extends SubsystemBase {
     setSpeed(desiredState, isOpenLoop);
   }
 
-  public SwerveModuleState getDesiredState(){
+  public SwerveModuleState getDesiredState() {
     return currentDesiredState;
   }
 
@@ -87,14 +87,14 @@ public class SwerveModule extends SubsystemBase {
   private void configAngleMotor() {
     angleMotor.restoreFactoryDefaults();
     CANSparkMaxUtil.setCANSparkMaxBusUsage(angleMotor, Usage.kPositionOnly);
-    angleMotor.setSmartCurrentLimit(Constants.Swerve.angleContinuousCurrentLimit);
-    angleMotor.setInverted(Constants.Swerve.angleInvert);
-    angleMotor.setIdleMode(Constants.Swerve.angleNeutralMode);
-    integratedAngleEncoder.setPositionConversionFactor(Constants.Swerve.angleConversionFactor);
-    angleController.setP(Constants.Swerve.angleKP);
-    angleController.setI(Constants.Swerve.angleKI);
-    angleController.setD(Constants.Swerve.angleKD);
-    angleController.setFF(Constants.Swerve.angleKFF);
+    angleMotor.setSmartCurrentLimit(Constants.SwerveConstants.angleContinuousCurrentLimit);
+    angleMotor.setInverted(Constants.SwerveConstants.angleInvert);
+    angleMotor.setIdleMode(Constants.SwerveConstants.angleNeutralMode);
+    integratedAngleEncoder.setPositionConversionFactor(Constants.SwerveConstants.angleConversionFactor);
+    angleController.setP(Constants.SwerveConstants.angleKP);
+    angleController.setI(Constants.SwerveConstants.angleKI);
+    angleController.setD(Constants.SwerveConstants.angleKD);
+    angleController.setFF(Constants.SwerveConstants.angleKFF);
 
     // ******************************************************** */
 
@@ -104,7 +104,7 @@ public class SwerveModule extends SubsystemBase {
 
     // ******************************************************** */
 
-    angleMotor.enableVoltageCompensation(Constants.Swerve.voltageComp);
+    angleMotor.enableVoltageCompensation(Constants.SwerveConstants.voltageComp);
     angleMotor.burnFlash();
 
   }
@@ -112,25 +112,25 @@ public class SwerveModule extends SubsystemBase {
   private void configDriveMotor() {
     driveMotor.restoreFactoryDefaults();
     CANSparkMaxUtil.setCANSparkMaxBusUsage(driveMotor, Usage.kAll);
-    driveMotor.setSmartCurrentLimit(Constants.Swerve.driveContinuousCurrentLimit);
-    driveMotor.setInverted(Constants.Swerve.driveInvert);
-    driveMotor.setIdleMode(Constants.Swerve.driveNeutralMode);
-    driveEncoder.setVelocityConversionFactor(Constants.Swerve.driveConversionVelocityFactor);
-    driveEncoder.setPositionConversionFactor(Constants.Swerve.driveConversionPositionFactor);
-    driveController.setP(Constants.Swerve.driveKP);
-    driveController.setI(Constants.Swerve.driveKI);
-    driveController.setD(Constants.Swerve.driveKD);
-    driveController.setFF(Constants.Swerve.driveKFF);
-    driveMotor.enableVoltageCompensation(Constants.Swerve.voltageComp);
+    driveMotor.setSmartCurrentLimit(Constants.SwerveConstants.driveContinuousCurrentLimit);
+    driveMotor.setInverted(Constants.SwerveConstants.driveInvert);
+    driveMotor.setIdleMode(Constants.SwerveConstants.driveNeutralMode);
+    driveEncoder.setVelocityConversionFactor(Constants.SwerveConstants.driveConversionVelocityFactor);
+    driveEncoder.setPositionConversionFactor(Constants.SwerveConstants.driveConversionPositionFactor);
+    driveController.setP(Constants.SwerveConstants.driveKP);
+    driveController.setI(Constants.SwerveConstants.driveKI);
+    driveController.setD(Constants.SwerveConstants.driveKD);
+    driveController.setFF(Constants.SwerveConstants.driveKFF);
+    driveMotor.enableVoltageCompensation(Constants.SwerveConstants.voltageComp);
     driveMotor.burnFlash();
     driveEncoder.setPosition(0.0);
   }
 
   private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop) {
 
-    SmartDashboard.putNumber(Constants.Swerve.modNames[moduleNumber] + "Set Speed", desiredState.speedMetersPerSecond);
+    SmartDashboard.putNumber(Constants.SwerveConstants.modNames[moduleNumber] + "Set Speed", desiredState.speedMetersPerSecond);
     if (isOpenLoop) {
-      double percentOutput = desiredState.speedMetersPerSecond / Constants.Swerve.maxSpeed;
+      double percentOutput = desiredState.speedMetersPerSecond / Constants.SwerveConstants.maxSpeed;
       driveMotor.setVoltage(percentOutput * RobotController.getBatteryVoltage());
     } else {
       driveController.setReference(
@@ -142,7 +142,7 @@ public class SwerveModule extends SubsystemBase {
 
   private void setAngle(SwerveModuleState desiredState) {
     // Prevent rotating module if speed is less then 1%. Prevents jittering.
-    Rotation2d angle = (Math.abs(desiredState.speedMetersPerSecond) <= (Constants.Swerve.maxSpeed * 0.01))
+    Rotation2d angle = (Math.abs(desiredState.speedMetersPerSecond) <= (Constants.SwerveConstants.maxSpeed * 0.01))
         ? lastAngle
         : desiredState.angle;
 
@@ -164,17 +164,22 @@ public class SwerveModule extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // SmartDashboard.putNumber(Constants.Swerve.modNames[moduleNumber] + "angle deg",
-    //     round2dp(getAngle().getDegrees(), 2));
-    // SmartDashboard.putNumber(Constants.Swerve.modNames[moduleNumber] + "distance m",
-    //     round2dp(driveEncoder.getPosition(), 2));
-    // SmartDashboard.putNumber(Constants.Swerve.modNames[moduleNumber] + "velocity mps",
-    //     round2dp(driveEncoder.getVelocity(), 2));
+    // SmartDashboard.putNumber(Constants.Swerve.modNames[moduleNumber] + "angle
+    // deg",
+    // round2dp(getAngle().getDegrees(), 2));
+    // SmartDashboard.putNumber(Constants.Swerve.modNames[moduleNumber] + "distance
+    // m",
+    // round2dp(driveEncoder.getPosition(), 2));
+    // SmartDashboard.putNumber(Constants.Swerve.modNames[moduleNumber] + "velocity
+    // mps",
+    // round2dp(driveEncoder.getVelocity(), 2));
 
-    // SmartDashboard.putNumber(Constants.Swerve.modNames[moduleNumber] + "cancoder",
-    //     round2dp(m_turnCancoder.getPosition().getValueAsDouble(), 2));
-    // SmartDashboard.putNumber(Constants.Swerve.modNames[moduleNumber] + "cancoderAbs",
-    //     round2dp(m_turnCancoder.getAbsolutePosition().getValueAsDouble(), 2));
+    // SmartDashboard.putNumber(Constants.Swerve.modNames[moduleNumber] +
+    // "cancoder",
+    // round2dp(m_turnCancoder.getPosition().getValueAsDouble(), 2));
+    // SmartDashboard.putNumber(Constants.Swerve.modNames[moduleNumber] +
+    // "cancoderAbs",
+    // round2dp(m_turnCancoder.getAbsolutePosition().getValueAsDouble(), 2));
 
   }
 

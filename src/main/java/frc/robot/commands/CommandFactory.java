@@ -27,6 +27,8 @@ import frc.robot.subsystems.SwerveSubsystem;
 /** Add your docs here. */
 public class CommandFactory {
 
+        public SequentialCommandGroup centerChoice2;
+
         PathConstraints pathConstraints = new PathConstraints(
                         3.0, 4.0,
                         Units.degreesToRadians(360),
@@ -50,18 +52,51 @@ public class CommandFactory {
         public CommandFactory(AutoFactory af, SwerveSubsystem drive, ArmSubsystem arm,
                         IntakeSubsystem intake, ShooterSubsystem shooter) {
 
-                SequentialCommandGroup centerChoice2                                = new SequentialCommandGroup(
-                                                // shoot loaded note to speaker
-                                                new ParallelCommandGroup(arm.positionArmCommand(
-                                                                Constants.ArmConstants.armPositionToShootClose),
-                                                                shooter.setShooterSpeed(ShooterConstants.closeShootSpeed),
-                                               
+                centerChoice2 = new SequentialCommandGroup(
+                                // shoot loaded note to speaker
+                                new ParallelCommandGroup(arm.positionArmCommand(
+                                                Constants.ArmConstants.armPositionToShootClose),
+                                                shooter.setShooterSpeed(ShooterConstants.closeShootSpeed),
+
                                                 intake.feedShooterCommand(),
                                                 new WaitCommand(1),
 
-                                                // pick up  note directly behind
+                                                // pick up note directly behind
 
                                                 new ParallelCommandGroup(
+
+                                                                arm.positionArmCommand(
+                                                                                Constants.ArmConstants.armPositionToIntakeDegrees),
+                                                                shooter.setShooterSpeed(
+                                                                                ShooterConstants.dist1ShootSpeed),
+
+                                                                new ParallelRaceGroup(
+
+                                                                                getPathToPose(FieldConstants.blueNote2,
+                                                                                                pathConstraints),
+                                                                                intake.runIntakeCommand())),
+
+                                                intake.feedShooterCommand(),
+                                                new WaitCommand(1),
+
+                                                new ParallelCommandGroup(
+
+                                                                arm.positionArmCommand(
+                                                                                Constants.ArmConstants.armPositionToIntakeDegrees),
+                                                                shooter.setShooterSpeed(
+                                                                                ShooterConstants.dist3ShootSpeed),
+
+                                                                new ParallelRaceGroup(
+
+                                                                                getPathToPose(FieldConstants.blueNote1,
+                                                                                                pathConstraints),
+                                                                                intake.runIntakeCommand())),
+
+                                                intake.feedShooterCommand(),
+                                                new WaitCommand(1),
+
+                                                new ParallelCommandGroup(
+
                                                                 arm.positionArmCommand(
                                                                                 Constants.ArmConstants.armPositionToIntakeDegrees),
                                                                 shooter.setShooterSpeed(
@@ -76,7 +111,7 @@ public class CommandFactory {
                                                 intake.feedShooterCommand(),
                                                 new WaitCommand(1)
 
-                ));
+                                ));
 
         }
 

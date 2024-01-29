@@ -39,16 +39,16 @@ public class TeleopSwerve extends Command {
   public void execute() {
     /* Get Values, Deadband */
     double translationVal = translationLimiter.calculate(
-        MathUtil.applyDeadband(translationSup.getAsDouble(), Constants.Swerve.stickDeadband));
+        MathUtil.applyDeadband(translationSup.getAsDouble(), Constants.SwerveConstants.stickDeadband));
     double strafeVal = strafeLimiter.calculate(
-        MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.Swerve.stickDeadband));
+        MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.SwerveConstants.stickDeadband));
     double rotationVal = rotationLimiter.calculate(
-        MathUtil.applyDeadband(rotationSup.getAsDouble(), Constants.Swerve.stickDeadband));
+        MathUtil.applyDeadband(rotationSup.getAsDouble(), Constants.SwerveConstants.stickDeadband));
 
     /* Drive */
     s_Swerve.drive(
-        new Translation2d(translationVal, strafeVal).times(Constants.Swerve.maxSpeed),
-        rotationVal * Constants.Swerve.maxAngularVelocity,
+        new Translation2d(translationVal, strafeVal).times(Constants.SwerveConstants.maxSpeed),
+        rotationVal * Constants.SwerveConstants.maxAngularVelocity,
         !robotCentricSup.getAsBoolean(),
         true);
   }
