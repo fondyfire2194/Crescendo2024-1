@@ -88,8 +88,7 @@ public class CommandFactory {
 
                                                                 new ParallelRaceGroup(
 
-                                                                                getPathToPose(FieldConstants.blueNote1,
-                                                                                                pathConstraints),
+                                                                                getSinglePathCommand("AutoOneP2"),
                                                                                 intake.runIntakeCommand())),
 
                                                 intake.feedShooterCommand(),
@@ -104,8 +103,7 @@ public class CommandFactory {
 
                                                                 new ParallelRaceGroup(
 
-                                                                                getPathToPose(FieldConstants.blueNote2,
-                                                                                                pathConstraints),
+                                                                                getSinglePathCommand("AutoOneP2"),
                                                                                 intake.runIntakeCommand())),
 
                                                 intake.feedShooterCommand(),

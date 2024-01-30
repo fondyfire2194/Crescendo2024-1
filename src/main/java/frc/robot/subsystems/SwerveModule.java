@@ -20,6 +20,7 @@ import frc.lib.math.OnboardModuleState;
 import frc.lib.util.CANSparkMaxUtil;
 import frc.lib.util.CANSparkMaxUtil.Usage;
 import frc.robot.Constants;
+import frc.robot.Pref;
 
 public class SwerveModule extends SubsystemBase {
   public int moduleNumber;
@@ -62,6 +63,8 @@ public class SwerveModule extends SubsystemBase {
     configDriveMotor();
 
     lastAngle = getState().angle;
+
+    
   }
 
   public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
@@ -126,9 +129,14 @@ public class SwerveModule extends SubsystemBase {
     driveEncoder.setPosition(0.0);
   }
 
+  public void setDriveKp(){
+    driveController.setP(Pref.getPref("DriveKp"));
+  }
+
   private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop) {
 
-    SmartDashboard.putNumber(Constants.SwerveConstants.modNames[moduleNumber] + "Set Speed", desiredState.speedMetersPerSecond);
+    SmartDashboard.putNumber(Constants.SwerveConstants.modNames[moduleNumber] + "Set Speed",
+        desiredState.speedMetersPerSecond);
     if (isOpenLoop) {
       double percentOutput = desiredState.speedMetersPerSecond / Constants.SwerveConstants.maxSpeed;
       driveMotor.setVoltage(percentOutput * RobotController.getBatteryVoltage());

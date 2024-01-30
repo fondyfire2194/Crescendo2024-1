@@ -7,6 +7,7 @@ package frc.robot;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.CommandFactory;
@@ -73,7 +74,12 @@ public class AutoFactory {
         m_sourceStartChooser.addOption("Choice 1", 21);
         m_sourceStartChooser.addOption("Choice 2", 22);
 
-        centerChoice2 = m_cf.centerChoice2;
+      //  centerChoice2 = m_cf.centerChoice2;
+
+        SmartDashboard.putData("DelayChooser",m_startDelayChooser);
+        SmartDashboard.putData("AmpStartChooser",m_ampStartChooser);
+        SmartDashboard.putData("CenterStartChooser",m_centerStartChooser);
+        SmartDashboard.putData("SourceStartChooser",m_sourceStartChooser);
 
     }
 

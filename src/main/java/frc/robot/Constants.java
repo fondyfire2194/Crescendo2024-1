@@ -88,7 +88,7 @@ public final class Constants {
                 public static final double angleKFF = 0.0;
 
                 /* Drive Motor PID Values */
-                public static final double driveKP = 0.1;
+                public static final double driveKP = 0.001;
                 public static final double driveKI = 0.0;
                 public static final double driveKD = 0.0;
                 public static final double driveKFF = .9 / maxSpeed;// 90% feed forward
@@ -163,8 +163,8 @@ public final class Constants {
                 }
 
                 public static final HolonomicPathFollowerConfig pathFollowerConfig = new HolonomicPathFollowerConfig(
-                                new PIDConstants(5.0, 0, 0), // Translation constants
-                                new PIDConstants(5.0, 0, 0), // Rotation constants
+                                new PIDConstants(1.0, 0, 0), // Translation constants
+                                new PIDConstants(1.0, 0, 0), // Rotation constants
                                 maxSpeed,
                                 flModuleOffset.getNorm(), // Drive base radius (distance from center to furthest module)
                                 new ReplanningConfig());

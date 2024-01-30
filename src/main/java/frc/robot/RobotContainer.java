@@ -6,8 +6,12 @@ package frc.robot;
 
 import java.util.List;
 import java.util.function.BooleanSupplier;
+
+import org.ejml.dense.block.MatrixOps_DDRB;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
@@ -19,6 +23,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -45,7 +50,7 @@ public class RobotContainer {
 
   public final AutoFactory m_cf = new AutoFactory(null, m_swerve, m_intake, m_shooter);
 
-  private BooleanSupplier robotCentric = () -> true;
+  private BooleanSupplier robotCentric = () -> false;
 
   private final CommandXboxController driver = new CommandXboxController(0);
 
@@ -74,15 +79,17 @@ public class RobotContainer {
     m_swerve.setDefaultCommand(
         new TeleopSwerve(
             m_swerve,
-            () -> -driver.getLeftX(),
             () -> -driver.getLeftY(),
+            () -> -driver.getLeftX(),
             () -> -driver.getRightX() / 6,
             () -> robotCentric.getAsBoolean()));
 
-    m_intake.setDefaultCommand(Commands.runOnce(() -> m_intake.stopMotor(), m_intake));
-    m_shooter.setDefaultCommand(Commands.runOnce(() -> m_shooter.stopMotors(), m_shooter));
-    m_llv1.setDefaultCommand(new TrackAprilTags3D(m_llv1, m_swerve));
-    m_llv2.setDefaultCommand(new TrackAprilTags3D(m_llv2, m_swerve));
+    // m_intake.setDefaultCommand(Commands.runOnce(() -> m_intake.stopMotor(),
+    // m_intake));
+    // m_shooter.setDefaultCommand(Commands.runOnce(() -> m_shooter.stopMotors(),
+    // m_shooter));
+    // m_llv1.setDefaultCommand(new TrackAprilTags3D(m_llv1, m_swerve));
+    // m_llv2.setDefaultCommand(new TrackAprilTags3D(m_llv2, m_swerve));
   }
 
   private void registerNamedCommands() {
@@ -90,6 +97,10 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
+
+    SmartDashboard.putData("CommSchd", CommandScheduler.getInstance());
+
+    SmartDashboard.putData("SetDriveKp",m_swerve.setDriveKp());
 
     driver.y().onTrue(new InstantCommand(() -> m_swerve.zeroGyro()));
 
@@ -102,16 +113,17 @@ public class RobotContainer {
 
     codriver.rightTrigger().onTrue(m_shooter.stopShootersCommand());
 
-    // Add a button to run pathfinding commands to SmartDashboard
+    
+
     SmartDashboard.putData("Pathfind to Pickup Pos", AutoBuilder.pathfindToPose(
-        new Pose2d(14.0, 6.5, Rotation2d.fromDegrees(0)),
+        new Pose2d(2.0, 1.5, Rotation2d.fromDegrees(0)),
         new PathConstraints(
             4.0, 4.0,
             Units.degreesToRadians(360), Units.degreesToRadians(540)),
         0,
         2.0));
     SmartDashboard.putData("Pathfind to Scoring Pos", AutoBuilder.pathfindToPose(
-        new Pose2d(2.15, 3.0, Rotation2d.fromDegrees(180)),
+        new Pose2d(1.15, 1.0, Rotation2d.fromDegrees(180)),
         new PathConstraints(
             4.0, 4.0,
             Units.degreesToRadians(360), Units.degreesToRadians(540)),
@@ -126,13 +138,14 @@ public class RobotContainer {
 
       // The rotation component in these poses represents the direction of travel
       Pose2d startPos = new Pose2d(currentPose.getTranslation(), new Rotation2d());
-      Pose2d endPos = new Pose2d(currentPose.getTranslation().plus(new Translation2d(2.0, 0.0)), new Rotation2d());
+      Pose2d endPos = new Pose2d(currentPose.getTranslation()
+          .plus(new Translation2d(2.0, 0.0)), new Rotation2d());
 
       List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(startPos, endPos);
       PathPlannerPath path = new PathPlannerPath(
           bezierPoints,
           new PathConstraints(
-              4.0, 4.0,
+              1.0, 1.0,
               Units.degreesToRadians(360), Units.degreesToRadians(540)),
           new GoalEndState(0.0, currentPose.getRotation()));
 

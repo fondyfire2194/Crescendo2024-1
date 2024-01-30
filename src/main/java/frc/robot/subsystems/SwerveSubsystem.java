@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.CANIDConstants;
@@ -43,6 +44,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
   private final TimeOfFlight m_rearLeftSensor = new TimeOfFlight(CANIDConstants.rearLeftSensor);
   private final TimeOfFlight m_rearRightSensor = new TimeOfFlight(CANIDConstants.rearRightSensor);
+
+  private boolean allowVisionCorrection;
 
   public SwerveSubsystem() {
     gyro = new AHRS(SPI.Port.kMXP, (byte) 100);
@@ -151,6 +154,17 @@ public class SwerveSubsystem extends SubsystemBase {
     return getPose().getY();
   }
 
+  public void setModuleDriveKp() {
+    mSwerveMods[0].setDriveKp();
+    mSwerveMods[1].setDriveKp();
+    mSwerveMods[2].setDriveKp();
+    mSwerveMods[3].setDriveKp();
+  }
+
+  public Command setDriveKp() {
+    return Commands.runOnce(() -> setModuleDriveKp());
+  }
+
   public double getPoseHeading() {
     return getPose().getRotation().getDegrees();
   }
@@ -205,7 +219,8 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public void addVisionMeasurement(Pose2d pose, double timestamp) {
-    swervePoseEstimator.addVisionMeasurement(pose, timestamp);
+    if (allowVisionCorrection)
+      swervePoseEstimator.addVisionMeasurement(pose, timestamp);
   }
 
   public double getRearLeftSensorMM() {
@@ -259,9 +274,9 @@ public class SwerveSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("LeftInches",
-    round2dp( Units.metersToInches(getRearLeftSensorMM() / 1000),1));
+        round2dp(Units.metersToInches(getRearLeftSensorMM() / 1000), 1));
     SmartDashboard.putNumber("RightInches",
-     round2dp(Units.metersToInches(getRearRightSensorMM() / 1000),1));
+        round2dp(Units.metersToInches(getRearRightSensorMM() / 1000), 1));
 
     swervePoseEstimator.update(getYaw(), getPositions());
     // swervePoseEstimator.addVisionMeasurement(previousposeleft,
