@@ -1,10 +1,55 @@
 {
   "NTProvider": {
     "types": {
-      "/FMSInfo": "FMSInfo"
+      "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/ArmSubsystem/ArmSubsystem": "Subsystem",
+      "/Shuffleboard/Autonomous/AmpStart": "String Chooser",
+      "/Shuffleboard/Autonomous/CenterStart": "String Chooser",
+      "/Shuffleboard/Autonomous/DelayChooser": "String Chooser",
+      "/Shuffleboard/Autonomous/DelayOnStart": "String Chooser",
+      "/Shuffleboard/Autonomous/DelayonStart": "String Chooser",
+      "/Shuffleboard/Autonomous/SendableChooser[0]": "String Chooser",
+      "/Shuffleboard/Autonomous/SendableChooser[1]": "String Chooser",
+      "/Shuffleboard/Autonomous/SendableChooser[2]": "String Chooser",
+      "/Shuffleboard/Autonomous/SendableChooser[3]": "String Chooser",
+      "/Shuffleboard/Autonomous/SourceStart": "String Chooser",
+      "/Shuffleboard/Drivetrain/SwerveSubsystem": "Subsystem",
+      "/Shuffleboard/IntakeSubsystem/IntakeSubsystem": "Subsystem",
+      "/Shuffleboard/ShooterSubsystem/ShooterSubsystem": "Subsystem",
+      "/Shuffleboard/ShooterSubsystem/SwerveSubsystem": "Subsystem",
+      "/Shuffleboard/TuneTab/SetDriveKp": "Command",
+      "/SmartDashboard/AmpStartChooser": "String Chooser",
+      "/SmartDashboard/Auto Mode": "String Chooser",
+      "/SmartDashboard/CenterStartChooser": "String Chooser",
+      "/SmartDashboard/CommSchd": "Scheduler",
+      "/SmartDashboard/DelayChooser": "String Chooser",
+      "/SmartDashboard/FC": "Command",
+      "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/On-the-fly path": "Command",
+      "/SmartDashboard/Pathfind to Pickup Pos": "Command",
+      "/SmartDashboard/Pathfind to Scoring Pos": "Command",
+      "/SmartDashboard/ResetPose": "Command",
+      "/SmartDashboard/SetDriveKp": "Command",
+      "/SmartDashboard/SourceStartChooser": "String Chooser"
+    },
+    "windows": {
+      "/SmartDashboard/Field": {
+        "bottom": 1476,
+        "height": 8.210550308227539,
+        "left": 150,
+        "right": 2961,
+        "top": 79,
+        "width": 16.541748046875,
+        "window": {
+          "visible": true
+        }
+      }
     }
   },
   "NetworkTables": {
+    "Retained Values": {
+      "open": false
+    },
     "transitory": {
       "SmartDashboard": {
         "open": true

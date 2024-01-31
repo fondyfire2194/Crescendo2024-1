@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.time.chrono.ThaiBuddhistDate;
+
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.FollowPathHolonomic;
@@ -10,25 +12,26 @@ import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
 import com.playingwithfusion.TimeOfFlight;
 import com.playingwithfusion.TimeOfFlight.RangingMode;
-
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.Constants.CANIDConstants;
 
 public class SwerveSubsystem extends SubsystemBase {
@@ -42,18 +45,32 @@ public class SwerveSubsystem extends SubsystemBase {
 
   private Field2d field;
 
+  public double simAngle;
+
   private final TimeOfFlight m_rearLeftSensor = new TimeOfFlight(CANIDConstants.rearLeftSensor);
+
   private final TimeOfFlight m_rearRightSensor = new TimeOfFlight(CANIDConstants.rearRightSensor);
 
   private boolean allowVisionCorrection;
 
   public SwerveSubsystem() {
+
+    if (RobotBase.isSimulation()) {
+
+      // thetaPID.setP(0);
+
+      // xPID.setP(1.0);
+
+      // yPID.setP(0);
+
+    }
+
     gyro = new AHRS(SPI.Port.kMXP, (byte) 100);
-    zeroGyro();
 
     // Configure time of flight sensor for short ranging mode and sample
     // distance every 40 ms
     m_rearLeftSensor.setRangingMode(RangingMode.Short, 40);
+
     m_rearRightSensor.setRangingMode(RangingMode.Short, 40);
 
     mSwerveMods = new SwerveModule[] {
@@ -73,7 +90,10 @@ public class SwerveSubsystem extends SubsystemBase {
 
     field = new Field2d();
     SmartDashboard.putData("Field", field);
-    resetModuleEncoders();
+    if (Robot.isReal())
+      resetModuleEncoders();
+    else
+      resetAngleEncoders();
 
     // Configure AutoBuilder
     AutoBuilder.configureHolonomic(
@@ -99,6 +119,16 @@ public class SwerveSubsystem extends SubsystemBase {
     // Set up custom logging to add the current path to a field 2d widget
     PathPlannerLogging.setLogActivePathCallback((poses) -> field.getObject("path").setPoses(poses));
 
+    zeroGyro();
+
+    Shuffleboard.getTab("Drivetrain").add(this)
+        .withSize(2, 1).withPosition(0, 0);
+
+    Shuffleboard.getTab("Drivetrain").add("SetKp", setDriveKp())
+        .withSize(2, 1).withPosition(2, 0);
+    Shuffleboard.getTab("Drivetrain").add("ResetPose", this.setPoseToX0Y0())
+        .withSize(2, 1).withPosition(4, 0);
+
   }
 
   public void driveFieldRelative(ChassisSpeeds fieldRelativeSpeeds) {
@@ -111,13 +141,13 @@ public class SwerveSubsystem extends SubsystemBase {
     setStates(targetStates);
   }
 
-  public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
+  public void drive(double translation, double strafe, double rotation, boolean fieldRelative, boolean isOpenLoop) {
     SwerveModuleState[] swerveModuleStates = Constants.SwerveConstants.swerveKinematics.toSwerveModuleStates(
 
         fieldRelative
             ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                translation.getX(), translation.getY(), rotation, getYaw())
-            : new ChassisSpeeds(translation.getX(), translation.getY(), rotation));
+                translation, strafe, rotation, getYaw())
+            : new ChassisSpeeds(translation, strafe, rotation));
 
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.SwerveConstants.maxSpeed);
 
@@ -140,6 +170,14 @@ public class SwerveSubsystem extends SubsystemBase {
     mSwerveMods[1].resetAngleToAbsolute();
     mSwerveMods[2].resetAngleToAbsolute();
     mSwerveMods[3].resetAngleToAbsolute();
+  }
+
+  public void resetAngleEncoders() {
+    mSwerveMods[0].resetAngleEncoder(0);
+    mSwerveMods[1].resetAngleEncoder(180);
+    mSwerveMods[2].resetAngleEncoder(0);
+    mSwerveMods[3].resetAngleEncoder(180);
+
   }
 
   public Pose2d getPose() {
@@ -170,7 +208,12 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public void resetPoseEstimator(Pose2d pose) {
+    zeroGyro();
     swervePoseEstimator.resetPosition(getYaw(), getPositions(), pose);
+  }
+
+  public Command setPose(Pose2d pose) {
+    return Commands.runOnce(() -> resetPoseEstimator(pose));
   }
 
   public SwerveDrivePoseEstimator getPoseEstimator() {
@@ -195,11 +238,17 @@ public class SwerveSubsystem extends SubsystemBase {
 
   public void zeroGyro() {
     gyro.reset();
+    simAngle = 0;
   }
 
   public Rotation2d getYaw() {
-    return (Constants.SwerveConstants.invertGyro) ? Rotation2d.fromDegrees(360 - gyro.getYaw())
-        : Rotation2d.fromDegrees(gyro.getYaw());
+    if (RobotBase.isReal())
+      return (Constants.SwerveConstants.invertGyro) ? Rotation2d.fromDegrees(360 - gyro.getYaw())
+          : Rotation2d.fromDegrees(gyro.getYaw());
+
+    else
+      return Rotation2d.fromDegrees(simAngle);
+
   }
 
   public float getPitch() {
@@ -278,7 +327,11 @@ public class SwerveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("RightInches",
         round2dp(Units.metersToInches(getRearRightSensorMM() / 1000), 1));
 
-    swervePoseEstimator.update(getYaw(), getPositions());
+    Rotation2d temp = getYaw();
+    if (RobotBase.isSimulation())
+      temp = new Rotation2d(Units.degreesToRadians(simAngle));
+
+    swervePoseEstimator.update(temp, getPositions());
     // swervePoseEstimator.addVisionMeasurement(previousposeleft,
     // timestampsecondsl);
     // swervePoseEstimator.addVisionMeasurement(previousposeright,
@@ -292,7 +345,51 @@ public class SwerveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Yaw", round2dp(getHeadingDegrees(), 2));
     SmartDashboard.putNumberArray("Odometry",
         new double[] { getPose().getX(), getPose().getY(), getPose().getRotation().getDegrees() });
-    // putStates();
+
+    putStates();
+
+  }
+
+  private void resetAll() {
+    gyro.reset();
+
+    resetModuleEncoders();
+    swervePoseEstimator.resetPosition(getYaw(), getPositions(), new Pose2d());
+
+  }
+
+  public Command setPoseToX0Y0() {
+    return Commands.runOnce(() -> resetAll());
+  }
+
+  @Override
+  public void simulationPeriodic() {
+
+    ChassisSpeeds chassisSpeedSim = Constants.SwerveConstants.swerveKinematics.toChassisSpeeds(
+
+        new SwerveModuleState[] {
+            mSwerveMods[0].getState(),
+            mSwerveMods[1].getState(),
+            mSwerveMods[2].getState(),
+            mSwerveMods[3].getState()
+        });
+
+    /**
+     * Need to find the degree change in 20 ms from angular radians per second
+     * 
+     * So radsper20ms = radspersec/50
+     * degrees per rad = 360/2PI=57.3
+     * degrees per 20ms = radsper20ms * degrees per rad
+     * conversion is 57.3/50=114.6/100=1.15
+     */
+
+    double temp = chassisSpeedSim.omegaRadiansPerSecond * .25;// 1.15;
+    SmartDashboard.putNumber("CHSSM", chassisSpeedSim.omegaRadiansPerSecond);
+
+    simAngle += temp;
+    SmartDashboard.putNumber("CHSSMTemp", temp);
+
+    SmartDashboard.putNumber("SIMANGLE", simAngle);
 
   }
 

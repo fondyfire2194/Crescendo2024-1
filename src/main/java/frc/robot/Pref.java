@@ -38,8 +38,8 @@ public class Pref {
     // shooter values
     prefDict.put("ShooterRPM", 470.);
 
-    //drive tune
-    prefDict.put("DriveKp",;.001)
+    // drive tune
+    prefDict.put("DriveKp", .001);
 
   }
 

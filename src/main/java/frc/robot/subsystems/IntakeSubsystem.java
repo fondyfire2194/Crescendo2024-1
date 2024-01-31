@@ -7,10 +7,15 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.REVPhysicsSim;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -32,6 +37,9 @@ public class IntakeSubsystem extends SubsystemBase {
     intakeController = intakeMotor.getPIDController();
     intakeEncoder = intakeMotor.getEncoder();
     configMotor(intakeMotor, intakeEncoder, intakeController, true);
+    if (RobotBase.isSimulation())
+      REVPhysicsSim.getInstance().addSparkMax(intakeMotor, 3, 5600);
+
   }
 
   private void configMotor(CANSparkMax motor, RelativeEncoder encoder, SparkPIDController controller,
@@ -50,6 +58,8 @@ public class IntakeSubsystem extends SubsystemBase {
     motor.enableVoltageCompensation(Constants.IntakeConstants.voltageComp);
     motor.burnFlash();
     encoder.setPosition(0.0);
+
+      Shuffleboard.getTab("IntakeSubsystem").add(this).withSize(2, 1);
   }
 
   public void stopMotor() {
@@ -62,7 +72,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command runIntakeCommand() {
-    return this.run(() -> intakeController.setReference(Pref.getPref("IntakeRPM"), ControlType.kVelocity));
+    return this.run(() -> intakeController.setReference(2500, ControlType.kVelocity));
   }
 
   public Command feedShooterCommand() {
@@ -79,6 +89,11 @@ public class IntakeSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("IntakeRPM", getRPM());
     SmartDashboard.putNumber("IntakeCANVer", intakeMotor.getFirmwareVersion());
 
+  }
+
+  @Override
+  public void simulationPeriodic() {
+    REVPhysicsSim.getInstance().run();
   }
 
   public void jog(double speed) {

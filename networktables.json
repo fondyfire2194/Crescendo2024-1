@@ -1,1 +1,26 @@
-[]
+[
+  {
+    "name": "/Preferences/DriveKp",
+    "type": "double",
+    "value": 0.001,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/IntakeRPM",
+    "type": "double",
+    "value": 470.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/ShooterRPM",
+    "type": "double",
+    "value": 470.0,
+    "properties": {
+      "persistent": true
+    }
+  }
+]

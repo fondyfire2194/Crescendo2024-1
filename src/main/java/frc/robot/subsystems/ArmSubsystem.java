@@ -9,6 +9,8 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.CANSparkMaxUtil;
@@ -21,18 +23,21 @@ public class ArmSubsystem extends SubsystemBase {
   CANSparkMax armMotor;
   SparkPIDController armController;
   RelativeEncoder armEncoder;
+  private double simPosition;
+
   /** Creates a new Arm. */
   public ArmSubsystem() {
 
- armMotor = new CANSparkMax(Constants.CANIDConstants.armID, MotorType.kBrushless);
+    armMotor = new CANSparkMax(Constants.CANIDConstants.armID, MotorType.kBrushless);
     armController = armMotor.getPIDController();
     armEncoder = armMotor.getEncoder();
     configMotor(armMotor, armEncoder, armController, true);
 
+    Shuffleboard.getTab("ArmSubsystem").add(this).withSize(2, 1);
 
   }
 
-   private void configMotor(CANSparkMax motor, RelativeEncoder encoder, SparkPIDController controller,
+  private void configMotor(CANSparkMax motor, RelativeEncoder encoder, SparkPIDController controller,
       boolean reverse) {
     motor.restoreFactoryDefaults();
     CANSparkMaxUtil.setCANSparkMaxBusUsage(motor, Usage.kAll);
@@ -50,12 +55,25 @@ public class ArmSubsystem extends SubsystemBase {
     encoder.setPosition(0.0);
   }
 
+  public double getPosition() {
+    if (RobotBase.isReal())
+      return armEncoder.getPosition();
+    else {
+      simPosition += armEncoder.getVelocity() / 50;
+      return simPosition;
+    }
+  }
+
+  public double getVelocity() {
+    return armEncoder.getVelocity();
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
   }
 
-  public Command positionArmCommand(double degrees){
+  public Command positionArmCommand(double degrees) {
     return new DoNothing();
   }
 }

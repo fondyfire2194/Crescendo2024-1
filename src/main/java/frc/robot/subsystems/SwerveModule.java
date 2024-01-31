@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.net.PortUnreachableException;
+
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
@@ -7,12 +9,16 @@ import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.REVPhysicsSim;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+
+import edu.wpi.first.hal.SimDouble;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.config.SwerveModuleConstants;
@@ -39,6 +45,9 @@ public class SwerveModule extends SubsystemBase {
   private final SparkPIDController angleController;
 
   private SwerveModuleState currentDesiredState = new SwerveModuleState();
+  private double angleDegrees;
+  private double simAngle;
+  private double simPosition;
 
   public SwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants) {
     this.moduleNumber = moduleNumber;
@@ -64,7 +73,8 @@ public class SwerveModule extends SubsystemBase {
 
     lastAngle = getState().angle;
 
-    
+    simPosition = 0;
+
   }
 
   public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
@@ -84,7 +94,11 @@ public class SwerveModule extends SubsystemBase {
   public void resetAngleToAbsolute() {
     double angle = ((m_turnCancoder.getAbsolutePosition().getValueAsDouble() * 360) - angleOffset.getDegrees());
     integratedAngleEncoder.setPosition(angle);
+  }
 
+  public void resetAngleEncoder(double angle) {
+    integratedAngleEncoder.setPosition(angle);
+    simAngle = 0;
   }
 
   private void configAngleMotor() {
@@ -118,8 +132,8 @@ public class SwerveModule extends SubsystemBase {
     driveMotor.setSmartCurrentLimit(Constants.SwerveConstants.driveContinuousCurrentLimit);
     driveMotor.setInverted(Constants.SwerveConstants.driveInvert);
     driveMotor.setIdleMode(Constants.SwerveConstants.driveNeutralMode);
-    driveEncoder.setVelocityConversionFactor(Constants.SwerveConstants.driveConversionVelocityFactor);
-    driveEncoder.setPositionConversionFactor(Constants.SwerveConstants.driveConversionPositionFactor);
+    // driveEncoder.setVelocityConversionFactor(Constants.SwerveConstants.driveConversionVelocityFactor);
+    // driveEncoder.setPositionConversionFactor(Constants.SwerveConstants.driveConversionPositionFactor);
     driveController.setP(Constants.SwerveConstants.driveKP);
     driveController.setI(Constants.SwerveConstants.driveKI);
     driveController.setD(Constants.SwerveConstants.driveKD);
@@ -129,7 +143,7 @@ public class SwerveModule extends SubsystemBase {
     driveEncoder.setPosition(0.0);
   }
 
-  public void setDriveKp(){
+  public void setDriveKp() {
     driveController.setP(Pref.getPref("DriveKp"));
   }
 
@@ -139,12 +153,11 @@ public class SwerveModule extends SubsystemBase {
         desiredState.speedMetersPerSecond);
     if (isOpenLoop) {
       double percentOutput = desiredState.speedMetersPerSecond / Constants.SwerveConstants.maxSpeed;
-      driveMotor.setVoltage(percentOutput * RobotController.getBatteryVoltage());
+      driveMotor.setVoltage(percentOutput * RobotController.getBatteryVoltage() / 10);
+
     } else {
-      driveController.setReference(
-          desiredState.speedMetersPerSecond,
-          CANSparkBase.ControlType.kVelocity,
-          0);
+      driveController.setReference(desiredState.speedMetersPerSecond, CANSparkMax.ControlType.kVelocity);
+
     }
   }
 
@@ -156,38 +169,56 @@ public class SwerveModule extends SubsystemBase {
 
     angleController.setReference(angle.getDegrees(), ControlType.kPosition);
     lastAngle = angle;
+    angleDegrees = angle.getDegrees();
   }
 
   private Rotation2d getAngle() {
-    return Rotation2d.fromDegrees(integratedAngleEncoder.getPosition());
+    if (RobotBase.isReal())
+      return Rotation2d.fromDegrees(integratedAngleEncoder.getPosition());
+    else
+      return Rotation2d.fromDegrees(simAngle);
   }
 
   public SwerveModulePosition getPosition() {
-    return new SwerveModulePosition(driveEncoder.getPosition(), getAngle());
+    return new SwerveModulePosition(getDrivePosition(), getAngle());
   }
 
   public SwerveModuleState getState() {
-    return new SwerveModuleState(driveEncoder.getVelocity(), getAngle());
+    return new SwerveModuleState(getDriveVelocity(), getAngle());
+  }
+
+  public double getDriveVelocity() {
+    if (RobotBase.isReal())
+      return driveEncoder.getVelocity();
+    else {
+      return currentDesiredState.speedMetersPerSecond;
+
+    }
+  }
+
+  public double getDrivePosition() {
+    if (RobotBase.isReal())
+      return driveEncoder.getPosition();
+    else {
+      simPosition += currentDesiredState.speedMetersPerSecond / 50;
+      return simPosition;
+    }
   }
 
   @Override
   public void periodic() {
-    // SmartDashboard.putNumber(Constants.Swerve.modNames[moduleNumber] + "angle
-    // deg",
-    // round2dp(getAngle().getDegrees(), 2));
-    // SmartDashboard.putNumber(Constants.Swerve.modNames[moduleNumber] + "distance
-    // m",
-    // round2dp(driveEncoder.getPosition(), 2));
-    // SmartDashboard.putNumber(Constants.Swerve.modNames[moduleNumber] + "velocity
-    // mps",
-    // round2dp(driveEncoder.getVelocity(), 2));
 
-    // SmartDashboard.putNumber(Constants.Swerve.modNames[moduleNumber] +
-    // "cancoder",
-    // round2dp(m_turnCancoder.getPosition().getValueAsDouble(), 2));
-    // SmartDashboard.putNumber(Constants.Swerve.modNames[moduleNumber] +
-    // "cancoderAbs",
-    // round2dp(m_turnCancoder.getAbsolutePosition().getValueAsDouble(), 2));
+  }
+
+  @Override
+  public void simulationPeriodic() {
+
+    SmartDashboard.putNumber(String.valueOf(moduleNumber)+" angdeg", angleDegrees);
+    SmartDashboard.putNumber(String.valueOf(moduleNumber)+" simAng", simAngle);
+
+    double diff = angleDegrees - simAngle;
+
+    simAngle += diff / 3;
 
   }
 
@@ -196,4 +227,5 @@ public class SwerveModule extends SubsystemBase {
     number /= 100;
     return number;
   }
+
 }

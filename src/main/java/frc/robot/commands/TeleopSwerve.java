@@ -3,6 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -14,7 +15,7 @@ public class TeleopSwerve extends Command {
   private DoubleSupplier translationSup;
   private DoubleSupplier strafeSup;
   private DoubleSupplier rotationSup;
-  private BooleanSupplier robotCentricSup;
+  private BooleanSupplier fieldCentric;
 
   private SlewRateLimiter translationLimiter = new SlewRateLimiter(3.0);
   private SlewRateLimiter strafeLimiter = new SlewRateLimiter(3.0);
@@ -25,14 +26,14 @@ public class TeleopSwerve extends Command {
       DoubleSupplier translationSup,
       DoubleSupplier strafeSup,
       DoubleSupplier rotationSup,
-      BooleanSupplier robotCentricSup) {
+      BooleanSupplier fieldCentric) {
     this.s_Swerve = s_Swerve;
     addRequirements(s_Swerve);
 
     this.translationSup = translationSup;
     this.strafeSup = strafeSup;
     this.rotationSup = rotationSup;
-    this.robotCentricSup = robotCentricSup;
+    this.fieldCentric = fieldCentric;
   }
 
   @Override
@@ -47,9 +48,20 @@ public class TeleopSwerve extends Command {
 
     /* Drive */
     s_Swerve.drive(
-        new Translation2d(translationVal, strafeVal).times(Constants.SwerveConstants.maxSpeed),
-        rotationVal * Constants.SwerveConstants.maxAngularVelocity,
-        !robotCentricSup.getAsBoolean(),
+
+        translationVal *= Constants.SwerveConstants.maxSpeed,
+        strafeVal *= Constants.SwerveConstants.maxSpeed,
+
+        // new Translation2d(translationVal,
+        // strafeVal).times(Constants.SwerveConstants.maxSpeed),
+        rotationVal *= Constants.SwerveConstants.maxAngularVelocity,
+        fieldCentric.getAsBoolean(),
         true);
+
+    SmartDashboard.putBoolean("FieldCentric", fieldCentric.getAsBoolean());
+    SmartDashboard.putNumber("TransVal", translationVal);
+    SmartDashboard.putNumber("StrafeVal", strafeVal);
+    SmartDashboard.putNumber("RotVal", rotationVal);
+
   }
 }

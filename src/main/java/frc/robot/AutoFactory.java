@@ -4,8 +4,11 @@
 
 package frc.robot;
 
+import javax.naming.AuthenticationNotSupportedException;
+
 import com.pathplanner.lib.path.PathPlannerPath;
 
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -74,33 +77,37 @@ public class AutoFactory {
         m_sourceStartChooser.addOption("Choice 1", 21);
         m_sourceStartChooser.addOption("Choice 2", 22);
 
-      //  centerChoice2 = m_cf.centerChoice2;
+        centerChoice1 = m_cf.centerChoice2;
 
-        SmartDashboard.putData("DelayChooser",m_startDelayChooser);
-        SmartDashboard.putData("AmpStartChooser",m_ampStartChooser);
-        SmartDashboard.putData("CenterStartChooser",m_centerStartChooser);
-        SmartDashboard.putData("SourceStartChooser",m_sourceStartChooser);
+        Shuffleboard.getTab("Autonomous").add("DelayChooser", m_startDelayChooser)
+                .withSize(2, 1).withPosition(0, 0);
+        Shuffleboard.getTab("Autonomous").add("AmpStart", m_ampStartChooser)
+                .withSize(2, 1).withPosition(2, 0);
+        Shuffleboard.getTab("Autonomous").add("CenterStart", m_centerStartChooser)
+                .withSize(2, 1).withPosition(4, 0);
+        Shuffleboard.getTab("Autonomous").add("SourceStart", m_sourceStartChooser)
+                .withSize(2, 1).withPosition(6, 0);
 
     }
 
-    private Command selectAndBuildAuto() {
+    private int selectAndBuildAuto() {
 
-        int ampChoice = m_ampStartChooser.getSelected();
+        int ampChoice = m_ampStartChooser.getSelected();// 0 start
 
-        int centerChoice = m_centerStartChooser.getSelected();
+        int centerChoice = m_centerStartChooser.getSelected();// 10 start
 
-        int sourceChoice = m_sourceStartChooser.getSelected();
+        int sourceChoice = m_sourceStartChooser.getSelected();// 20 start
 
-        if (centerChoice == 0 && sourceChoice == 0 && ampChoice != 0)
+        if (ampChoice != 0 && centerChoice == 10 && sourceChoice == 20)
             finalChoice = ampChoice;
 
-        if (centerChoice == 0 && ampChoice == 0 && sourceChoice != 0)
-            finalChoice = sourceChoice;
-
-        if (sourceChoice == 0 && ampChoice == 0 && centerChoice != 0)
+        if (ampChoice == 0 && centerChoice != 10 && sourceChoice == 20)
             finalChoice = centerChoice;
 
-        return new DoNothing();
+        if (ampChoice == 0 && centerChoice == 10 && sourceChoice != 20)
+            finalChoice = sourceChoice;
+
+        return finalChoice;
     }
 
     private Command finalCommand() {
@@ -132,6 +139,8 @@ public class AutoFactory {
 
     public Command getAutonomousCommand() {
         selectAndBuildAuto();
+        SmartDashboard.putNumber("FinChoice", finalChoice);
+        SmartDashboard.putData("FC", finalCommand());
         return finalCommand();
     }
 
