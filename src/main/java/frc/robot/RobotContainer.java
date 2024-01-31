@@ -123,7 +123,7 @@ public class RobotContainer {
 
         private void configureBindings() {
 
-                SmartDashboard.putData("CommSchd", CommandScheduler.getInstance());
+               // SmartDashboard.putData("CommSchd", CommandScheduler.getInstance());
 
                 driver.y().onTrue(new InstantCommand(() -> m_swerve.zeroGyro()));
 
@@ -133,7 +133,7 @@ public class RobotContainer {
                 driver.x().onTrue(m_swerve.setPose(new Pose2d(1, 5.5, new Rotation2d())))
                                 .onFalse(m_cf.getSinglePathCommand("AutoOneP1"));
 
-                driver.y().onTrue(getSinglePathCommand("AutoOneP2"));
+                driver.y().onTrue(m_cf.getSinglePathCommand("AutoOneP2"));
 
                 driver.back().onTrue(m_cf.getSinglePathCommand("AutoOneP3"));
 
@@ -153,6 +153,7 @@ public class RobotContainer {
                                                 Units.degreesToRadians(360), Units.degreesToRadians(540)),
                                 0,
                                 2.0));
+
                 SmartDashboard.putData("Pathfind to Scoring Pos", AutoBuilder.pathfindToPose(
                                 new Pose2d(1.15, 1.0, Rotation2d.fromDegrees(180)),
                                 new PathConstraints(
@@ -186,13 +187,6 @@ public class RobotContainer {
                 }));
         }
 
-        public Command getSinglePathCommand(String pathname) {
 
-                // Load the path you want to follow using its name in the GUI
-                PathPlannerPath path = PathPlannerPath.fromPathFile(pathname);
-                // Create a path following command using AutoBuilder. This will also trigger
-                // event markers.
-                return AutoBuilder.followPath(path);
-        }
 
 }

@@ -30,7 +30,6 @@ import frc.robot.subsystems.SwerveSubsystem;
 /** Add your docs here. */
 public class CommandFactory {
 
-
         public SequentialCommandGroup centerChoice2;
 
         PathConstraints pathConstraints = new PathConstraints(
@@ -42,7 +41,6 @@ public class CommandFactory {
 
                 // Load the path you want to follow using its name in the GUI
                 PathPlannerPath path = PathPlannerPath.fromPathFile(pathname);
-
                 // Create a path following command using AutoBuilder. This will also trigger
                 // event markers.
                 return AutoBuilder.followPath(path);
@@ -56,7 +54,7 @@ public class CommandFactory {
 
         public CommandFactory(SwerveSubsystem drive, ArmSubsystem arm,
                         IntakeSubsystem intake, ShooterSubsystem shooter) {
-                
+
                 centerChoice2 = new SequentialCommandGroup(
                                 // shoot loaded note to speaker
                                 new ParallelCommandGroup(

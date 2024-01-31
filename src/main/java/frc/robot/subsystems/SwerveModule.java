@@ -1,19 +1,14 @@
 package frc.robot.subsystems;
 
-import java.net.PortUnreachableException;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
-import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.REVPhysicsSim;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
-
-import edu.wpi.first.hal.SimDouble;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -208,6 +203,10 @@ public class SwerveModule extends SubsystemBase {
   @Override
   public void periodic() {
 
+  }
+
+  public boolean isStopped(){
+    return Math.abs(getDriveVelocity())<.1;
   }
 
   @Override

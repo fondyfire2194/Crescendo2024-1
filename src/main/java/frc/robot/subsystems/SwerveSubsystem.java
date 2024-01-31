@@ -430,8 +430,10 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public boolean isStopped() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'isStopped'");
+    return mSwerveMods[0].isStopped()
+        && mSwerveMods[1].isStopped()
+        && mSwerveMods[2].isStopped()
+        && mSwerveMods[3].isStopped();
   }
 
 }
