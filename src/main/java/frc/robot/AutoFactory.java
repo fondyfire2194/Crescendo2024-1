@@ -14,18 +14,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.CenterStartCommandFactory;
 import frc.robot.commands.DoNothing;
-import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.ShooterSubsystem;
+
 import frc.robot.subsystems.SwerveSubsystem;
 
 /** Add your docs here. */
 public class AutoFactory {
 
     private final SwerveSubsystem m_swerve;
-
-    private final IntakeSubsystem m_intake;
-
-    private final ShooterSubsystem m_shooter;
 
     private final CenterStartCommandFactory m_csf;
 
@@ -64,11 +59,9 @@ public class AutoFactory {
 
     List<String> usedPathFiles = new ArrayList<>();
 
-    public AutoFactory(CenterStartCommandFactory csf, SwerveSubsystem swerve, IntakeSubsystem intake,
-            ShooterSubsystem shooter) {
+    public AutoFactory(CenterStartCommandFactory csf, SwerveSubsystem swerve) {
         m_swerve = swerve;
-        m_intake = intake;
-        m_shooter = shooter;
+
         m_csf = csf;
 
         m_startDelayChooser.setDefaultOption("Zero Seconds", 0.);
@@ -142,11 +135,16 @@ public class AutoFactory {
         if (ampChoice == 0 && centerChoice == 10 && sourceChoice != 20)
             finalChoice = sourceChoice;
 
-        if (finalChoice != 0)
+        if (finalChoice != 0 && finalChoice == centerChoice) {
 
             setFilenames(finalChoice);
 
+            m_csf.loadPathFiles(usedPathFiles);
+
+        }
+
         return finalChoice;
+
     }
 
     private List<String> setFilenames(int index) {
@@ -156,9 +154,14 @@ public class AutoFactory {
         switch (finalChoice) {
 
             case 11:
-                usedPathFiles.add("AutoPath1");
-                usedPathFiles.add("AutoPath2");
-                usedPathFiles.add("AutoPath3");
+            
+                usedPathFiles.add("AutoOneP1");
+                usedPathFiles.add("AutoOneP1R");
+                usedPathFiles.add("AutoOneP2");
+                usedPathFiles.add("AutoOneP2R");
+                usedPathFiles.add("AutoOneP3");
+                usedPathFiles.add("AutoOneP3R");
+
                 return usedPathFiles;
 
             default:

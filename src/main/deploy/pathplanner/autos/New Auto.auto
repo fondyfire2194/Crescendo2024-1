@@ -3,7 +3,7 @@
   "startingPose": {
     "position": {
       "x": 1.0,
-      "y": 5.54
+      "y": 5.5
     },
     "rotation": 0
   },
@@ -12,9 +12,9 @@
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": null
+            "pathName": "AutoOneP1"
           }
         },
         {
@@ -24,27 +24,15 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "\"shootspeedone\""
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "AutoOneP1"
+            "pathName": "AutoOneP1R"
           }
         },
         {
-          "type": "named",
+          "type": "wait",
           "data": {
-            "name": null
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "\"runintake"
+            "waitTime": 1.0
           }
         },
         {
@@ -56,31 +44,19 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.25
+            "waitTime": 1.0
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "\"shootspeedthree\""
+            "pathName": "AutoOneP2R"
           }
         },
         {
           "type": "wait",
           "data": {
             "waitTime": 1.0
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": null
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": []
           }
         },
         {
@@ -92,25 +68,19 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.25
+            "waitTime": 1.0
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": null
+            "pathName": "AutoOneP3R"
           }
         },
         {
           "type": "wait",
           "data": {
             "waitTime": 1.0
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": null
           }
         }
       ]

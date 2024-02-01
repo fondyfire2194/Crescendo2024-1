@@ -353,7 +353,6 @@ public class SwerveSubsystem extends SubsystemBase {
 
   private void resetAll() {
     gyro.reset();
-
     resetModuleEncoders();
     swervePoseEstimator.resetPosition(getYaw(), getPositions(), new Pose2d());
 

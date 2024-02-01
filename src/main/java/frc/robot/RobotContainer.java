@@ -19,22 +19,20 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.shuffleboard.EventImportance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.CenterStartCommandFactory;
 import frc.robot.commands.LoadAndRunPPath;
-import frc.robot.commands.RunPPath;
 import frc.robot.commands.TeleopSwerve;
-import frc.robot.commands.TrackAprilTags3D;
-import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.BottomShooterRollerSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.HoldNoteSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
-import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.TopShooterRollerSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class RobotContainer {
@@ -43,9 +41,13 @@ public class RobotContainer {
 
         final IntakeSubsystem m_intake = new IntakeSubsystem();
 
-        final ShooterSubsystem m_shooter = new ShooterSubsystem();
+        final TopShooterRollerSubsystem m_topShooter = new TopShooterRollerSubsystem();
 
-        final ArmSubsystem m_arm = new ArmSubsystem();
+        final BottomShooterRollerSubsystem m_bottomShooter = new BottomShooterRollerSubsystem();
+
+        final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
+
+        final HoldNoteSubsystem m_holdNote = new HoldNoteSubsystem();
 
         final LimelightSubsystem m_llv1 = new LimelightSubsystem("limelight");
 
@@ -53,15 +55,15 @@ public class RobotContainer {
 
         final LimelightSubsystem m_llv3 = new LimelightSubsystem("limelight_2");
 
-        public final CenterStartCommandFactory m_cf = new CenterStartCommandFactory(m_swerve, m_arm, m_intake, m_shooter);
+        public final CenterStartCommandFactory m_cf = new CenterStartCommandFactory(m_swerve, m_elevator, m_intake,
+                        m_holdNote,
+                        m_topShooter, m_bottomShooter);
 
-        public final AutoFactory m_af = new AutoFactory(m_cf, m_swerve, m_intake, m_shooter);
+        public final AutoFactory m_af = new AutoFactory(m_cf, m_swerve);
 
         private final CommandXboxController driver = new CommandXboxController(0);
 
         private final CommandXboxController codriver = new CommandXboxController(1);
-
-        private final SendableChooser<Command> autoChooser;
 
         public RobotContainer() {
 
@@ -74,10 +76,6 @@ public class RobotContainer {
                 registerNamedCommands();
 
                 configureBindings();
-
-                autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
-
-                // Shuffleboard.getTab("Autonomous").add("PPAutos",autoChooser).withSize(2, 1);
 
                 // Set the scheduler to log Shuffleboard events for command initialize,
                 // interrupt, finish
@@ -125,29 +123,28 @@ public class RobotContainer {
 
         private void configureBindings() {
 
-                // SmartDashboard.putData("CommSchd", CommandScheduler.getInstance());
+                SmartDashboard.putData("CommSchd", CommandScheduler.getInstance());
 
-                driver.y().onTrue(new InstantCommand(() -> m_swerve.zeroGyro()));
+                driver.y().onTrue(m_swerve.setPoseToX0Y0());
 
                 driver.b().onTrue(m_intake.runIntakeCommand())
                                 .onFalse(m_intake.stopIntakeCommand());
 
-
                 driver.x().onTrue(new LoadAndRunPPath(m_swerve, "AutoOneP1", true));
-        
+
                 driver.y().onTrue(new LoadAndRunPPath(m_swerve, "AutoOneP2", false));
-        
+
                 driver.back().onTrue(new LoadAndRunPPath(m_swerve, "AutoOneP3", false));
-        
-               
+
                 codriver.leftBumper().onTrue(m_intake.runIntakeCommand());
 
                 codriver.leftTrigger().onTrue(m_intake.stopIntakeCommand());
 
-                codriver.rightBumper().onTrue(m_shooter.runTopRollerCommand())
-                                .onTrue(m_shooter.runBottomRollerCommand());
+                codriver.rightBumper().onTrue(m_topShooter.runTopRollerCommand())
+                                .onTrue(m_bottomShooter.runBottomRollerCommand());
 
-                codriver.rightTrigger().onTrue(m_shooter.stopShootersCommand());
+                codriver.rightTrigger().onTrue(m_topShooter.stopShootersCommand())
+                                .onTrue(m_bottomShooter.stopShootersCommand());
 
                 SmartDashboard.putData("Pathfind to Pickup Pos", AutoBuilder.pathfindToPose(
                                 new Pose2d(2.0, 1.5, Rotation2d.fromDegrees(0)),

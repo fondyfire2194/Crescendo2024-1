@@ -27,10 +27,12 @@ public final class Constants {
                 public static final int topShooterID = 17;
 
                 public static final int intakeID = 18;
-                public static final int armID = 19;
+                public static final int elevatorID = 19;
 
                 public static final int rearLeftSensor=20;
                 public static final int rearRightSensor=21;
+
+                public static int holdNoteID = 22;
 
         }
 
@@ -260,23 +262,41 @@ public final class Constants {
 
         }
 
-        public static final class ArmConstants {
+        public static final class HoldNoteConstants {
 
-                public static final double maxArmMotorRPM = 5700;
-                public static final double armConversionVelocityFactor = 1; // TODO change value
-                public static final double armConversionPositionFactor = 1; // TODO change value
-                public static final double armKP = .000001;
-                public static final double armKI = 0;
-                public static final double armKD = 0;
-                public static final double armKFF = 1 / maxArmMotorRPM;
+                public static final double maxHoldNoteMotorRPM = 5700;
+                public static final double holdnoteConversionVelocityFactor = 1; // TODO change value
+                public static final double holdnoteConversionPositionFactor = 1; // TODO change value
+                public static final double holdnoteKP = .000001;
+                public static final double holdnoteKI = 0;
+                public static final double holdnoteKD = 0;
+                public static final double holdnoteKFF = 1 / maxHoldNoteMotorRPM;
                 public static final double voltageComp = 12;
-                public static final IdleMode armIdleMode = IdleMode.kCoast;
-                public static final int armContinuousCurrentLimit = 30;
-
-                public static double armPositionToIntakeDegrees = 10;
-                public static double armPositionToShootClose = 30;
+                public static final IdleMode holdnoteIdleMode = IdleMode.kCoast;
+                public static final int holdnoteContinuousCurrentLimit = 30;
 
         }
+
+        public static final class ElevatorConstants {
+
+                public static final double maxElevatorMotorRPM = 5700;
+                public static final double elevatorConversionVelocityFactor = 1; // TODO change value
+                public static final double elevatorConversionPositionFactor = 1; // TODO change value
+                public static final double elevatorKP = .000001;
+                public static final double elevatorKI = 0;
+                public static final double elevatorKD = 0;
+                public static final double elevatorKFF = 1 / maxElevatorMotorRPM;
+                public static final double voltageComp = 12;
+                public static final IdleMode elevatorIdleMode = IdleMode.kCoast;
+                public static final int elevatorContinuousCurrentLimit = 30;
+
+                public static double elevatorPositionToIntakeDegrees = 10;
+                public static double elevatorPositionToShootClose = 30;
+                public static double elevatorPositionToIntake;
+
+        }
+
+
 
         public static final double[][] speedAngleValues
 

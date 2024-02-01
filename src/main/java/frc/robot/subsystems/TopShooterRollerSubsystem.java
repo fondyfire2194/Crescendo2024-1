@@ -11,7 +11,7 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -20,30 +20,28 @@ import frc.lib.util.CANSparkMaxUtil.Usage;
 import frc.robot.Constants;
 import frc.robot.Pref;
 
-public class ShooterSubsystem extends SubsystemBase {
+public class TopShooterRollerSubsystem extends SubsystemBase {
 
-  CANSparkMax bottomRoller;
   CANSparkMax topRoller;
-  SparkPIDController bottomController;
+
   SparkPIDController topController;
   RelativeEncoder topEncoder;
-  RelativeEncoder bottomEncoder;
+
   double topRollerCommandRPM = 500;
-  double bottomRollerCommandRPM = 500;
+
   double commandRPM = 500;
 
   /** Creates a new Shooter. */
-  public ShooterSubsystem() {
-    bottomRoller = new CANSparkMax(Constants.CANIDConstants.bottomShooterID, MotorType.kBrushless);
+  public TopShooterRollerSubsystem() {
     topRoller = new CANSparkMax(Constants.CANIDConstants.topShooterID, MotorType.kBrushless);
-    bottomController = bottomRoller.getPIDController();
     topController = topRoller.getPIDController();
     topEncoder = topRoller.getEncoder();
-    bottomEncoder = bottomRoller.getEncoder();
-    configMotor(bottomRoller, bottomEncoder, bottomController, true);
+
     configMotor(topRoller, topEncoder, topController, false);
- 
-    Shuffleboard.getTab("ShooterSubsystem").add(this).withSize(2, 1);
+
+    Shuffleboard.getTab("ShooterSubsystem").add(this)
+    .withSize(2, 1)
+    .withPosition(0, 0);
   }
 
   private void configMotor(CANSparkMax motor, RelativeEncoder encoder, SparkPIDController controller, boolean reverse) {
@@ -64,7 +62,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public void setShooterRPM(double rpm) {
-    bottomController.setReference(rpm, ControlType.kVelocity);
+   
     topController.setReference(rpm, ControlType.kVelocity);
   }
 
@@ -74,27 +72,21 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public void stopMotors() {
 
-    bottomController.setReference(0, ControlType.kVelocity);
     topController.setReference(0, ControlType.kVelocity);
     topRoller.stopMotor();
-    bottomRoller.stopMotor();
+  
   }
 
   public Command runTopRollerCommand() {
     return this.run(() -> topController.setReference(Pref.getPref("ShooterRPM"), ControlType.kVelocity));
   }
 
-  public Command runBottomRollerCommand() {
-    return this.run(() -> bottomController.setReference(Pref.getPref("ShooterRPM"), ControlType.kVelocity));
-  }
-
+  
   public Command stopShootersCommand() {
     return this.runOnce(() -> stopMotors());
   }
 
-  public double getRPMBottom() {
-    return bottomEncoder.getVelocity();
-  }
+ 
 
   public double getRPMTop() {
     return topEncoder.getVelocity();
@@ -103,6 +95,6 @@ public class ShooterSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    //SmartDashboard.putNumber("CANTopRoller", topRoller.getFirmwareVersion());
+    // SmartDashboard.putNumber("CANTopRoller", topRoller.getFirmwareVersion());
   }
 }

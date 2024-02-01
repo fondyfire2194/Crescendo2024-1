@@ -22,22 +22,24 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.BottomShooterRollerSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.HoldNoteSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.TopShooterRollerSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 /** Add your docs here. */
 public class CenterStartCommandFactory {
 
-        public List<PathPlannerPath> activePaths = new ArrayList<>();
+        PathPlannerPath tempPath = this.getPath("AutoOneP1");
+        ArrayList<PathPlannerPath> activePaths = new ArrayList<PathPlannerPath>(5);
 
         public void loadPathFiles(List<String> fileNames) {
                 activePaths.clear();
-                Enumeration<String> e = Collections.enumeration(fileNames);
-                // Till elements are there
-                while (e.hasMoreElements())
-                        activePaths.add(getPath(fileNames.get(0)));
+                for (String i : fileNames) {
+                        activePaths.add(getPath(i));
+                }
         }
 
         public SequentialCommandGroup centerChoice1;
@@ -61,71 +63,62 @@ public class CenterStartCommandFactory {
         }
 
         public Command getPathToPose(Pose2d pose, PathConstraints constraints) {
-
                 return AutoBuilder.pathfindToPose(pose, constraints, 0, 2);
-
         }
 
-        public CenterStartCommandFactory(SwerveSubsystem swerve, ArmSubsystem arm,
-                        IntakeSubsystem intake, ShooterSubsystem shooter) {
+        public CenterStartCommandFactory(SwerveSubsystem swerve, ElevatorSubsystem elevator,
+                        IntakeSubsystem intake, HoldNoteSubsystem holdNote, TopShooterRollerSubsystem topShooter,
+                        BottomShooterRollerSubsystem bottomShooter) {
+
+                activePaths.add(tempPath);
+                activePaths.add(tempPath);
+                activePaths.add(tempPath);
+                activePaths.add(tempPath);
+                activePaths.add(tempPath);  
+                activePaths.add(tempPath);
+                
+                
 
                 centerChoice1 = new SequentialCommandGroup(
                                 // shoot loaded note to speaker
                                 new ParallelCommandGroup(
-                                                arm.positionArmCommand(
-                                                                Constants.ArmConstants.armPositionToShootClose),
-                                                shooter.setShooterSpeed(ShooterConstants.closeShootSpeed)),
+                                                elevator.positionElevatorCommand(
+                                                                Constants.ElevatorConstants.elevatorPositionToIntake),
+                                                topShooter.setShooterSpeed(ShooterConstants.closeShootSpeed)),
 
-                                intake.feedShooterCommand(),
+                                holdNote.feedShooterCommand(),
                                 new WaitCommand(1),
 
-                                // pick up note directly behind
+                                // pick up note directly behinE
 
                                 new ParallelCommandGroup(
 
-                                                arm.positionArmCommand(
-                                                                Constants.ArmConstants.armPositionToIntakeDegrees)
-                                                                .asProxy(),
-                                                shooter.setShooterSpeed(
-                                                                ShooterConstants.dist1ShootSpeed)
-                                                                .asProxy(),
+                                                new RunPPath(swerve, activePaths.get(0), false),
+                                                holdNote.runIntakeCommand().asProxy(),
+                                                intake.runIntakeCommand().asProxy()),
 
-                                                new ParallelCommandGroup(
+                                new RunPPath(swerve, activePaths.get(1), false),
 
-                                                                getPathToPose(FieldConstants.blueNote1,
-                                                                                pathConstraints),
-                                                                intake.runIntakeCommand().asProxy())),
-
-                                intake.feedShooterCommand(),
+                                holdNote.feedShooterCommand(),
                                 new WaitCommand(1),
 
                                 new ParallelCommandGroup(
+                                                new RunPPath(swerve, activePaths.get(2), false),
+                                                holdNote.runIntakeCommand(),
+                                                intake.runIntakeCommand()),
 
-                                                arm.positionArmCommand(
-                                                                Constants.ArmConstants.armPositionToIntakeDegrees)
-                                                                .asProxy(),
-                                                shooter.setShooterSpeed(
-                                                                ShooterConstants.dist3ShootSpeed)
-                                                                .asProxy(),
+                                new RunPPath(swerve, activePaths.get(3), false),
 
-                                                new ParallelCommandGroup(
-                                                                new RunPPath(swerve, activePaths.get(1), false),
-                                                                intake.runIntakeCommand())),
-
-                                intake.feedShooterCommand(),
+                                holdNote.feedShooterCommand(),
                                 new WaitCommand(1),
 
                                 new ParallelCommandGroup(
 
-                                                arm.positionArmCommand(
-                                                                Constants.ArmConstants.armPositionToIntakeDegrees),
-                                                shooter.setShooterSpeed(
-                                                                ShooterConstants.dist1ShootSpeed),
+                                                new RunPPath(swerve, activePaths.get(4), false),
+                                                intake.runIntakeCommand(),
+                                                holdNote.runIntakeCommand()),
 
-                                                new ParallelRaceGroup(
-
-                                                                new RunPPath(swerve, activePaths.get(2), false),
-                                                                intake.runIntakeCommand())),
+                                new RunPPath(swerve, activePaths.get(5), false),
 
                                 intake.feedShooterCommand(),
                                 new WaitCommand(1)
