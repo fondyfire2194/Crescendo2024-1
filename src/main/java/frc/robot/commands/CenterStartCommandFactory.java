@@ -5,8 +5,6 @@
 package frc.robot.commands;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
@@ -16,16 +14,16 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
-import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.BottomShooterRollerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.HoldNoteSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.TopShooterRollerSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
@@ -68,23 +66,23 @@ public class CenterStartCommandFactory {
 
         public CenterStartCommandFactory(SwerveSubsystem swerve, ElevatorSubsystem elevator,
                         IntakeSubsystem intake, HoldNoteSubsystem holdNote, TopShooterRollerSubsystem topShooter,
-                        BottomShooterRollerSubsystem bottomShooter) {
+                        BottomShooterRollerSubsystem bottomShooter, ShooterAngleSubsystem shooterAngle) {
 
                 activePaths.add(tempPath);
                 activePaths.add(tempPath);
                 activePaths.add(tempPath);
                 activePaths.add(tempPath);
-                activePaths.add(tempPath);  
                 activePaths.add(tempPath);
-                
-                
+                activePaths.add(tempPath);
 
                 centerChoice1 = new SequentialCommandGroup(
                                 // shoot loaded note to speaker
                                 new ParallelCommandGroup(
+                                                shooterAngle.positionShooterAngleCommand(0),
                                                 elevator.positionElevatorCommand(
                                                                 Constants.ElevatorConstants.elevatorPositionToIntake),
-                                                topShooter.setShooterSpeed(ShooterConstants.closeShootSpeed)),
+                                                topShooter.setShooterSpeed(ShooterConstants.closeShootSpeed),
+                                                bottomShooter.setShooterSpeed(ShooterConstants.closeShootSpeed)),
 
                                 holdNote.feedShooterCommand(),
                                 new WaitCommand(1),

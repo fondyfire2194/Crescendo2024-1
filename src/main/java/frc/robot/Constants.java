@@ -29,10 +29,12 @@ public final class Constants {
                 public static final int intakeID = 18;
                 public static final int elevatorID = 19;
 
-                public static final int rearLeftSensor=20;
-                public static final int rearRightSensor=21;
+                public static final int rearLeftSensor = 20;
+                public static final int rearRightSensor = 21;
 
                 public static int holdNoteID = 22;
+
+                public static int shooterangleID = 23;
 
         }
 
@@ -296,7 +298,24 @@ public final class Constants {
 
         }
 
+        public static final class ShooterAngleConstants {
 
+                public static final double maxShooterAngleMotorRPM = 5700;
+                public static final double shooterangleConversionVelocityFactor = 1; // TODO change value
+                public static final double shooterangleConversionPositionFactor = 1; // TODO change value
+                public static final double shooterangleKP = .000001;
+                public static final double shooterangleKI = 0;
+                public static final double shooterangleKD = 0;
+                public static final double shooterangleKFF = 1 / maxShooterAngleMotorRPM;
+                public static final double voltageComp = 12;
+                public static final IdleMode shooterangleIdleMode = IdleMode.kCoast;
+                public static final int shooterangleContinuousCurrentLimit = 30;
+
+                public static double shooteranglePositionToIntakeDegrees = 10;
+                public static double shooteranglePositionToShootClose = 30;
+                public static double shooteranglePositionToIntake;
+
+        }
 
         public static final double[][] speedAngleValues
 

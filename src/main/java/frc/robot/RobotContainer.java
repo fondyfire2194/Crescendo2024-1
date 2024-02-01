@@ -32,6 +32,7 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.HoldNoteSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
+import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.TopShooterRollerSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
@@ -49,6 +50,8 @@ public class RobotContainer {
 
         final HoldNoteSubsystem m_holdNote = new HoldNoteSubsystem();
 
+        final ShooterAngleSubsystem m_shooterAngle = new ShooterAngleSubsystem();
+
         final LimelightSubsystem m_llv1 = new LimelightSubsystem("limelight");
 
         final LimelightSubsystem m_llv2 = new LimelightSubsystem("limelight_1");
@@ -56,8 +59,7 @@ public class RobotContainer {
         final LimelightSubsystem m_llv3 = new LimelightSubsystem("limelight_2");
 
         public final CenterStartCommandFactory m_cf = new CenterStartCommandFactory(m_swerve, m_elevator, m_intake,
-                        m_holdNote,
-                        m_topShooter, m_bottomShooter);
+                        m_holdNote,                        m_topShooter, m_bottomShooter, m_shooterAngle);
 
         public final AutoFactory m_af = new AutoFactory(m_cf, m_swerve);
 
