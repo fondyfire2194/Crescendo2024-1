@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.path.PathPlannerPath;
-
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -16,6 +14,8 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
+
+  private boolean autonomousEnded;
 
   @Override
   public void robotInit() {
@@ -33,11 +33,14 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     CommandScheduler.getInstance().cancelAll();
-  
+
   }
 
   @Override
   public void disabledPeriodic() {
+
+    if (!autonomousEnded && m_robotContainer.m_af.checkChoiceChange())
+      m_robotContainer.m_af.validStartChoice = m_robotContainer.m_af.selectAndLoadPathFiles();
   }
 
   @Override
@@ -46,6 +49,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+
     m_autonomousCommand = m_robotContainer.m_af.getAutonomousCommand();
 
     if (m_autonomousCommand != null) {
@@ -59,6 +63,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousExit() {
+    autonomousEnded = true;
   }
 
   @Override

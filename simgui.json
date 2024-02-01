@@ -49,19 +49,26 @@
     }
   },
   "NetworkTables": {
-    "Retained Values": {
+    "Persistent Values": {
       "open": false
     },
-    "transitory": {
-      "SmartDashboard": {
-        "open": true
-      }
+    "Retained Values": {
+      "open": false
     }
   },
   "NetworkTables Info": {
     "Clients": {
       "open": true
     },
+    "Connections": {
+      "open": true
+    },
+    "Server": {
+      "open": true
+    },
     "visible": true
+  },
+  "NetworkTables View": {
+    "visible": false
   }
 }

@@ -26,7 +26,9 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.CommandFactory;
+import frc.robot.commands.CenterStartCommandFactory;
+import frc.robot.commands.LoadAndRunPPath;
+import frc.robot.commands.RunPPath;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.TrackAprilTags3D;
 import frc.robot.subsystems.ArmSubsystem;
@@ -51,7 +53,7 @@ public class RobotContainer {
 
         final LimelightSubsystem m_llv3 = new LimelightSubsystem("limelight_2");
 
-        public final CommandFactory m_cf = new CommandFactory(m_swerve, m_arm, m_intake, m_shooter);
+        public final CenterStartCommandFactory m_cf = new CenterStartCommandFactory(m_swerve, m_arm, m_intake, m_shooter);
 
         public final AutoFactory m_af = new AutoFactory(m_cf, m_swerve, m_intake, m_shooter);
 
@@ -67,7 +69,7 @@ public class RobotContainer {
 
                 Pref.addMissing();
 
-                // setDefaultCommands();
+                setDefaultCommands();
 
                 registerNamedCommands();
 
@@ -130,21 +132,14 @@ public class RobotContainer {
                 driver.b().onTrue(m_intake.runIntakeCommand())
                                 .onFalse(m_intake.stopIntakeCommand());
 
-                // driver.x().onTrue(m_swerve.setPose(new Pose2d(1, 5.5,
-                // Rotation2d.fromDegrees(0))))
-                // .onFalse(m_cf.getSinglePathCommand("AutoOneP1"));
 
-                driver.x().onTrue(getSinglePathCommandWithPresetStart("AutoOneP1"));
-
-                driver.y().onTrue(m_cf.getSinglePathCommand("AutoOneP2"));
-
-                driver.back().onTrue(m_cf.getSinglePathCommand("AutoOneP3"));
-
-                driver.leftBumper().whileTrue(new TeleopSwerve(m_swerve,
-                                () -> -driver.getLeftY(),
-                                () -> -driver.getLeftX(),
-                                () -> -driver.getRightX(), fieldCentric));
-
+                driver.x().onTrue(new LoadAndRunPPath(m_swerve, "AutoOneP1", true));
+        
+                driver.y().onTrue(new LoadAndRunPPath(m_swerve, "AutoOneP2", false));
+        
+                driver.back().onTrue(new LoadAndRunPPath(m_swerve, "AutoOneP3", false));
+        
+               
                 codriver.leftBumper().onTrue(m_intake.runIntakeCommand());
 
                 codriver.leftTrigger().onTrue(m_intake.stopIntakeCommand());
@@ -207,6 +202,5 @@ public class RobotContainer {
 
                                 AutoBuilder.followPath(path));
         }
-
 
 }

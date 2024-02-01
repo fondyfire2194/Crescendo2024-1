@@ -4,16 +4,16 @@
 
 package frc.robot.commands;
 
-import org.ejml.dense.block.MatrixMult_MT_DDRB;
-import org.ejml.dense.block.MatrixMult_MT_FDRB;
-
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
@@ -28,9 +28,23 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 /** Add your docs here. */
-public class CommandFactory {
+public class CenterStartCommandFactory {
 
-        public SequentialCommandGroup centerChoice2;
+        public List<PathPlannerPath> activePaths = new ArrayList<>();
+
+        public void loadPathFiles(List<String> fileNames) {
+                activePaths.clear();
+                Enumeration<String> e = Collections.enumeration(fileNames);
+                // Till elements are there
+                while (e.hasMoreElements())
+                        activePaths.add(getPath(fileNames.get(0)));
+        }
+
+        public SequentialCommandGroup centerChoice1;
+
+        public PathPlannerPath getPath(String pathname) {
+                return PathPlannerPath.fromPathFile(pathname);
+        }
 
         PathConstraints pathConstraints = new PathConstraints(
                         3.0, 4.0,
@@ -52,10 +66,10 @@ public class CommandFactory {
 
         }
 
-        public CommandFactory(SwerveSubsystem drive, ArmSubsystem arm,
+        public CenterStartCommandFactory(SwerveSubsystem swerve, ArmSubsystem arm,
                         IntakeSubsystem intake, ShooterSubsystem shooter) {
 
-                centerChoice2 = new SequentialCommandGroup(
+                centerChoice1 = new SequentialCommandGroup(
                                 // shoot loaded note to speaker
                                 new ParallelCommandGroup(
                                                 arm.positionArmCommand(
@@ -76,7 +90,7 @@ public class CommandFactory {
                                                                 ShooterConstants.dist1ShootSpeed)
                                                                 .asProxy(),
 
-                                                new ParallelRaceGroup(
+                                                new ParallelCommandGroup(
 
                                                                 getPathToPose(FieldConstants.blueNote1,
                                                                                 pathConstraints),
@@ -95,7 +109,7 @@ public class CommandFactory {
                                                                 .asProxy(),
 
                                                 new ParallelCommandGroup(
-                                                                 getSinglePathCommand("AutoOneP2"),
+                                                                new RunPPath(swerve, activePaths.get(1), false),
                                                                 intake.runIntakeCommand())),
 
                                 intake.feedShooterCommand(),
@@ -109,10 +123,8 @@ public class CommandFactory {
                                                                 ShooterConstants.dist1ShootSpeed),
 
                                                 new ParallelRaceGroup(
-                                                                new DoNothing(),
-                                                                getPathToPose(FieldConstants.blueNote3,
-                                                                                pathConstraints),
-                                                                // getSinglePathCommand("AutoOneP3"),
+
+                                                                new RunPPath(swerve, activePaths.get(2), false),
                                                                 intake.runIntakeCommand())),
 
                                 intake.feedShooterCommand(),
