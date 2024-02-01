@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
@@ -127,8 +126,8 @@ public class SwerveModule extends SubsystemBase {
     driveMotor.setSmartCurrentLimit(Constants.SwerveConstants.driveContinuousCurrentLimit);
     driveMotor.setInverted(Constants.SwerveConstants.driveInvert);
     driveMotor.setIdleMode(Constants.SwerveConstants.driveNeutralMode);
-    // driveEncoder.setVelocityConversionFactor(Constants.SwerveConstants.driveConversionVelocityFactor);
-    // driveEncoder.setPositionConversionFactor(Constants.SwerveConstants.driveConversionPositionFactor);
+    driveEncoder.setVelocityConversionFactor(Constants.SwerveConstants.driveConversionVelocityFactor);
+    driveEncoder.setPositionConversionFactor(Constants.SwerveConstants.driveConversionPositionFactor);
     driveController.setP(Constants.SwerveConstants.driveKP);
     driveController.setI(Constants.SwerveConstants.driveKI);
     driveController.setD(Constants.SwerveConstants.driveKD);
@@ -148,7 +147,7 @@ public class SwerveModule extends SubsystemBase {
         desiredState.speedMetersPerSecond);
     if (isOpenLoop) {
       double percentOutput = desiredState.speedMetersPerSecond / Constants.SwerveConstants.maxSpeed;
-      driveMotor.setVoltage(percentOutput * RobotController.getBatteryVoltage() / 10);
+      driveMotor.setVoltage(percentOutput * RobotController.getBatteryVoltage());
 
     } else {
       driveController.setReference(desiredState.speedMetersPerSecond, CANSparkMax.ControlType.kVelocity);
@@ -202,18 +201,20 @@ public class SwerveModule extends SubsystemBase {
 
   @Override
   public void periodic() {
-
+    SmartDashboard.putNumber(String.valueOf(moduleNumber) + " DRIVEVEL", getDriveVelocity());
+    SmartDashboard.putNumber(String.valueOf(moduleNumber) + " SETVEL", currentDesiredState.speedMetersPerSecond);
+    
   }
 
-  public boolean isStopped(){
-    return Math.abs(getDriveVelocity())<.1;
+  public boolean isStopped() {
+    return Math.abs(getDriveVelocity()) < .1;
   }
 
   @Override
   public void simulationPeriodic() {
 
-    SmartDashboard.putNumber(String.valueOf(moduleNumber)+" angdeg", angleDegrees);
-    SmartDashboard.putNumber(String.valueOf(moduleNumber)+" simAng", simAngle);
+    SmartDashboard.putNumber(String.valueOf(moduleNumber) + " angdeg", angleDegrees);
+    SmartDashboard.putNumber(String.valueOf(moduleNumber) + " simAng", simAngle);
 
     double diff = angleDegrees - simAngle;
 

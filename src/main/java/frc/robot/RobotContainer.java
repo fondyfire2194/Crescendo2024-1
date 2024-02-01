@@ -67,7 +67,7 @@ public class RobotContainer {
 
                 Pref.addMissing();
 
-                setDefaultCommands();
+                // setDefaultCommands();
 
                 registerNamedCommands();
 
@@ -123,19 +123,27 @@ public class RobotContainer {
 
         private void configureBindings() {
 
-               // SmartDashboard.putData("CommSchd", CommandScheduler.getInstance());
+                // SmartDashboard.putData("CommSchd", CommandScheduler.getInstance());
 
                 driver.y().onTrue(new InstantCommand(() -> m_swerve.zeroGyro()));
 
                 driver.b().onTrue(m_intake.runIntakeCommand())
                                 .onFalse(m_intake.stopIntakeCommand());
 
-                driver.x().onTrue(m_swerve.setPose(new Pose2d(1, 5.5, new Rotation2d())))
-                                .onFalse(m_cf.getSinglePathCommand("AutoOneP1"));
+                // driver.x().onTrue(m_swerve.setPose(new Pose2d(1, 5.5,
+                // Rotation2d.fromDegrees(0))))
+                // .onFalse(m_cf.getSinglePathCommand("AutoOneP1"));
+
+                driver.x().onTrue(getSinglePathCommandWithPresetStart("AutoOneP1"));
 
                 driver.y().onTrue(m_cf.getSinglePathCommand("AutoOneP2"));
 
                 driver.back().onTrue(m_cf.getSinglePathCommand("AutoOneP3"));
+
+                driver.leftBumper().whileTrue(new TeleopSwerve(m_swerve,
+                                () -> -driver.getLeftY(),
+                                () -> -driver.getLeftX(),
+                                () -> -driver.getRightX(), fieldCentric));
 
                 codriver.leftBumper().onTrue(m_intake.runIntakeCommand());
 
@@ -149,7 +157,7 @@ public class RobotContainer {
                 SmartDashboard.putData("Pathfind to Pickup Pos", AutoBuilder.pathfindToPose(
                                 new Pose2d(2.0, 1.5, Rotation2d.fromDegrees(0)),
                                 new PathConstraints(
-                                                4.0, 4.0,
+                                                3.0, 3.0,
                                                 Units.degreesToRadians(360), Units.degreesToRadians(540)),
                                 0,
                                 2.0));
@@ -157,7 +165,7 @@ public class RobotContainer {
                 SmartDashboard.putData("Pathfind to Scoring Pos", AutoBuilder.pathfindToPose(
                                 new Pose2d(1.15, 1.0, Rotation2d.fromDegrees(180)),
                                 new PathConstraints(
-                                                4.0, 4.0,
+                                                3.0, 3.0,
                                                 Units.degreesToRadians(360), Units.degreesToRadians(540)),
                                 0,
                                 0));
@@ -177,7 +185,7 @@ public class RobotContainer {
                         PathPlannerPath path = new PathPlannerPath(
                                         bezierPoints,
                                         new PathConstraints(
-                                                        1.0, 1.0,
+                                                        3.0, 3.0,
                                                         Units.degreesToRadians(360), Units.degreesToRadians(540)),
                                         new GoalEndState(0.0, currentPose.getRotation()));
 
@@ -187,6 +195,18 @@ public class RobotContainer {
                 }));
         }
 
+        public Command getSinglePathCommandWithPresetStart(String pathname) {
+
+                // Load the path you want to follow using its name in the GUI
+                PathPlannerPath path = PathPlannerPath.fromPathFile(pathname);
+
+                Pose2d startPose = path.getPreviewStartingHolonomicPose();
+                // Create a path following command using AutoBuilder. This will also trigger
+                // event markers.
+                return m_swerve.setPose(startPose).andThen(
+
+                                AutoBuilder.followPath(path));
+        }
 
 
 }

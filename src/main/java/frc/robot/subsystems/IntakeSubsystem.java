@@ -87,8 +87,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("IntakeRPM", getRPM());
-    SmartDashboard.putNumber("IntakeCANVer", intakeMotor.getFirmwareVersion());
-
+  
   }
 
   @Override

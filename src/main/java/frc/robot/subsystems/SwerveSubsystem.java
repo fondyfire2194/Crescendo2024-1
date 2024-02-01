@@ -120,7 +120,8 @@ public class SwerveSubsystem extends SubsystemBase {
     PathPlannerLogging.setLogActivePathCallback((poses) -> field.getObject("path").setPoses(poses));
 
     zeroGyro();
-
+    resetPoseEstimator(new Pose2d());
+    
     Shuffleboard.getTab("Drivetrain").add(this)
         .withSize(2, 1).withPosition(0, 0);
 
@@ -346,7 +347,7 @@ public class SwerveSubsystem extends SubsystemBase {
     SmartDashboard.putNumberArray("Odometry",
         new double[] { getPose().getX(), getPose().getY(), getPose().getRotation().getDegrees() });
 
-    putStates();
+    // putStates();
 
   }
 

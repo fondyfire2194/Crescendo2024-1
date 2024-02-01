@@ -94,11 +94,8 @@ public class CommandFactory {
                                                                 ShooterConstants.dist3ShootSpeed)
                                                                 .asProxy(),
 
-                                                new ParallelRaceGroup(
-                                                                getPathToPose(FieldConstants.blueNote3,
-                                                                                pathConstraints),
-                                                                new DoNothing(),
-                                                                // getSinglePathCommand("AutoOneP2"),
+                                                new ParallelCommandGroup(
+                                                                 getSinglePathCommand("AutoOneP2"),
                                                                 intake.runIntakeCommand())),
 
                                 intake.feedShooterCommand(),

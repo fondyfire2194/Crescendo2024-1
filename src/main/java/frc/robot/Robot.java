@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.path.PathPlannerPath;
+
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -17,7 +19,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-    
+
     DataLogManager.start();
 
     m_robotContainer = new RobotContainer();
@@ -30,6 +32,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledInit() {
+    CommandScheduler.getInstance().cancelAll();
+  
   }
 
   @Override
