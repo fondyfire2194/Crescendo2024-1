@@ -5,11 +5,13 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.REVPhysicsSim;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -43,6 +45,13 @@ public class BottomShooterRollerSubsystem extends SubsystemBase {
     Shuffleboard.getTab("ShooterSubsystem").add(this)
     .withSize(2, 1)
     .withPosition(2, 0);
+
+    Shuffleboard.getTab("ShooterSubsystem").addNumber("BottomRPM",()->getRPMBottom())
+    .withSize(2, 1)
+    .withPosition(2, 1);
+
+   if (RobotBase.isSimulation())
+      REVPhysicsSim.getInstance().addSparkMax(bottomRoller, 3, 5600);
   }
 
   private void configMotor(CANSparkMax motor, RelativeEncoder encoder, SparkPIDController controller, boolean reverse) {
@@ -97,4 +106,11 @@ public class BottomShooterRollerSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     //SmartDashboard.putNumber("CANTopRoller", topRoller.getFirmwareVersion());
   }
+
+  
+  @Override
+  public void simulationPeriodic() {
+    REVPhysicsSim.getInstance().run();
+  }
+
 }

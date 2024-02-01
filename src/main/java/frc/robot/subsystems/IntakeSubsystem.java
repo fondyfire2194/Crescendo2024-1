@@ -59,7 +59,22 @@ public class IntakeSubsystem extends SubsystemBase {
     motor.burnFlash();
     encoder.setPosition(0.0);
 
-      Shuffleboard.getTab("IntakeSubsystem").add(this).withSize(2, 1);
+    Shuffleboard.getTab("IntakeSubsystem").add(this)
+        .withSize(2, 1)
+        .withPosition(0, 0);
+
+    Shuffleboard.getTab("IntakeSubsystem").addNumber("IntakeRPM", () -> getRPM())
+        .withSize(2, 1)
+        .withPosition(0, 1);
+
+    Shuffleboard.getTab("IntakeSubsystem").add("StartIntake", runIntakeCommand())
+        .withSize(2, 1)
+        .withPosition(0, 2);
+
+    Shuffleboard.getTab("IntakeSubsystem").add("StopIntake", stopIntakeCommand())
+        .withSize(2, 1)
+        .withPosition(0, 3);
+
   }
 
   public void stopMotor() {
@@ -76,7 +91,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command feedShooterCommand() {
-    return this.run(() -> intakeController.setReference(Pref.getPref("IntakeRPM"), ControlType.kVelocity));
+    return this.runOnce(() -> intakeController.setReference(Pref.getPref("IntakeRPM"), ControlType.kVelocity));
   }
 
   public Command stopIntakeCommand() {
@@ -87,7 +102,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("IntakeRPM", getRPM());
-  
+
   }
 
   @Override

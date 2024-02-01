@@ -59,7 +59,7 @@ public class RobotContainer {
         final LimelightSubsystem m_llv3 = new LimelightSubsystem("limelight_2");
 
         public final CenterStartCommandFactory m_cf = new CenterStartCommandFactory(m_swerve, m_elevator, m_intake,
-                        m_holdNote,                        m_topShooter, m_bottomShooter, m_shooterAngle);
+                        m_holdNote, m_topShooter, m_bottomShooter, m_shooterAngle);
 
         public final AutoFactory m_af = new AutoFactory(m_cf, m_swerve);
 
@@ -147,6 +147,12 @@ public class RobotContainer {
 
                 codriver.rightTrigger().onTrue(m_topShooter.stopShootersCommand())
                                 .onTrue(m_bottomShooter.stopShootersCommand());
+
+                codriver.y().whileTrue(m_elevator.jogCommand(.2))
+                                .onFalse(Commands.runOnce(() -> m_elevator.stopMotor()));
+
+                codriver.a().whileTrue(m_elevator.jogCommand(-.2))
+                                .onFalse(Commands.runOnce(() -> m_elevator.stopMotor()));
 
                 SmartDashboard.putData("Pathfind to Pickup Pos", AutoBuilder.pathfindToPose(
                                 new Pose2d(2.0, 1.5, Rotation2d.fromDegrees(0)),

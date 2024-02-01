@@ -39,7 +39,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
 
-    if (!autonomousEnded && m_robotContainer.m_af.checkChoiceChange())
+    if (m_robotContainer.m_af.checkChoiceChange())
       m_robotContainer.m_af.validStartChoice = m_robotContainer.m_af.selectAndLoadPathFiles();
   }
 

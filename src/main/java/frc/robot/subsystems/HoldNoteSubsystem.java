@@ -55,7 +55,22 @@ public class HoldNoteSubsystem extends SubsystemBase {
     motor.burnFlash();
     encoder.setPosition(0.0);
 
-      Shuffleboard.getTab("HoldNoteSubsystem").add(this).withSize(2, 1);
+    Shuffleboard.getTab("IntakeSubsystem").add(this)
+        .withSize(2, 1)
+        .withPosition(4, 0);
+
+    Shuffleboard.getTab("IntakeSubsystem").addNumber("HoldNoteRPM", () -> getRPM())
+        .withSize(2, 1)
+        .withPosition(4, 1);
+
+    Shuffleboard.getTab("IntakeSubsystem").add("StartHoldNote", runHoldNoteCommand())
+        .withSize(2, 1)
+        .withPosition(4, 2);
+
+    Shuffleboard.getTab("IntakeSubsystem").add("StopHoldNote", stopHoldNoteCommand())
+        .withSize(2, 1)
+        .withPosition(4, 3);
+
   }
 
   public void stopMotor() {
@@ -68,17 +83,12 @@ public class HoldNoteSubsystem extends SubsystemBase {
   }
 
   public Command runHoldNoteCommand() {
-    return this.run(() -> holdnoteController.setReference(2500, ControlType.kVelocity));
+    return this.runOnce(() -> holdnoteController.setReference(2500, ControlType.kVelocity));
   }
 
   public Command feedShooterCommand() {
     return this.run(() -> holdnoteController.setReference(Pref.getPref("HoldNoteRPM"), ControlType.kVelocity));
   }
-
-  public Command runIntakeCommand() {
-    return this.run(() -> holdnoteController.setReference(2500, ControlType.kVelocity));
-  }
-
 
   public Command stopHoldNoteCommand() {
     return this.runOnce(() -> stopMotor());
@@ -88,7 +98,7 @@ public class HoldNoteSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("HoldNoteRPM", getRPM());
-  
+
   }
 
   @Override

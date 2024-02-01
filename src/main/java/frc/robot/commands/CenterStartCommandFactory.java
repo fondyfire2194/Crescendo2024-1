@@ -79,8 +79,7 @@ public class CenterStartCommandFactory {
                                 // shoot loaded note to speaker
                                 new ParallelCommandGroup(
                                                 shooterAngle.positionShooterAngleCommand(0),
-                                                elevator.positionElevatorCommand(
-                                                                Constants.ElevatorConstants.elevatorPositionToIntake),
+                                                elevator.positionToIntakeCommand(),                                                                
                                                 topShooter.setShooterSpeed(ShooterConstants.closeShootSpeed),
                                                 bottomShooter.setShooterSpeed(ShooterConstants.closeShootSpeed)),
 
@@ -92,7 +91,7 @@ public class CenterStartCommandFactory {
                                 new ParallelCommandGroup(
 
                                                 new RunPPath(swerve, activePaths.get(0), false),
-                                                holdNote.runIntakeCommand().asProxy(),
+                                                holdNote.runHoldNoteCommand().asProxy(),
                                                 intake.runIntakeCommand().asProxy()),
 
                                 new RunPPath(swerve, activePaths.get(1), false),
@@ -102,7 +101,7 @@ public class CenterStartCommandFactory {
 
                                 new ParallelCommandGroup(
                                                 new RunPPath(swerve, activePaths.get(2), false),
-                                                holdNote.runIntakeCommand(),
+                                                holdNote.runHoldNoteCommand(),
                                                 intake.runIntakeCommand()),
 
                                 new RunPPath(swerve, activePaths.get(3), false),
@@ -114,7 +113,7 @@ public class CenterStartCommandFactory {
 
                                                 new RunPPath(swerve, activePaths.get(4), false),
                                                 intake.runIntakeCommand(),
-                                                holdNote.runIntakeCommand()),
+                                                holdNote.runHoldNoteCommand()),
 
                                 new RunPPath(swerve, activePaths.get(5), false),
 
