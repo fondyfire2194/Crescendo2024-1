@@ -293,7 +293,9 @@ public final class Constants {
                 public static final int elevatorContinuousCurrentLimit = 30;
 
                 public static double elevatorPositionToAmp = 30;
-                public static double elevatorPositionToIntake =5;
+                public static double elevatorPositionToIntake = 5;
+                public static double elevatorMinInches = 2;
+                public static double elevatorMaxinches = 34;
 
         }
 
@@ -309,9 +311,8 @@ public final class Constants {
                 public static final double voltageComp = 12;
                 public static final IdleMode shooterangleIdleMode = IdleMode.kCoast;
                 public static final int shooterangleContinuousCurrentLimit = 30;
-
-                public static double shooteranglePositionToIntakeDegrees = 10;
-                public static double shooteranglePositionToShootClose = 30;
+                public static double shooterangleMinDegrees = 1;
+                public static double shooterangleMaxDegrees = 30;
                 public static double shooteranglePositionToIntake;
 
         }

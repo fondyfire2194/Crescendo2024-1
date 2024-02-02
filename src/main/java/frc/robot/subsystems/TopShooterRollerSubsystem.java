@@ -87,7 +87,7 @@ public class TopShooterRollerSubsystem extends SubsystemBase {
   }
 
   public Command runTopRollerCommand() {
-    return this.run(() -> topController.setReference(Pref.getPref("ShooterRPM"), ControlType.kVelocity));
+    return this.runOnce(() -> topController.setReference(commandRPM, ControlType.kVelocity));
   }
 
   

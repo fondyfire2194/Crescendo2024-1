@@ -28,6 +28,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   RelativeEncoder elevatorEncoder;
   private double simPosition;
   private double commandInches;
+  private double velocitySet;
 
   /** Creates a new Elevator. */
   public ElevatorSubsystem() {
@@ -37,27 +38,28 @@ public class ElevatorSubsystem extends SubsystemBase {
     elevatorEncoder = elevatorMotor.getEncoder();
     configMotor(elevatorMotor, elevatorEncoder, elevatorController, true);
 
-    if (RobotBase.isSimulation())
-      REVPhysicsSim.getInstance().addSparkMax(elevatorMotor, 3, 5600);
-
     Shuffleboard.getTab("IntakeSubsystem").add(this)
         .withSize(2, 1)
         .withPosition(2, 0);
 
-    Shuffleboard.getTab("IntakeSubsystem").addNumber("ElevtorPositionInches", () -> round2dp(getPosition(),2))
-        .withSize(2, 1)
+    Shuffleboard.getTab("IntakeSubsystem").addNumber("PositionInches", () -> round2dp(getPosition(), 2))
+        .withSize(1, 1)
         .withPosition(2, 1);
+
+    Shuffleboard.getTab("IntakeSubsystem").addNumber("Velocity", () -> round2dp(getVelocity(), 2))
+        .withSize(1, 1)
+        .withPosition(3, 1);
 
     Shuffleboard.getTab("IntakeSubsystem").add("ElevatorToIntake", positionToIntakeCommand())
         .withSize(2, 1)
         .withPosition(2, 2);
 
-    Shuffleboard.getTab("IntakeSubsystem").add("ElaevatorToAmp", positionToAmpCommand())
+    Shuffleboard.getTab("IntakeSubsystem").add("ElevatorToAmp", positionToAmpCommand())
         .withSize(2, 1)
         .withPosition(2, 3);
 
     if (RobotBase.isSimulation()) {
-
+      REVPhysicsSim.getInstance().addSparkMax(elevatorMotor, 3, 5600);
       elevatorEncoder.setVelocityConversionFactor(.001 / 60);
       elevatorEncoder.setPositionConversionFactor(.001);
     }
@@ -86,7 +88,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     if (RobotBase.isReal())
       return elevatorEncoder.getPosition();
     else {
-      simPosition += elevatorEncoder.getVelocity() / 50000;
+      simPosition += getVelocity() / 50000;
       return simPosition;
     }
   }
@@ -98,17 +100,23 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public void jog(double speed) {
     elevatorMotor.setVoltage(speed * RobotController.getBatteryVoltage());
+    commandInches = getPosition();
+    velocitySet=speed;
   }
 
   public Command jogCommand(Double speed) {
-    return Commands.run(() -> jog(speed),this).withName("Jog");
+    return Commands.run(() -> jog(speed), this).withName("Jog");
   }
 
   public double getVelocity() {
-    return elevatorEncoder.getVelocity();
+    if (RobotBase.isReal())
+      return elevatorEncoder.getVelocity();
+    else
+      return velocitySet;
   }
 
   public void setVelocity(double speed) {
+    velocitySet = speed;
     elevatorMotor.setVoltage(speed * RobotController.getBatteryVoltage());
   }
 
@@ -135,7 +143,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public Command positionToAmpCommand() {
-    return Commands.run(() -> positionElevator(Constants.ElevatorConstants.elevatorPositionToAmp), this)
+    return Commands.runOnce(() -> positionElevator(Constants.ElevatorConstants.elevatorPositionToAmp), this)
         .until(() -> Math.abs(getPositionError()) < .5);
   }
 

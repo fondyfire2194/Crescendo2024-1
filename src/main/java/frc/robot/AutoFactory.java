@@ -12,17 +12,34 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.commands.CenterStartCommandFactory;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.DoNothing;
-
+import frc.robot.commands.CenterStart.CenterStartCommand1;
+import frc.robot.commands.CenterStart.CenterStartCommand2;
+import frc.robot.subsystems.BottomShooterRollerSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.HoldNoteSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.TopShooterRollerSubsystem;
 
 /** Add your docs here. */
 public class AutoFactory {
 
     private final SwerveSubsystem m_swerve;
 
-    private final CenterStartCommandFactory m_csf;
+    private final ElevatorSubsystem m_elevator;
+
+    private final IntakeSubsystem m_intake;
+
+    private final TopShooterRollerSubsystem m_topshooter;
+
+    private final BottomShooterRollerSubsystem m_bottomshooter;
+
+    private final ShooterAngleSubsystem m_shooterangle;
+
+    private final HoldNoteSubsystem m_holdnote;
 
     public final SendableChooser<Integer> m_ampStartChooser = new SendableChooser<Integer>();
 
@@ -31,18 +48,6 @@ public class AutoFactory {
     public final SendableChooser<Integer> m_sourceStartChooser = new SendableChooser<Integer>();
 
     public final SendableChooser<Double> m_startDelayChooser = new SendableChooser<Double>();
-
-    private Command ampChoice1 = new DoNothing();
-    private Command ampChoice2 = new DoNothing();
-    private Command ampChoice3 = new DoNothing();
-
-    private Command centerChoice1 = new DoNothing();
-    private Command centerChoice2 = new DoNothing();
-    private Command centerChoice3 = new DoNothing();
-
-    private Command sourceChoice1 = new DoNothing();
-    private Command sourceChoice2 = new DoNothing();
-    private Command sourceChoice3 = new DoNothing();
 
     int finalChoice = 0;
 
@@ -59,10 +64,18 @@ public class AutoFactory {
 
     List<String> usedPathFiles = new ArrayList<>();
 
-    public AutoFactory(CenterStartCommandFactory csf, SwerveSubsystem swerve) {
-        m_swerve = swerve;
+    public ArrayList<PathPlannerPath> activePaths = new ArrayList<PathPlannerPath>(5);
 
-        m_csf = csf;
+    public AutoFactory(SwerveSubsystem swerve, ElevatorSubsystem elevator,
+            IntakeSubsystem intake, HoldNoteSubsystem holdNote, TopShooterRollerSubsystem topShooter,
+            BottomShooterRollerSubsystem bottomShooter, ShooterAngleSubsystem shooterAngle) {
+        m_swerve = swerve;
+        m_elevator = elevator;
+        m_intake = intake;
+        m_holdnote = holdNote;
+        m_topshooter = topShooter;
+        m_bottomshooter = bottomShooter;
+        m_shooterangle = shooterAngle;
 
         m_startDelayChooser.setDefaultOption("Zero Seconds", 0.);
         m_startDelayChooser.addOption("One Second", 1.);
@@ -77,13 +90,11 @@ public class AutoFactory {
 
         m_centerStartChooser.setDefaultOption("Not Used", 10);
         m_centerStartChooser.addOption("Score 4", 11);
-        m_centerStartChooser.addOption("Not Assigned", 12);
+        m_centerStartChooser.addOption("Paths Test", 12);
 
         m_sourceStartChooser.setDefaultOption("Not Used", 20);
         m_sourceStartChooser.addOption("Not Assigned", 21);
         m_sourceStartChooser.addOption("Not Assigned", 22);
-
-        centerChoice1 = m_csf.centerChoice1;
 
         Shuffleboard.getTab("Autonomous").add("DelayChooser", m_startDelayChooser)
                 .withSize(2, 1).withPosition(0, 0);
@@ -139,7 +150,7 @@ public class AutoFactory {
 
             setFilenames(finalChoice);
 
-            m_csf.loadPathFiles(usedPathFiles);
+            loadPathFiles(usedPathFiles);
 
         }
 
@@ -154,7 +165,18 @@ public class AutoFactory {
         switch (finalChoice) {
 
             case 11:
-            
+
+                usedPathFiles.add("AutoOneP1");
+                usedPathFiles.add("AutoOneP1R");
+                usedPathFiles.add("AutoOneP2");
+                usedPathFiles.add("AutoOneP2R");
+                usedPathFiles.add("AutoOneP3");
+                usedPathFiles.add("AutoOneP3R");
+
+                return usedPathFiles;
+
+            case 12:
+
                 usedPathFiles.add("AutoOneP1");
                 usedPathFiles.add("AutoOneP1R");
                 usedPathFiles.add("AutoOneP2");
@@ -175,23 +197,24 @@ public class AutoFactory {
 
         switch (choice) {
             case 1:
-                return ampChoice1;
+                return new DoNothing();
             case 2:
-                return ampChoice2;
+                return new DoNothing();
             case 3:
-                return ampChoice3;
+                return new DoNothing();
             case 11:
-                return centerChoice1;
+                return new CenterStartCommand1(this, m_swerve, m_elevator, m_intake, m_holdnote, m_topshooter,
+                        m_bottomshooter, m_shooterangle).withName("CC1");
             case 12:
-                return centerChoice2;
+                return new CenterStartCommand2(this, m_swerve).withName("CC2");
             case 13:
-                return centerChoice3;
+                return new DoNothing();
             case 21:
-                return sourceChoice1;
+                return new DoNothing();
             case 22:
-                return sourceChoice2;
+                return new DoNothing();
             case 23:
-                return sourceChoice3;
+                return new DoNothing();
             default:
                 return new DoNothing();
 
@@ -206,8 +229,14 @@ public class AutoFactory {
         return PathPlannerPath.fromPathFile(pathname);
     }
 
-    public void followPath(String pathName) {
-        m_swerve.followPathCommand(pathName);
+
+    public void loadPathFiles(List<String> fileNames) {
+        activePaths.clear();
+        for (String i : fileNames) {
+            activePaths.add(getPath(i));
+
+        }
+
     }
 
 }

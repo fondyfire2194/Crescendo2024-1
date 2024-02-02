@@ -89,7 +89,7 @@ public class BottomShooterRollerSubsystem extends SubsystemBase {
 
   
   public Command runBottomRollerCommand() {
-    return this.run(() -> bottomController.setReference(Pref.getPref("ShooterRPM"), ControlType.kVelocity));
+    return this.runOnce(() -> bottomController.setReference(commandRPM, ControlType.kVelocity));
   }
 
   public Command stopShootersCommand() {

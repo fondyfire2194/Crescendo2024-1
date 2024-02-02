@@ -143,8 +143,8 @@ public class SwerveModule extends SubsystemBase {
 
   private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop) {
 
-    SmartDashboard.putNumber(Constants.SwerveConstants.modNames[moduleNumber] + "Set Speed",
-        desiredState.speedMetersPerSecond);
+    // SmartDashboard.putNumber(Constants.SwerveConstants.modNames[moduleNumber] + "Set Speed",
+    //     desiredState.speedMetersPerSecond);
     if (isOpenLoop) {
       double percentOutput = desiredState.speedMetersPerSecond / Constants.SwerveConstants.maxSpeed;
       driveMotor.setVoltage(percentOutput * RobotController.getBatteryVoltage());
@@ -201,8 +201,8 @@ public class SwerveModule extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber(String.valueOf(moduleNumber) + " DRIVEVEL", getDriveVelocity());
-    SmartDashboard.putNumber(String.valueOf(moduleNumber) + " SETVEL", currentDesiredState.speedMetersPerSecond);
+    // SmartDashboard.putNumber(String.valueOf(moduleNumber) + " DRIVEVEL", getDriveVelocity());
+    // SmartDashboard.putNumber(String.valueOf(moduleNumber) + " SETVEL", currentDesiredState.speedMetersPerSecond);
     
   }
 
@@ -213,8 +213,8 @@ public class SwerveModule extends SubsystemBase {
   @Override
   public void simulationPeriodic() {
 
-    SmartDashboard.putNumber(String.valueOf(moduleNumber) + " angdeg", angleDegrees);
-    SmartDashboard.putNumber(String.valueOf(moduleNumber) + " simAng", simAngle);
+    // SmartDashboard.putNumber(String.valueOf(moduleNumber) + " angdeg", angleDegrees);
+    // SmartDashboard.putNumber(String.valueOf(moduleNumber) + " simAng", simAngle);
 
     double diff = angleDegrees - simAngle;
 

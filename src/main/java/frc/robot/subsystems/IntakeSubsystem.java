@@ -87,7 +87,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command runIntakeCommand() {
-    return this.run(() -> intakeController.setReference(2500, ControlType.kVelocity));
+    return this.runOnce(() -> intakeController.setReference(2500, ControlType.kVelocity));
   }
 
   public Command feedShooterCommand() {

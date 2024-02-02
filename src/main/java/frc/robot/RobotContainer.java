@@ -4,27 +4,13 @@
 
 package frc.robot;
 
-import java.util.List;
 import java.util.function.BooleanSupplier;
-
-import com.pathplanner.lib.auto.AutoBuilder;
-
-import com.pathplanner.lib.path.GoalEndState;
-import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerPath;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.shuffleboard.EventImportance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.CenterStartCommandFactory;
 import frc.robot.commands.LoadAndRunPPath;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.BottomShooterRollerSubsystem;
@@ -58,10 +44,8 @@ public class RobotContainer {
 
         final LimelightSubsystem m_llv3 = new LimelightSubsystem("limelight_2");
 
-        public final CenterStartCommandFactory m_cf = new CenterStartCommandFactory(m_swerve, m_elevator, m_intake,
-                        m_holdNote, m_topShooter, m_bottomShooter, m_shooterAngle);
-
-        public final AutoFactory m_af = new AutoFactory(m_cf, m_swerve);
+        public final AutoFactory m_af = new AutoFactory(m_swerve, m_elevator, m_intake, m_holdNote, m_topShooter,
+                        m_bottomShooter, m_shooterAngle);
 
         private final CommandXboxController driver = new CommandXboxController(0);
 
@@ -111,7 +95,9 @@ public class RobotContainer {
                                                 () -> -driver.getRightX(),
                                                 fieldCentric));
 
-                  m_elevator.setDefaultCommand(m_elevator.positionHold());
+                m_elevator.setDefaultCommand(m_elevator.positionHold());
+
+                m_shooterAngle.setDefaultCommand(m_shooterAngle.positionHold());
 
                 // m_intake.setDefaultCommand(Commands.runOnce(() -> m_intake.stopMotor(),
                 // m_intake));
@@ -153,61 +139,15 @@ public class RobotContainer {
                 codriver.y().whileTrue(m_elevator.jogCommand(.2))
                                 .onFalse(Commands.runOnce(() -> m_elevator.stopMotor()));
 
-                codriver.a().whileTrue(m_elevator.jogCommand(-.2))
+                codriver.a().whileTrue(m_shooterAngle.jogCommand(-.2))
+                                .onFalse(Commands.runOnce(() -> m_shooterAngle.stopMotor()));
+
+                codriver.x().whileTrue(m_shooterAngle.jogCommand(.2))
+                                .onFalse(Commands.runOnce(() -> m_shooterAngle.stopMotor()));
+
+                codriver.b().whileTrue(m_shooterAngle.jogCommand(-.2))
                                 .onFalse(Commands.runOnce(() -> m_elevator.stopMotor()));
 
-                SmartDashboard.putData("Pathfind to Pickup Pos", AutoBuilder.pathfindToPose(
-                                new Pose2d(2.0, 1.5, Rotation2d.fromDegrees(0)),
-                                new PathConstraints(
-                                                3.0, 3.0,
-                                                Units.degreesToRadians(360), Units.degreesToRadians(540)),
-                                0,
-                                2.0));
-
-                SmartDashboard.putData("Pathfind to Scoring Pos", AutoBuilder.pathfindToPose(
-                                new Pose2d(1.15, 1.0, Rotation2d.fromDegrees(180)),
-                                new PathConstraints(
-                                                3.0, 3.0,
-                                                Units.degreesToRadians(360), Units.degreesToRadians(540)),
-                                0,
-                                0));
-
-                // Add a button to SmartDashboard that will create and follow an on-the-fly path
-                // This example will simply move the robot 2m in the +X field direction
-                SmartDashboard.putData("On-the-fly path", Commands.runOnce(() -> {
-
-                        Pose2d currentPose = m_swerve.getPose();
-
-                        // The rotation component in these poses represents the direction of travel
-                        Pose2d startPos = new Pose2d(currentPose.getTranslation(), new Rotation2d());
-                        Pose2d endPos = new Pose2d(currentPose.getTranslation()
-                                        .plus(new Translation2d(2.0, 0.0)), new Rotation2d());
-
-                        List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(startPos, endPos);
-                        PathPlannerPath path = new PathPlannerPath(
-                                        bezierPoints,
-                                        new PathConstraints(
-                                                        3.0, 3.0,
-                                                        Units.degreesToRadians(360), Units.degreesToRadians(540)),
-                                        new GoalEndState(0.0, currentPose.getRotation()));
-
-                        path.preventFlipping = true;
-
-                        AutoBuilder.followPath(path).schedule();
-                }));
-        }
-
-        public Command getSinglePathCommandWithPresetStart(String pathname) {
-
-                // Load the path you want to follow using its name in the GUI
-                PathPlannerPath path = PathPlannerPath.fromPathFile(pathname);
-
-                Pose2d startPose = path.getPreviewStartingHolonomicPose();
-                // Create a path following command using AutoBuilder. This will also trigger
-                // event markers.
-                return m_swerve.setPose(startPose).andThen(
-
-                                AutoBuilder.followPath(path));
         }
 
 }

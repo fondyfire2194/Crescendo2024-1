@@ -87,7 +87,7 @@ public class HoldNoteSubsystem extends SubsystemBase {
   }
 
   public Command feedShooterCommand() {
-    return this.run(() -> holdnoteController.setReference(Pref.getPref("HoldNoteRPM"), ControlType.kVelocity));
+    return this.runOnce(() -> holdnoteController.setReference(Pref.getPref("HoldNoteRPM"), ControlType.kVelocity));
   }
 
   public Command stopHoldNoteCommand() {
@@ -97,7 +97,6 @@ public class HoldNoteSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("HoldNoteRPM", getRPM());
 
   }
 

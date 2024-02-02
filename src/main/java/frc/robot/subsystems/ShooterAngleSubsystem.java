@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.CANSparkMaxUtil;
 import frc.lib.util.CANSparkMaxUtil.Usage;
 import frc.robot.Constants;
-import frc.robot.commands.DoNothing;
 
 public class ShooterAngleSubsystem extends SubsystemBase {
 
@@ -29,6 +28,7 @@ public class ShooterAngleSubsystem extends SubsystemBase {
   RelativeEncoder shooterangleEncoder;
   private double simPosition;
   private double commandDegrees;
+  private double velocitySet;
 
   /** Creates a new ShooterAngle. */
   public ShooterAngleSubsystem() {
@@ -41,9 +41,33 @@ public class ShooterAngleSubsystem extends SubsystemBase {
     Shuffleboard.getTab("ShooterSubsystem").add(this).withSize(3, 1)
         .withPosition(6, 0);
 
-    Shuffleboard.getTab("ShooterSubsystem").addNumber("ShooterAngleDegrees", () -> round2dp(getPosition(), 2))
+    Shuffleboard.getTab("ShooterSubsystem").addNumber("ActlDegrees", () -> round2dp(getPosition(), 2))
         .withSize(1, 1)
         .withPosition(6, 1);
+
+    Shuffleboard.getTab("ShooterSubsystem").addNumber("CmdDegrees", () -> round2dp(commandDegrees, 2))
+        .withSize(1, 1)
+        .withPosition(7, 1);
+
+        Shuffleboard.getTab("ShooterSubsystem").addNumber("Velocity", () -> round2dp(getVelocity(), 2))
+        .withSize(1, 1)
+        .withPosition(8, 1);
+
+    Shuffleboard.getTab("ShooterSubsystem").add("ShooterToMaxAngle",
+        positionCommand(Constants.ShooterAngleConstants.shooterangleMaxDegrees))
+        .withSize(2, 1)
+        .withPosition(6, 2);
+
+    Shuffleboard.getTab("ShooterSubsystem").add("ShooterToIntake",
+        positionToIntakeCommand())
+        .withSize(2, 1)
+        .withPosition(6, 3);
+
+    if (RobotBase.isSimulation()) {
+      REVPhysicsSim.getInstance().addSparkMax(shooterangleMotor, 3, 5600);
+      shooterangleEncoder.setVelocityConversionFactor(.001 / 60);
+      shooterangleEncoder.setPositionConversionFactor(.001);
+    }
 
   }
 
@@ -65,28 +89,40 @@ public class ShooterAngleSubsystem extends SubsystemBase {
     encoder.setPosition(0.0);
   }
 
-  public void jog(double speed) {
-    shooterangleMotor.setVoltage(speed * RobotController.getBatteryVoltage());
+  public void stopMotor() {
+    shooterangleMotor.stopMotor();
+    shooterangleMotor.setVoltage(0);
+
   }
 
-  public Command jogCommand(Double speed) {
-    return Commands.run(() -> jog(speed), this).withName("Jog");
+  public void jog(double speed) {
+    shooterangleMotor.setVoltage(speed * RobotController.getBatteryVoltage());
+    commandDegrees = getPosition();
+  }
+
+  public Command jogCommand(double speed) {
+    commandDegrees = getPosition();
+    return Commands.runEnd(() -> jog(speed), () -> stopMotor(), this)
+        .withName("Jog");
   }
 
   public double getPosition() {
     if (RobotBase.isReal())
       return shooterangleEncoder.getPosition();
     else {
-      simPosition += shooterangleEncoder.getVelocity() / 50;
+      simPosition += getVelocity() / 100;
       return simPosition;
     }
   }
 
   public double getVelocity() {
+    if(RobotBase.isReal())
     return shooterangleEncoder.getVelocity();
+    else return velocitySet;
   }
 
   public void setVelocity(double speed) {
+    velocitySet = speed;
     shooterangleMotor.setVoltage(speed * RobotController.getBatteryVoltage());
   }
 
@@ -98,21 +134,24 @@ public class ShooterAngleSubsystem extends SubsystemBase {
   public void positionShooterAngle(double degrees) {
     commandDegrees = degrees;
     if (RobotBase.isReal())
-      shooterangleController.setReference(degrees, ControlType.kPosition);
+      shooterangleController.setReference(commandDegrees, ControlType.kPosition);
     else
-      setVelocity(degrees - getPosition());
-  }
-
-  public Command positionShooterAngleCommand(double degrees) {
-    return new DoNothing();
+      setVelocity(commandDegrees - getPosition());
   }
 
   public Command positionHold() {
     return Commands.run(() -> positionShooterAngle(commandDegrees), this).withName("Hold");
   }
 
-  public Command positionToHomeCommand() {
-    return Commands.run(() -> positionShooterAngle(Constants.ElevatorConstants.elevatorPositionToIntake), this)
+  public Command positionCommand(double angle) {
+    commandDegrees = angle;
+    return Commands.runOnce(() -> positionShooterAngle(angle), this)
+        .until(() -> Math.abs(getPositionError()) < .5);
+  }
+
+  public Command positionToIntakeCommand() {
+    return Commands
+        .runOnce(() -> positionShooterAngle(Constants.ShooterAngleConstants.shooteranglePositionToIntake), this)
         .until(() -> Math.abs(getPositionError()) < .5);
   }
 
