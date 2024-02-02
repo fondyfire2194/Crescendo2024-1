@@ -43,12 +43,12 @@ public class BottomShooterRollerSubsystem extends SubsystemBase {
     
  
     Shuffleboard.getTab("ShooterSubsystem").add(this)
-    .withSize(2, 1)
-    .withPosition(2, 0);
+    .withSize(3, 1)
+    .withPosition(3, 0);
 
     Shuffleboard.getTab("ShooterSubsystem").addNumber("BottomRPM",()->getRPMBottom())
-    .withSize(2, 1)
-    .withPosition(2, 1);
+    .withSize(1, 1)
+    .withPosition(3, 1);
 
    if (RobotBase.isSimulation())
       REVPhysicsSim.getInstance().addSparkMax(bottomRoller, 3, 5600);

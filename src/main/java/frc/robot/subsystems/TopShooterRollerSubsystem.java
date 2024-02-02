@@ -45,11 +45,11 @@ public class TopShooterRollerSubsystem extends SubsystemBase {
       REVPhysicsSim.getInstance().addSparkMax(topRoller, 3, 5600);
 
     Shuffleboard.getTab("ShooterSubsystem").add(this)
-    .withSize(2, 1)
+    .withSize(3, 1)
     .withPosition(0, 0);
 
     Shuffleboard.getTab("ShooterSubsystem").addNumber("TopRPM",()->getRPMTop())
-    .withSize(2, 1)
+    .withSize(1, 1)
     .withPosition(0, 1);
   }
 

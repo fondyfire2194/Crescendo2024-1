@@ -44,7 +44,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         .withSize(2, 1)
         .withPosition(2, 0);
 
-    Shuffleboard.getTab("IntakeSubsystem").addNumber("ElevtorPositionInches", () -> getPosition())
+    Shuffleboard.getTab("IntakeSubsystem").addNumber("ElevtorPositionInches", () -> round2dp(getPosition(),2))
         .withSize(2, 1)
         .withPosition(2, 1);
 
@@ -101,7 +101,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public Command jogCommand(Double speed) {
-    return Commands.run(() -> jog(speed));
+    return Commands.run(() -> jog(speed),this).withName("Jog");
   }
 
   public double getVelocity() {
@@ -125,13 +125,17 @@ public class ElevatorSubsystem extends SubsystemBase {
       setVelocity(inches - getPosition());
   }
 
+  public Command positionHold() {
+    return Commands.run(() -> positionElevator(commandInches), this).withName("Hold");
+  }
+
   public Command positionToIntakeCommand() {
-    return Commands.run(() -> positionElevator(Constants.ElevatorConstants.elevatorPositionToIntake))
+    return Commands.run(() -> positionElevator(Constants.ElevatorConstants.elevatorPositionToIntake), this)
         .until(() -> Math.abs(getPositionError()) < .5);
   }
 
   public Command positionToAmpCommand() {
-    return Commands.run(() -> positionElevator(Constants.ElevatorConstants.elevatorPositionToAmp))
+    return Commands.run(() -> positionElevator(Constants.ElevatorConstants.elevatorPositionToAmp), this)
         .until(() -> Math.abs(getPositionError()) < .5);
   }
 
@@ -142,6 +146,14 @@ public class ElevatorSubsystem extends SubsystemBase {
   @Override
   public void simulationPeriodic() {
     REVPhysicsSim.getInstance().run();
+  }
+
+  public static double round2dp(double number, int dp) {
+    double temp = Math.pow(10, dp);
+
+    double temp1 = Math.round(number * temp);
+
+    return temp1 / temp;
   }
 
 }

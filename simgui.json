@@ -27,6 +27,7 @@
       "/Shuffleboard/IntakeSubsystem/StopIntake": "Command",
       "/Shuffleboard/ShooterAngleSubsystem/ShooterAngleSubsystem": "Subsystem",
       "/Shuffleboard/ShooterSubsystem/BottomShooterRollerSubsystem": "Subsystem",
+      "/Shuffleboard/ShooterSubsystem/ShooterAngleSubsystem": "Subsystem",
       "/Shuffleboard/ShooterSubsystem/ShooterSubsystem": "Subsystem",
       "/Shuffleboard/ShooterSubsystem/SwerveSubsystem": "Subsystem",
       "/Shuffleboard/ShooterSubsystem/TopShooterRollerSubsystem": "Subsystem",

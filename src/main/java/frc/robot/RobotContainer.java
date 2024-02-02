@@ -111,6 +111,8 @@ public class RobotContainer {
                                                 () -> -driver.getRightX(),
                                                 fieldCentric));
 
+                  m_elevator.setDefaultCommand(m_elevator.positionHold());
+
                 // m_intake.setDefaultCommand(Commands.runOnce(() -> m_intake.stopMotor(),
                 // m_intake));
                 // m_shooter.setDefaultCommand(Commands.runOnce(() -> m_shooter.stopMotors(),
