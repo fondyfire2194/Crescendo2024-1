@@ -185,7 +185,7 @@ public class SwerveSubsystem extends SubsystemBase {
         .withSize(2, 1).withPosition(4, 1);
 
     Shuffleboard.getTab("Drivetrain").add("LoadPath AutooneP1",
-        new LoadAndRunPPath(this, "AutoOneP1", true))
+        new LoadAndRunPPath(this, "CentOneP1", true))
         .withSize(2, 1).withPosition(0, 2);
 
   }

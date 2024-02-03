@@ -4,23 +4,23 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVPhysicsSim;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkBase.ControlType;
-import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.CANSparkMaxUtil;
 import frc.lib.util.CANSparkMaxUtil.Usage;
 import frc.robot.Constants;
-import frc.robot.Pref;
+import frc.robot.Constants.ShooterConstants;
 
 public class TopShooterRollerSubsystem extends SubsystemBase {
 
@@ -45,12 +45,12 @@ public class TopShooterRollerSubsystem extends SubsystemBase {
       REVPhysicsSim.getInstance().addSparkMax(topRoller, 3, 5600);
 
     Shuffleboard.getTab("ShooterSubsystem").add(this)
-    .withSize(3, 1)
-    .withPosition(0, 0);
+        .withSize(3, 1)
+        .withPosition(0, 0);
 
-    Shuffleboard.getTab("ShooterSubsystem").addNumber("TopRPM",()->getRPMTop())
-    .withSize(1, 1)
-    .withPosition(0, 1);
+    Shuffleboard.getTab("ShooterSubsystem").addNumber("TopRPM", () -> getRPMTop())
+        .withSize(1, 1)
+        .withPosition(0, 1);
   }
 
   private void configMotor(CANSparkMax motor, RelativeEncoder encoder, SparkPIDController controller, boolean reverse) {
@@ -70,32 +70,35 @@ public class TopShooterRollerSubsystem extends SubsystemBase {
     encoder.setPosition(0.0);
   }
 
-  public void setShooterRPM(double rpm) {
-   
-    topController.setReference(rpm, ControlType.kVelocity);
-  }
-
   public Command setShooterSpeed(double rpm) {
     return Commands.runOnce(() -> commandRPM = rpm);
   }
 
   public void stopMotors() {
-
-    topController.setReference(0, ControlType.kVelocity);
+    if (RobotBase.isReal())
+      topController.setReference(0, ControlType.kVelocity);
     topRoller.stopMotor();
-  
+
+  }
+
+  public void runRoller() {
+    if (RobotBase.isReal())
+      topController.setReference(commandRPM, ControlType.kVelocity);
+    else
+      topRoller.setVoltage(commandRPM * 12 / ShooterConstants.maxShooterMotorRPM);
+
   }
 
   public Command runTopRollerCommand() {
-    return this.runOnce(() -> topController.setReference(commandRPM, ControlType.kVelocity));
+    if (RobotBase.isReal())
+      return this.runOnce(() -> runRoller());
+    else
+      return Commands.runOnce(() -> topRoller.setVoltage(.5));
   }
 
-  
   public Command stopShootersCommand() {
     return this.runOnce(() -> stopMotors());
   }
-
- 
 
   public double getRPMTop() {
     return topEncoder.getVelocity();
@@ -106,7 +109,6 @@ public class TopShooterRollerSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     // SmartDashboard.putNumber("CANTopRoller", topRoller.getFirmwareVersion());
   }
-
 
   @Override
   public void simulationPeriodic() {

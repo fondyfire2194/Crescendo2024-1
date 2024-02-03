@@ -292,10 +292,10 @@ public final class Constants {
                 public static final IdleMode elevatorIdleMode = IdleMode.kCoast;
                 public static final int elevatorContinuousCurrentLimit = 30;
 
-                public static double elevatorPositionToAmp = 30;
-                public static double elevatorPositionToIntake = 5;
-                public static double elevatorMinInches = 2;
-                public static double elevatorMaxinches = 34;
+                public static double elevatorPositionToAmp = 14;
+                public static double elevatorPositionToIntake = 2;
+                public static double elevatorMinInches = 0;
+                public static double elevatorMaxinches = 15;
 
         }
 

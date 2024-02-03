@@ -6,6 +6,9 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import javax.lang.model.util.ElementScanner14;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVPhysicsSim;
 import com.revrobotics.RelativeEncoder;
@@ -23,6 +26,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.CANSparkMaxUtil;
 import frc.lib.util.CANSparkMaxUtil.Usage;
 import frc.robot.Constants;
+import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.Pref;
 
 public class IntakeSubsystem extends SubsystemBase {
@@ -30,6 +35,7 @@ public class IntakeSubsystem extends SubsystemBase {
   CANSparkMax intakeMotor;
   SparkPIDController intakeController;
   RelativeEncoder intakeEncoder;
+  double intakeRPM = 1000;
 
   /** Creates a new Intake. */
   public IntakeSubsystem() {
@@ -78,7 +84,8 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public void stopMotor() {
-    intakeController.setReference(0, ControlType.kVelocity);
+    if (RobotBase.isReal())
+      intakeController.setReference(0, ControlType.kVelocity);
     intakeMotor.stopMotor();
   }
 
@@ -86,12 +93,20 @@ public class IntakeSubsystem extends SubsystemBase {
     return intakeEncoder.getVelocity();
   }
 
+  public void runIntake(double rpm) {
+    if (RobotBase.isReal())
+      intakeController.setReference(intakeRPM, ControlType.kVelocity);
+    else
+      intakeMotor.setVoltage(intakeRPM * 12 / IntakeConstants.maxIntakeMotorRPM);
+  }
+
   public Command runIntakeCommand() {
-    return this.runOnce(() -> intakeController.setReference(2500, ControlType.kVelocity));
+
+    return this.runOnce(() -> runIntake(intakeRPM));
   }
 
   public Command feedShooterCommand() {
-    return this.runOnce(() -> intakeController.setReference(Pref.getPref("IntakeRPM"), ControlType.kVelocity));
+    return this.runOnce(() -> runIntake(intakeRPM));
   }
 
   public Command stopIntakeCommand() {
@@ -111,6 +126,6 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public void jog(double speed) {
-    intakeMotor.setVoltage(speed * RobotController.getBatteryVoltage());
+    intakeMotor.setVoltage(speed * 12);
   }
 }

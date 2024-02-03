@@ -14,7 +14,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "AutoOneP1"
+            "pathName": "CentOneP1"
           }
         },
         {
@@ -26,7 +26,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "AutoOneP1R"
+            "pathName": "CentOneP1R"
           }
         },
         {
@@ -38,7 +38,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "AutoOneP2"
+            "pathName": "CentOneP2"
           }
         },
         {
@@ -50,7 +50,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "AutoOneP2R"
+            "pathName": "CentOneP2R"
           }
         },
         {
@@ -62,7 +62,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "AutoOneP3"
+            "pathName": "CentOneP3"
           }
         },
         {
@@ -74,7 +74,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "AutoOneP3R"
+            "pathName": "CentOneP3R"
           }
         },
         {

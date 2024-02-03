@@ -41,6 +41,8 @@ public class AutoFactory {
 
     private final HoldNoteSubsystem m_holdnote;
 
+    private final CommandFactory m_cf;
+
     public final SendableChooser<Integer> m_ampStartChooser = new SendableChooser<Integer>();
 
     public final SendableChooser<Integer> m_centerStartChooser = new SendableChooser<Integer>();
@@ -66,9 +68,10 @@ public class AutoFactory {
 
     public ArrayList<PathPlannerPath> activePaths = new ArrayList<PathPlannerPath>(5);
 
-    public AutoFactory(SwerveSubsystem swerve, ElevatorSubsystem elevator,
+    public AutoFactory(CommandFactory cf, SwerveSubsystem swerve, ElevatorSubsystem elevator,
             IntakeSubsystem intake, HoldNoteSubsystem holdNote, TopShooterRollerSubsystem topShooter,
             BottomShooterRollerSubsystem bottomShooter, ShooterAngleSubsystem shooterAngle) {
+        m_cf = cf;
         m_swerve = swerve;
         m_elevator = elevator;
         m_intake = intake;
@@ -96,21 +99,21 @@ public class AutoFactory {
         m_sourceStartChooser.addOption("Not Assigned", 21);
         m_sourceStartChooser.addOption("Not Assigned", 22);
 
-        Shuffleboard.getTab("Autonomous").add("DelayChooser", m_startDelayChooser)
+        Shuffleboard.getTab("Centnomous").add("DelayChooser", m_startDelayChooser)
                 .withSize(2, 1).withPosition(0, 0);
-        Shuffleboard.getTab("Autonomous").add("AmpStart", m_ampStartChooser)
+        Shuffleboard.getTab("Centnomous").add("AmpStart", m_ampStartChooser)
                 .withSize(2, 1).withPosition(2, 0);
-        Shuffleboard.getTab("Autonomous").add("CenterStart", m_centerStartChooser)
+        Shuffleboard.getTab("Centnomous").add("CenterStart", m_centerStartChooser)
                 .withSize(2, 1).withPosition(4, 0);
-        Shuffleboard.getTab("Autonomous").add("SourceStart", m_sourceStartChooser)
+        Shuffleboard.getTab("Centnomous").add("SourceStart", m_sourceStartChooser)
                 .withSize(2, 1).withPosition(6, 0);
-        Shuffleboard.getTab("Autonomous").addNumber("Choice Must Not Be Zero", () -> validStartChoice)
+        Shuffleboard.getTab("Centnomous").addNumber("Choice Must Not Be Zero", () -> validStartChoice)
                 .withSize(2, 1).withPosition(2, 1);
-        Shuffleboard.getTab("Autonomous").addBoolean("Valid Choice", () -> validStartChoice != 0)
+        Shuffleboard.getTab("Centnomous").addBoolean("Valid Choice", () -> validStartChoice != 0)
                 .withSize(2, 1).withPosition(4, 1)
                 .withProperties(Map.of("colorWhenTrue", "green", "colorWhenFalse", "red"));
 
-        Shuffleboard.getTab("Autonomous").addNumber("Number Files", () -> usedPathFiles.size())
+        Shuffleboard.getTab("Centnomous").addNumber("Number Files", () -> usedPathFiles.size())
                 .withSize(2, 1).withPosition(6, 1);
 
     }
@@ -166,23 +169,23 @@ public class AutoFactory {
 
             case 11:
 
-                usedPathFiles.add("AutoOneP1");
-                usedPathFiles.add("AutoOneP1R");
-                usedPathFiles.add("AutoOneP2");
-                usedPathFiles.add("AutoOneP2R");
-                usedPathFiles.add("AutoOneP3");
-                usedPathFiles.add("AutoOneP3R");
+                usedPathFiles.add("CentOneP1");
+                usedPathFiles.add("CentOneP1R");
+                usedPathFiles.add("CentOneP2");
+                usedPathFiles.add("CentOneP2R");
+                usedPathFiles.add("CentOneP3");
+                usedPathFiles.add("CentOneP3R");
 
                 return usedPathFiles;
 
             case 12:
 
-                usedPathFiles.add("AutoOneP1");
-                usedPathFiles.add("AutoOneP1R");
-                usedPathFiles.add("AutoOneP2");
-                usedPathFiles.add("AutoOneP2R");
-                usedPathFiles.add("AutoOneP3");
-                usedPathFiles.add("AutoOneP3R");
+                usedPathFiles.add("CentOneP1");
+                usedPathFiles.add("CentOneP1R");
+                usedPathFiles.add("CentOneP2");
+                usedPathFiles.add("CentOneP2R");
+                usedPathFiles.add("CentOneP3");
+                usedPathFiles.add("CentOneP3R");
 
                 return usedPathFiles;
 
@@ -203,7 +206,7 @@ public class AutoFactory {
             case 3:
                 return new DoNothing();
             case 11:
-                return new CenterStartCommand1(this, m_swerve, m_elevator, m_intake, m_holdnote, m_topshooter,
+                return new CenterStartCommand1(this,m_cf, m_swerve, m_elevator, m_intake, m_holdnote, m_topshooter,
                         m_bottomshooter, m_shooterangle).withName("CC1");
             case 12:
                 return new CenterStartCommand2(this, m_swerve).withName("CC2");
@@ -228,7 +231,6 @@ public class AutoFactory {
     public PathPlannerPath getPath(String pathname) {
         return PathPlannerPath.fromPathFile(pathname);
     }
-
 
     public void loadPathFiles(List<String> fileNames) {
         activePaths.clear();

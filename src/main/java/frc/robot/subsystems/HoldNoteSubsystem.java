@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.CANSparkMaxUtil;
 import frc.lib.util.CANSparkMaxUtil.Usage;
@@ -63,7 +64,7 @@ public class HoldNoteSubsystem extends SubsystemBase {
         .withSize(2, 1)
         .withPosition(4, 1);
 
-    Shuffleboard.getTab("IntakeSubsystem").add("StartHoldNote", runHoldNoteCommand())
+    Shuffleboard.getTab("IntakeSubsystem").add("StartHoldNote", feedShooterCommand())
         .withSize(2, 1)
         .withPosition(4, 2);
 
@@ -74,7 +75,8 @@ public class HoldNoteSubsystem extends SubsystemBase {
   }
 
   public void stopMotor() {
-    holdnoteController.setReference(0, ControlType.kVelocity);
+    if (RobotBase.isReal())
+      holdnoteController.setReference(0, ControlType.kVelocity);
     holdnoteMotor.stopMotor();
   }
 
@@ -82,12 +84,17 @@ public class HoldNoteSubsystem extends SubsystemBase {
     return holdnoteEncoder.getVelocity();
   }
 
-  public Command runHoldNoteCommand() {
-    return this.runOnce(() -> holdnoteController.setReference(2500, ControlType.kVelocity));
+  public void runHoldNote() {
+    if (RobotBase.isReal())
+      this.runOnce(() -> holdnoteController.setReference(2500, ControlType.kVelocity));
+    else
+      Commands.runOnce(() -> holdnoteMotor.setVoltage(.5));
   }
 
   public Command feedShooterCommand() {
-    return this.runOnce(() -> holdnoteController.setReference(Pref.getPref("HoldNoteRPM"), ControlType.kVelocity));
+
+    return this.runOnce(() -> runHoldNote());
+
   }
 
   public Command stopHoldNoteCommand() {
@@ -106,6 +113,6 @@ public class HoldNoteSubsystem extends SubsystemBase {
   }
 
   public void jog(double speed) {
-    holdnoteMotor.setVoltage(speed * RobotController.getBatteryVoltage());
+    holdnoteMotor.setVoltage(speed * 12);
   }
 }

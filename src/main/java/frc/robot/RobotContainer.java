@@ -38,13 +38,16 @@ public class RobotContainer {
 
         final ShooterAngleSubsystem m_shooterAngle = new ShooterAngleSubsystem();
 
-        final LimelightSubsystem m_llv1 = new LimelightSubsystem("limelight");
+        final CommandFactory m_cf = new CommandFactory(m_swerve, m_intake, m_elevator,
+                        m_holdNote, m_shooterAngle, m_topShooter, m_bottomShooter);
 
-        final LimelightSubsystem m_llv2 = new LimelightSubsystem("limelight_1");
+        // final LimelightSubsystem m_llv1 = new LimelightSubsystem("limelight");
 
-        final LimelightSubsystem m_llv3 = new LimelightSubsystem("limelight_2");
+        // final LimelightSubsystem m_llv2 = new LimelightSubsystem("limelight_1");
 
-        public final AutoFactory m_af = new AutoFactory(m_swerve, m_elevator, m_intake, m_holdNote, m_topShooter,
+        // final LimelightSubsystem m_llv3 = new LimelightSubsystem("limelight_2");
+
+        public final AutoFactory m_af = new AutoFactory(m_cf, m_swerve, m_elevator, m_intake, m_holdNote, m_topShooter,
                         m_bottomShooter, m_shooterAngle);
 
         private final CommandXboxController driver = new CommandXboxController(0);
@@ -113,18 +116,20 @@ public class RobotContainer {
 
         private void configureBindings() {
 
-                SmartDashboard.putData("CommSchd", CommandScheduler.getInstance());
+              //  SmartDashboard.putData("CommSchd", CommandScheduler.getInstance());
 
                 driver.y().onTrue(m_swerve.setPoseToX0Y0());
 
                 driver.b().onTrue(m_intake.runIntakeCommand())
                                 .onFalse(m_intake.stopIntakeCommand());
 
-                driver.x().onTrue(new LoadAndRunPPath(m_swerve, "AutoOneP1", true));
+                driver.x().onTrue(new LoadAndRunPPath(m_swerve, "CentOneP1", true));
 
-                driver.y().onTrue(new LoadAndRunPPath(m_swerve, "AutoOneP2", false));
+                driver.a().onTrue(new LoadAndRunPPath(m_swerve, "CentOneP2", false));
 
-                driver.back().onTrue(new LoadAndRunPPath(m_swerve, "AutoOneP3", false));
+                driver.back().onTrue(new LoadAndRunPPath(m_swerve, "CentOneP3", false));
+
+                driver.start().onTrue(m_cf.runShooters());
 
                 codriver.leftBumper().onTrue(m_intake.runIntakeCommand());
 

@@ -49,7 +49,7 @@ public class ShooterAngleSubsystem extends SubsystemBase {
         .withSize(1, 1)
         .withPosition(7, 1);
 
-        Shuffleboard.getTab("ShooterSubsystem").addNumber("Velocity", () -> round2dp(getVelocity(), 2))
+    Shuffleboard.getTab("ShooterSubsystem").addNumber("Velocity", () -> round2dp(getVelocity(), 2))
         .withSize(1, 1)
         .withPosition(8, 1);
 
@@ -96,7 +96,7 @@ public class ShooterAngleSubsystem extends SubsystemBase {
   }
 
   public void jog(double speed) {
-    shooterangleMotor.setVoltage(speed * RobotController.getBatteryVoltage());
+    shooterangleMotor.setVoltage(speed * 12);
     commandDegrees = getPosition();
   }
 
@@ -116,14 +116,15 @@ public class ShooterAngleSubsystem extends SubsystemBase {
   }
 
   public double getVelocity() {
-    if(RobotBase.isReal())
-    return shooterangleEncoder.getVelocity();
-    else return velocitySet;
+    if (RobotBase.isReal())
+      return shooterangleEncoder.getVelocity();
+    else
+      return velocitySet;
   }
 
   public void setVelocity(double speed) {
     velocitySet = speed;
-    shooterangleMotor.setVoltage(speed * RobotController.getBatteryVoltage());
+    shooterangleMotor.setVoltage(speed * 12);
   }
 
   @Override

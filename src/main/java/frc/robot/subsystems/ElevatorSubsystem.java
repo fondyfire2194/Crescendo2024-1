@@ -88,7 +88,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     if (RobotBase.isReal())
       return elevatorEncoder.getPosition();
     else {
-      simPosition += getVelocity() / 50000;
+      simPosition += getVelocity() / 50;
       return simPosition;
     }
   }
@@ -99,7 +99,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void jog(double speed) {
-    elevatorMotor.setVoltage(speed * RobotController.getBatteryVoltage());
+    elevatorMotor.setVoltage(speed * 12);
     commandInches = getPosition();
     velocitySet=speed;
   }
@@ -117,7 +117,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public void setVelocity(double speed) {
     velocitySet = speed;
-    elevatorMotor.setVoltage(speed * RobotController.getBatteryVoltage());
+    elevatorMotor.setVoltage(speed * 12);
   }
 
   @Override
@@ -139,7 +139,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public Command positionToIntakeCommand() {
     return Commands.run(() -> positionElevator(Constants.ElevatorConstants.elevatorPositionToIntake), this)
-        .until(() -> Math.abs(getPositionError()) < .5);
+        .until(() -> Math.abs(getPositionError()) < 1.5);
   }
 
   public Command positionToAmpCommand() {

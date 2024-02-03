@@ -147,7 +147,7 @@ public class SwerveModule extends SubsystemBase {
     //     desiredState.speedMetersPerSecond);
     if (isOpenLoop) {
       double percentOutput = desiredState.speedMetersPerSecond / Constants.SwerveConstants.maxSpeed;
-      driveMotor.setVoltage(percentOutput * RobotController.getBatteryVoltage());
+      driveMotor.setVoltage(percentOutput * 12);
 
     } else {
       driveController.setReference(desiredState.speedMetersPerSecond, CANSparkMax.ControlType.kVelocity);
