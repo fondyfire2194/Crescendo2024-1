@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.config.SwerveModuleConstants;
 import frc.lib.math.OnboardModuleState;
@@ -41,11 +42,12 @@ public class SwerveModule extends SubsystemBase {
   private double angleDegrees;
   private double simAngle;
   private double simPosition;
+  private boolean driveReversed;
 
   public SwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants) {
     this.moduleNumber = moduleNumber;
     angleOffset = moduleConstants.angleOffset;
-
+    driveReversed = moduleConstants.driveReversed;
     /* Angle Motor Config */
     angleMotor = new CANSparkMax(moduleConstants.angleMotorID, MotorType.kBrushless);
     integratedAngleEncoder = angleMotor.getEncoder();
@@ -54,9 +56,9 @@ public class SwerveModule extends SubsystemBase {
 
     m_turnCancoder = new CANcoder(moduleConstants.canCoderID, "CV1");
 
-    var can_config = new CANcoderConfiguration();
-    can_config.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
-    m_turnCancoder.getConfigurator().apply(can_config);
+    // var can_config = new CANcoderConfiguration();
+    // can_config.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
+    // m_turnCancoder.getConfigurator().apply(can_config);
 
     /* Drive Motor Config */
     driveMotor = new CANSparkMax(moduleConstants.driveMotorID, MotorType.kBrushless);
@@ -123,14 +125,14 @@ public class SwerveModule extends SubsystemBase {
     driveMotor.restoreFactoryDefaults();
     CANSparkMaxUtil.setCANSparkMaxBusUsage(driveMotor, Usage.kAll);
     driveMotor.setSmartCurrentLimit(Constants.SwerveConstants.driveContinuousCurrentLimit);
-    driveMotor.setInverted(Constants.SwerveConstants.driveInvert);
+    driveMotor.setInverted(driveReversed);
     driveMotor.setIdleMode(Constants.SwerveConstants.driveNeutralMode);
     driveEncoder.setVelocityConversionFactor(Constants.SwerveConstants.driveConversionVelocityFactor);
     driveEncoder.setPositionConversionFactor(Constants.SwerveConstants.driveConversionPositionFactor);
     driveController.setP(Constants.SwerveConstants.driveKP);
     driveController.setI(Constants.SwerveConstants.driveKI);
     driveController.setD(Constants.SwerveConstants.driveKD);
-    driveController.setFF(Constants.SwerveConstants.driveKFF);
+    driveController.setFF(Constants.SwerveConstants.driveKFF/3.25);//3.24=max speed
     driveMotor.enableVoltageCompensation(Constants.SwerveConstants.voltageComp);
     driveMotor.burnFlash();
     driveEncoder.setPosition(0.0);
@@ -142,6 +144,20 @@ public class SwerveModule extends SubsystemBase {
   public void setDriveFF() {
     driveController.setFF(Pref.getPref("DriveFF"));
   }
+  public double getDriveKp() {
+   return driveController.getP();
+  }
+  public double getDriveFF() {
+    return driveController.getFF();
+  }
+
+  public void setAngleKp() {
+    angleController.setP(Pref.getPref("AngleKp"));
+  }
+
+  public double getAngleKp() {
+    return angleController.getP();
+   }
 
   private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop) {
 
@@ -203,9 +219,9 @@ public class SwerveModule extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // SmartDashboard.putNumber(String.valueOf(moduleNumber) + " DRIVEVEL", getDriveVelocity());
-    // SmartDashboard.putNumber(String.valueOf(moduleNumber) + " SETVEL", currentDesiredState.speedMetersPerSecond);
-    
+    //  SmartDashboard.putNumber(String.valueOf(moduleNumber) + " DRIVEVEL", getDriveVelocity());
+    //  SmartDashboard.putNumber(String.valueOf(moduleNumber) + " SETVEL", currentDesiredState.speedMetersPerSecond);
+    //  SmartDashboard.putNumber(String.valueOf(moduleNumber) + " ABS POS", m_turnCancoder.getAbsolutePosition().getValueAsDouble());
   }
 
   public boolean isStopped() {

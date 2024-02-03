@@ -12,18 +12,17 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.AutoFactory;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.RunPPath;
-import frc.robot.subsystems.BottomShooterRollerSubsystem;
+import frc.robot.subsystems.LeftShooterRollerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.HoldNoteSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.TopShooterRollerSubsystem;
+import frc.robot.subsystems.RightShooterRollerSubsystem;
 
 /** Add your docs here. */
 public class CenterStartCommand1 extends SequentialCommandGroup {
@@ -45,8 +44,8 @@ public class CenterStartCommand1 extends SequentialCommandGroup {
 
         public CenterStartCommand1(AutoFactory af, CommandFactory cf, SwerveSubsystem swerve,
                         ElevatorSubsystem elevator,
-                        IntakeSubsystem intake, HoldNoteSubsystem holdNote, TopShooterRollerSubsystem topShooter,
-                        BottomShooterRollerSubsystem bottomShooter, ShooterAngleSubsystem shooterAngle) {
+                        IntakeSubsystem intake, HoldNoteSubsystem holdNote, RightShooterRollerSubsystem rightshooter,
+                        LeftShooterRollerSubsystem leftshooter, ShooterAngleSubsystem shooterAngle) {
 
                 addCommands(
 
@@ -77,8 +76,8 @@ public class CenterStartCommand1 extends SequentialCommandGroup {
 
                                                 cf.shootNote(),
 
-                                                topShooter.stopShootersCommand(),
-                                                bottomShooter.stopShootersCommand()
+                                                rightshooter.stopShooterCommand(),
+                                                leftshooter.stopShooterCommand()
 
                                 ));
 

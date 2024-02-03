@@ -37,6 +37,7 @@ public class LoadAndRunPPath extends SequentialCommandGroup {
             m_swerve.setPose(path.getPreviewStartingHolonomicPose()),
             new DoNothing(),
             () -> m_setStartPose),
+        // m_swerve.followPathCommand(m_pathname));
         AutoBuilder.followPath(path));
   }
 }

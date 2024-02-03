@@ -8,19 +8,12 @@
     }
   },
   {
-    "name": "/Preferences/IntakeRPM",
+    "name": "/Preferences/DriveFF",
     "type": "double",
-    "value": 470.0,
+    "value": 0.6,
     "properties": {
-      "persistent": true
-    }
-  },
-  {
-    "name": "/Preferences/ShooterRPM",
-    "type": "double",
-    "value": 470.0,
-    "properties": {
-      "persistent": true
+      "persistent": true,
+      "retained": true
     }
   }
 ]

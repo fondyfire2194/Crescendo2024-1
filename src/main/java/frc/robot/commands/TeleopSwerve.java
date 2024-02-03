@@ -54,7 +54,7 @@ public class TeleopSwerve extends Command {
 
         // new Translation2d(translationVal,
         // strafeVal).times(Constants.SwerveConstants.maxSpeed),
-        rotationVal *= Constants.SwerveConstants.maxAngularVelocity,
+        rotationVal *= Constants.SwerveConstants.maxAngularVelocity / 6,
         fieldCentric.getAsBoolean(),
         true);
 

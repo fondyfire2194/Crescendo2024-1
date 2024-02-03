@@ -22,36 +22,36 @@ import frc.lib.util.CANSparkMaxUtil.Usage;
 import frc.robot.Constants;
 import frc.robot.Constants.ShooterConstants;
 
-public class BottomShooterRollerSubsystem extends SubsystemBase {
+public class LeftShooterRollerSubsystem extends SubsystemBase {
 
-  CANSparkMax bottomRoller;
+  CANSparkMax leftRoller;
 
-  SparkPIDController bottomController;
+  SparkPIDController leftController;
 
-  RelativeEncoder bottomEncoder;
+  RelativeEncoder leftEncoder;
 
-  double bottomRollerCommandRPM = 500;
+  double leftRollerCommandRPM = 500;
   double commandRPM = 500;
 
   /** Creates a new Shooter. */
-  public BottomShooterRollerSubsystem() {
-    bottomRoller = new CANSparkMax(Constants.CANIDConstants.bottomShooterID, MotorType.kBrushless);
+  public LeftShooterRollerSubsystem() {
+    leftRoller = new CANSparkMax(Constants.CANIDConstants.leftShooterID, MotorType.kBrushless);
 
-    bottomController = bottomRoller.getPIDController();
+    leftController = leftRoller.getPIDController();
 
-    bottomEncoder = bottomRoller.getEncoder();
-    configMotor(bottomRoller, bottomEncoder, bottomController, true);
+    leftEncoder = leftRoller.getEncoder();
+    configMotor(leftRoller, leftEncoder, leftController, true);
 
     Shuffleboard.getTab("ShooterSubsystem").add(this)
         .withSize(3, 1)
         .withPosition(3, 0);
 
-    Shuffleboard.getTab("ShooterSubsystem").addNumber("BottomRPM", () -> getRPMBottom())
+    Shuffleboard.getTab("ShooterSubsystem").addNumber("LeftRPM", () -> getRPMLeft())
         .withSize(1, 1)
         .withPosition(3, 1);
 
     if (RobotBase.isSimulation())
-      REVPhysicsSim.getInstance().addSparkMax(bottomRoller, 3, 5600);
+      REVPhysicsSim.getInstance().addSparkMax(leftRoller, 3, 5600);
   }
 
   private void configMotor(CANSparkMax motor, RelativeEncoder encoder, SparkPIDController controller, boolean reverse) {
@@ -77,30 +77,29 @@ public class BottomShooterRollerSubsystem extends SubsystemBase {
 
   public void runRoller() {
     if (RobotBase.isReal())
-      bottomController.setReference(commandRPM, ControlType.kVelocity);
+      leftController.setReference(commandRPM, ControlType.kVelocity);
     else
-      bottomRoller.setVoltage(commandRPM * 12 / ShooterConstants.maxShooterMotorRPM);
+      leftRoller.setVoltage(commandRPM * 12 / ShooterConstants.maxShooterMotorRPM);
 
   }
 
-  public void stopMotors() {
+  public void stopMotor() {
     if (RobotBase.isReal())
-      bottomController.setReference(0, ControlType.kVelocity);
-    bottomRoller.stopMotor();
+      leftController.setReference(0, ControlType.kVelocity);
+    leftRoller.stopMotor();
   }
 
-  public Command runBottomRollerCommand() {
-
+  public Command runLeftRollerCommand() {
     return this.runOnce(() -> runRoller());
 
   }
 
-  public Command stopShootersCommand() {
-    return this.runOnce(() -> stopMotors());
+  public Command stopShooterCommand() {
+    return this.runOnce(() -> stopMotor());
   }
 
-  public double getRPMBottom() {
-    return bottomEncoder.getVelocity();
+  public double getRPMLeft() {
+    return leftEncoder.getVelocity();
   }
 
   @Override

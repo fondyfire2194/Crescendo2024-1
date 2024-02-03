@@ -17,13 +17,13 @@ import frc.robot.commands.CommandFactory;
 import frc.robot.commands.DoNothing;
 import frc.robot.commands.CenterStart.CenterStartCommand1;
 import frc.robot.commands.CenterStart.CenterStartCommand2;
-import frc.robot.subsystems.BottomShooterRollerSubsystem;
+import frc.robot.subsystems.LeftShooterRollerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.HoldNoteSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.TopShooterRollerSubsystem;
+import frc.robot.subsystems.RightShooterRollerSubsystem;
 
 /** Add your docs here. */
 public class AutoFactory {
@@ -34,9 +34,9 @@ public class AutoFactory {
 
     private final IntakeSubsystem m_intake;
 
-    private final TopShooterRollerSubsystem m_topshooter;
+    private final RightShooterRollerSubsystem m_rightshooter;
 
-    private final BottomShooterRollerSubsystem m_bottomshooter;
+    private final LeftShooterRollerSubsystem m_leftshooter;
 
     private final ShooterAngleSubsystem m_shooterangle;
 
@@ -70,15 +70,15 @@ public class AutoFactory {
     public ArrayList<PathPlannerPath> activePaths = new ArrayList<PathPlannerPath>(5);
 
     public AutoFactory(CommandFactory cf, SwerveSubsystem swerve, ElevatorSubsystem elevator,
-            IntakeSubsystem intake, HoldNoteSubsystem holdNote, TopShooterRollerSubsystem topShooter,
-            BottomShooterRollerSubsystem bottomShooter, ShooterAngleSubsystem shooterAngle) {
+            IntakeSubsystem intake, HoldNoteSubsystem holdNote, RightShooterRollerSubsystem rightshooter,
+            LeftShooterRollerSubsystem leftshooter, ShooterAngleSubsystem shooterAngle) {
         m_cf = cf;
         m_swerve = swerve;
         m_elevator = elevator;
         m_intake = intake;
         m_holdnote = holdNote;
-        m_topshooter = topShooter;
-        m_bottomshooter = bottomShooter;
+        m_rightshooter = rightshooter;
+        m_leftshooter = leftshooter;
         m_shooterangle = shooterAngle;
 
         m_startDelayChooser.setDefaultOption("Zero Seconds", 0.);
@@ -207,8 +207,8 @@ public class AutoFactory {
             case 3:
                 return new DoNothing();
             case 11:
-                return new CenterStartCommand1(this,m_cf, m_swerve, m_elevator, m_intake, m_holdnote, m_topshooter,
-                        m_bottomshooter, m_shooterangle).withName("CC1");
+                return new CenterStartCommand1(this,m_cf, m_swerve, m_elevator, m_intake, m_holdnote, m_rightshooter,
+                        m_leftshooter, m_shooterangle).withName("CC1");
             case 12:
                 return new CenterStartCommand2(this, m_swerve).withName("CC2");
             case 13:

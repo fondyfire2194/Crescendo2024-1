@@ -35,6 +35,10 @@ public class Pref {
     // drive tune
     prefDict.put("DriveKp", .001);
     prefDict.put("DriveFF", .5);
+
+    // angle tune
+
+    prefDict.put("AngleKp", .01);
   }
 
   public static void ensureRioPrefs() {

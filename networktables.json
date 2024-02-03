@@ -10,7 +10,16 @@
   {
     "name": "/Preferences/DriveFF",
     "type": "double",
-    "value": 0.5,
+    "value": 0.6,
+    "properties": {
+      "persistent": true,
+      "retained": true
+    }
+  },
+  {
+    "name": "/Preferences/AngleKp",
+    "type": "double",
+    "value": 0.01,
     "properties": {
       "persistent": true
     }

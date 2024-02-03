@@ -14,13 +14,13 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.LoadAndRunPPath;
 import frc.robot.commands.TeleopSwerve;
-import frc.robot.subsystems.BottomShooterRollerSubsystem;
+import frc.robot.subsystems.LeftShooterRollerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.HoldNoteSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.TopShooterRollerSubsystem;
+import frc.robot.subsystems.RightShooterRollerSubsystem;
 
 public class RobotContainer {
         /* Subsystems */
@@ -28,9 +28,9 @@ public class RobotContainer {
 
         final IntakeSubsystem m_intake = new IntakeSubsystem();
 
-        final TopShooterRollerSubsystem m_topShooter = new TopShooterRollerSubsystem();
+        final RightShooterRollerSubsystem m_rightShooter = new RightShooterRollerSubsystem();
 
-        final BottomShooterRollerSubsystem m_bottomShooter = new BottomShooterRollerSubsystem();
+        final LeftShooterRollerSubsystem m_leftShooter = new LeftShooterRollerSubsystem();
 
         final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
 
@@ -39,7 +39,7 @@ public class RobotContainer {
         final ShooterAngleSubsystem m_shooterAngle = new ShooterAngleSubsystem();
 
         final CommandFactory m_cf = new CommandFactory(m_swerve, m_intake, m_elevator,
-                        m_holdNote, m_shooterAngle, m_topShooter, m_bottomShooter);
+                        m_holdNote, m_shooterAngle, m_rightShooter, m_leftShooter);
 
         // final LimelightSubsystem m_llv1 = new LimelightSubsystem("limelight");
 
@@ -47,8 +47,8 @@ public class RobotContainer {
 
         // final LimelightSubsystem m_llv3 = new LimelightSubsystem("limelight_2");
 
-        public final AutoFactory m_af = new AutoFactory(m_cf, m_swerve, m_elevator, m_intake, m_holdNote, m_topShooter,
-                        m_bottomShooter, m_shooterAngle);
+        public final AutoFactory m_af = new AutoFactory(m_cf, m_swerve, m_elevator, m_intake, m_holdNote, m_rightShooter,
+                        m_leftShooter, m_shooterAngle);
 
         private final CommandXboxController driver = new CommandXboxController(0);
 
@@ -95,7 +95,7 @@ public class RobotContainer {
                                                 m_swerve,
                                                 () -> -driver.getLeftY(),
                                                 () -> -driver.getLeftX(),
-                                                () -> -driver.getRightX(),
+                                                () -> -driver.getRightX()/4,
                                                 fieldCentric));
 
                 m_elevator.setDefaultCommand(m_elevator.positionHold());
@@ -120,26 +120,25 @@ public class RobotContainer {
 
                 driver.y().onTrue(m_swerve.setPoseToX0Y0());
 
-                driver.b().onTrue(m_intake.runIntakeCommand())
-                                .onFalse(m_intake.stopIntakeCommand());
-
                 driver.x().onTrue(new LoadAndRunPPath(m_swerve, "TestPath1", true));
 
-                driver.a().onTrue(new LoadAndRunPPath(m_swerve, "TestPath2", false));
+                driver.a().onTrue(new LoadAndRunPPath(m_swerve, "TestPath2", true));
 
-                driver.back().onTrue(new LoadAndRunPPath(m_swerve, "TestPath3", false));
+                driver.b().onTrue(new LoadAndRunPPath(m_swerve, "TestPath3", true));
+
+                driver.back().onTrue(m_intake.runIntakeCommand())
+                                .onFalse(m_intake.stopIntakeCommand());
 
                // driver.start()
 
                 codriver.leftBumper().onTrue(m_intake.runIntakeCommand());
 
                 codriver.leftTrigger().onTrue(m_intake.stopIntakeCommand());
+                codriver.rightBumper().onTrue(m_rightShooter.runRightRollerCommand())
+                                .onTrue(m_leftShooter.runLeftRollerCommand());
 
-                codriver.rightBumper().onTrue(m_topShooter.runTopRollerCommand())
-                                .onTrue(m_bottomShooter.runBottomRollerCommand());
-
-                codriver.rightTrigger().onTrue(m_topShooter.stopShootersCommand())
-                                .onTrue(m_bottomShooter.stopShootersCommand());
+                codriver.rightTrigger().onTrue(m_rightShooter.stopShooterCommand())
+                                .onTrue(m_leftShooter.stopShooterCommand());
 
                 codriver.y().whileTrue(m_elevator.jogCommand(.2))
                                 .onFalse(Commands.runOnce(() -> m_elevator.stopMotor()));

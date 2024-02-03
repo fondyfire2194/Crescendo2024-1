@@ -37,8 +37,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.Constants.CANIDConstants;
-import frc.robot.commands.LoadAndRunPPath;
-
 
 public class SwerveSubsystem extends SubsystemBase {
   // The gyro sensor
@@ -51,7 +49,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
   private Field2d field;
 
-  private Pose2d simOdometryPose =new Pose2d();
+  private Pose2d simOdometryPose = new Pose2d();
 
   private final TimeOfFlight m_rearLeftSensor = new TimeOfFlight(CANIDConstants.rearLeftSensor);
 
@@ -133,13 +131,24 @@ public class SwerveSubsystem extends SubsystemBase {
     Shuffleboard.getTab("Drivetrain").add(this)
         .withSize(2, 1).withPosition(0, 0);
 
-    Shuffleboard.getTab("Drivetrain").add("SetKp", setDriveKp())
+    Shuffleboard.getTab("Drivetrain").add("SetDriveKp", setDriveKp())
         .withSize(2, 1).withPosition(4, 0);
 
-        Shuffleboard.getTab("Drivetrain").add("SetFF", setDriveFF())
+    Shuffleboard.getTab("Drivetrain").add("SetDriveFF", setDriveFF())
         .withSize(2, 1).withPosition(4, 1);
 
-        
+    Shuffleboard.getTab("Drivetrain").addNumber("DriveKp", () -> getDriveKp())
+        .withSize(2, 1).withPosition(6, 0);
+
+    Shuffleboard.getTab("Drivetrain").addNumber("DriveFF", () -> getDriveFF() * 3.25)
+        .withSize(2, 1).withPosition(6, 1);
+
+        Shuffleboard.getTab("Drivetrain").add("SetAngleKp", setAngleKp())
+        .withSize(2, 1).withPosition(4, 2);
+
+        Shuffleboard.getTab("Drivetrain").addNumber("AngleKp", () -> getAngleKp())
+        .withSize(2, 1).withPosition(6, 2);
+
 
     Shuffleboard.getTab("Drivetrain").add("ResetPose", this.setPoseToX0Y0())
         .withSize(2, 1).withPosition(2, 0);
@@ -188,10 +197,6 @@ public class SwerveSubsystem extends SubsystemBase {
       AutoBuilder.followPath(path).schedule();
     }))
         .withSize(2, 1).withPosition(4, 1);
-
-    Shuffleboard.getTab("Drivetrain").add("LoadPath AutooneP1",
-        new LoadAndRunPPath(this, "CentOneP1", true))
-        .withSize(2, 1).withPosition(0, 2);
 
   }
 
@@ -273,7 +278,20 @@ public class SwerveSubsystem extends SubsystemBase {
     mSwerveMods[3].setDriveKp();
   }
 
+  public void setModuleAngleKp() {
+    mSwerveMods[0].setAngleKp();
+    mSwerveMods[1].setAngleKp();
+    mSwerveMods[2].setAngleKp();
+    mSwerveMods[3].setAngleKp();
+  }
 
+  public double getDriveKp() {
+    return mSwerveMods[0].getDriveKp();
+  }
+
+  public double getDriveFF() {
+    return mSwerveMods[0].getDriveFF();
+  }
 
   public Command setDriveKp() {
     return Commands.runOnce(() -> setModuleDriveKp());
@@ -281,6 +299,14 @@ public class SwerveSubsystem extends SubsystemBase {
 
   public Command setDriveFF() {
     return Commands.runOnce(() -> setModuleDriveFF());
+  }
+
+  public Command setAngleKp() {
+    return Commands.runOnce(() -> setModuleAngleKp());
+  }
+
+  public double getAngleKp() {
+    return mSwerveMods[0].getAngleKp();
   }
 
   public double getPoseHeading() {
@@ -319,7 +345,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
   public void zeroGyro() {
     gyro.reset();
-  
+
   }
 
   public Rotation2d getYaw() {
@@ -367,39 +393,41 @@ public class SwerveSubsystem extends SubsystemBase {
 
   public double getRearRightSensorStdDevMM() {
     return m_rearRightSensor.getRangeSigma();
-  }  
-
-  public Command followPathCommand(String pathName) {
-    PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
-
-    return new FollowPathHolonomic(
-        path,
-        this::getPose, // Robot pose supplier
-        this::getSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-        this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
-        new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-            new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-            new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
-            3., // Max module speed, in m/s
-            0.4, // Drive base radius in meters. Distance from robot center to furthest module.
-            new ReplanningConfig() // Default path replanning config. See the API for the options here
-        ),
-        () -> {
-          // Boolean supplier that controls when the path will be mirrored for the red
-          // alliance
-          // This will flip the path being followed to the red side of the field.
-          // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-
-          var alliance = DriverStation.getAlliance();
-          if (alliance.isPresent()) {
-            return alliance.get() == DriverStation.Alliance.Red;
-          }
-          return false;
-        },
-        this // Reference to this subsystem to set requirements
-    );
-
   }
+
+  // public Command followPathCommand(String pathName) {
+  // PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+
+  // return new FollowPathHolonomic(
+  // path,
+  // this::getPose, // Robot pose supplier
+  // this::getSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+  // this::driveRobotRelative, // Method that will drive the robot given ROBOT
+  // RELATIVE ChassisSpeeds
+  // new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should
+  // likely live in your Constants class
+  // new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+  // new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
+  // 3., // Max module speed, in m/s
+  // 0.446, // Drive base radius in meters. Distance from robot center to furthest
+  // module.
+  // new ReplanningConfig() // Default path replanning config. See the API for the
+  // options here
+  // ),
+  // () -> {
+  // // Boolean supplier that controls when the path will be mirrored for the red
+  // // alliance
+  // // This will flip the path being followed to the red side of the field.
+  // // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+  // var alliance = DriverStation.getAlliance();
+  // if (alliance.isPresent()) {
+  // return alliance.get() == DriverStation.Alliance.Red;
+  // }
+  // return false;
+  // },
+  // this // Reference to this subsystem to set requirements
+  // );
 
   @Override
   public void periodic() {
@@ -407,9 +435,6 @@ public class SwerveSubsystem extends SubsystemBase {
         round2dp(Units.metersToInches(getRearLeftSensorMM() / 1000), 1));
     SmartDashboard.putNumber("RightInches",
         round2dp(Units.metersToInches(getRearRightSensorMM() / 1000), 1));
-
-  
-   
 
     swervePoseEstimator.update(getYaw(), getPositions());
     // swervePoseEstimator.addVisionMeasurement(previousposeleft,
@@ -431,10 +456,10 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   private void resetAll() {
-    gyro.reset();
+    // gyro.reset();
     resetModuleEncoders();
     swervePoseEstimator.resetPosition(getYaw(), getPositions(), new Pose2d());
-    simOdometryPose=new Pose2d();
+    simOdometryPose = new Pose2d();
 
   }
 
