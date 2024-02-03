@@ -32,15 +32,9 @@ public class Pref {
 
   static {
 
-    // intake values
-    prefDict.put("IntakeRPM", 470.);
-
-    // shooter values
-    prefDict.put("ShooterRPM", 470.);
-
     // drive tune
     prefDict.put("DriveKp", .001);
-
+    prefDict.put("DriveFF", .5);
   }
 
   public static void ensureRioPrefs() {

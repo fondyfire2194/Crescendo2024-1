@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.AutoFactory;
-import frc.robot.CommandFactory;
+import frc.robot.commands.CommandFactory;
 import frc.robot.commands.RunPPath;
 import frc.robot.subsystems.BottomShooterRollerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -53,7 +53,7 @@ public class CenterStartCommand1 extends SequentialCommandGroup {
                                                                 af.activePaths.get(0)
                                                                                 .getPreviewStartingHolonomicPose())),
 
-                                                cf.runShooters(),
+                                                cf.runShooters(60,2500,2500),
 
                                                  cf.shootNote(),
 

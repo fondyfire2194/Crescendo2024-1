@@ -17,7 +17,6 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
-  private boolean autonomousEnded;
 
   @Override
   public void robotInit() {
@@ -67,7 +66,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousExit() {
-    autonomousEnded = true;
+   
   }
 
   @Override

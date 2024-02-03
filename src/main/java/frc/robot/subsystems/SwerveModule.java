@@ -8,12 +8,11 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.config.SwerveModuleConstants;
 import frc.lib.math.OnboardModuleState;
@@ -139,6 +138,9 @@ public class SwerveModule extends SubsystemBase {
 
   public void setDriveKp() {
     driveController.setP(Pref.getPref("DriveKp"));
+  }
+  public void setDriveFF() {
+    driveController.setFF(Pref.getPref("DriveFF"));
   }
 
   private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop) {

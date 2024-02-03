@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot;
+package frc.robot.commands;
 
 import com.pathplanner.lib.path.PathPlannerPath;
 
@@ -12,8 +12,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.ShooterAngleConstants;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.commands.DoNothing;
-import frc.robot.commands.RunPPath;
 import frc.robot.subsystems.BottomShooterRollerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.HoldNoteSubsystem;
@@ -73,19 +71,19 @@ public class CommandFactory {
                                 new WaitCommand(1));
         }
 
-        public Command runShooters() {
+        public Command runShooters(double shooterAngle, double topRPM, double bottomRPM) {
 
                 return new ParallelCommandGroup(
 
                                 m_shooterangle.positionCommand(
-                                                ShooterAngleConstants.shooterangleMinDegrees)
+                                                shooterAngle)
                                                 .asProxy(),
                                 m_elevator.positionToIntakeCommand().asProxy(),
-                                // m_topshooter.setShooterSpeed(
-                                //                 ShooterConstants.closeShootSpeed),
+                                m_topshooter.setShooterSpeed(
+                                                topRPM),
 
-                                // m_bottomshooter.setShooterSpeed(
-                                //                 ShooterConstants.closeShootSpeed),
+                                m_bottomshooter.setShooterSpeed(
+                                                bottomRPM),
 
                                 m_bottomshooter.runBottomRollerCommand(),
                                 m_topshooter.runTopRollerCommand())

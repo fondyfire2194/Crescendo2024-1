@@ -38,7 +38,7 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.Constants.CANIDConstants;
 import frc.robot.commands.LoadAndRunPPath;
-import frc.robot.commands.RunPPath;
+
 
 public class SwerveSubsystem extends SubsystemBase {
   // The gyro sensor
@@ -134,10 +134,15 @@ public class SwerveSubsystem extends SubsystemBase {
         .withSize(2, 1).withPosition(0, 0);
 
     Shuffleboard.getTab("Drivetrain").add("SetKp", setDriveKp())
-        .withSize(2, 1).withPosition(2, 0);
+        .withSize(2, 1).withPosition(4, 0);
+
+        Shuffleboard.getTab("Drivetrain").add("SetFF", setDriveFF())
+        .withSize(2, 1).withPosition(4, 1);
+
+        
 
     Shuffleboard.getTab("Drivetrain").add("ResetPose", this.setPoseToX0Y0())
-        .withSize(2, 1).withPosition(4, 0);
+        .withSize(2, 1).withPosition(2, 0);
 
     Shuffleboard.getTab("Drivetrain").add("Pathfind to Pickup Pos",
 
@@ -261,8 +266,21 @@ public class SwerveSubsystem extends SubsystemBase {
     mSwerveMods[3].setDriveKp();
   }
 
+  public void setModuleDriveFF() {
+    mSwerveMods[0].setDriveFF();
+    mSwerveMods[1].setDriveKp();
+    mSwerveMods[2].setDriveKp();
+    mSwerveMods[3].setDriveKp();
+  }
+
+
+
   public Command setDriveKp() {
     return Commands.runOnce(() -> setModuleDriveKp());
+  }
+
+  public Command setDriveFF() {
+    return Commands.runOnce(() -> setModuleDriveFF());
   }
 
   public double getPoseHeading() {
