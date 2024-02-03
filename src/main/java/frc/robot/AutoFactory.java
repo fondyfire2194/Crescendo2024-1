@@ -100,21 +100,21 @@ public class AutoFactory {
         m_sourceStartChooser.addOption("Not Assigned", 21);
         m_sourceStartChooser.addOption("Not Assigned", 22);
 
-        Shuffleboard.getTab("Centnomous").add("DelayChooser", m_startDelayChooser)
+        Shuffleboard.getTab("Autonomous").add("DelayChooser", m_startDelayChooser)
                 .withSize(2, 1).withPosition(0, 0);
-        Shuffleboard.getTab("Centnomous").add("AmpStart", m_ampStartChooser)
+        Shuffleboard.getTab("Autonomous").add("AmpStart", m_ampStartChooser)
                 .withSize(2, 1).withPosition(2, 0);
-        Shuffleboard.getTab("Centnomous").add("CenterStart", m_centerStartChooser)
+        Shuffleboard.getTab("Autonomous").add("CenterStart", m_centerStartChooser)
                 .withSize(2, 1).withPosition(4, 0);
-        Shuffleboard.getTab("Centnomous").add("SourceStart", m_sourceStartChooser)
+        Shuffleboard.getTab("Autonomous").add("SourceStart", m_sourceStartChooser)
                 .withSize(2, 1).withPosition(6, 0);
-        Shuffleboard.getTab("Centnomous").addNumber("Choice Must Not Be Zero", () -> validStartChoice)
+        Shuffleboard.getTab("Autonomous").addNumber("Choice Must Not Be Zero", () -> validStartChoice)
                 .withSize(2, 1).withPosition(2, 1);
-        Shuffleboard.getTab("Centnomous").addBoolean("Valid Choice", () -> validStartChoice != 0)
+        Shuffleboard.getTab("Autonomous").addBoolean("Valid Choice", () -> validStartChoice != 0)
                 .withSize(2, 1).withPosition(4, 1)
                 .withProperties(Map.of("colorWhenTrue", "green", "colorWhenFalse", "red"));
 
-        Shuffleboard.getTab("Centnomous").addNumber("Number Files", () -> usedPathFiles.size())
+        Shuffleboard.getTab("Autonomous").addNumber("Number Files", () -> usedPathFiles.size())
                 .withSize(2, 1).withPosition(6, 1);
 
     }

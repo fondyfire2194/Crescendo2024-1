@@ -123,11 +123,11 @@ public class RobotContainer {
                 driver.b().onTrue(m_intake.runIntakeCommand())
                                 .onFalse(m_intake.stopIntakeCommand());
 
-                driver.x().onTrue(new LoadAndRunPPath(m_swerve, "CentOneP1", true));
+                driver.x().onTrue(new LoadAndRunPPath(m_swerve, "TestPath1", true));
 
-                driver.a().onTrue(new LoadAndRunPPath(m_swerve, "CentOneP2", false));
+                driver.a().onTrue(new LoadAndRunPPath(m_swerve, "TestPath2", false));
 
-                driver.back().onTrue(new LoadAndRunPPath(m_swerve, "CentOneP3", false));
+                driver.back().onTrue(new LoadAndRunPPath(m_swerve, "TestPath3", false));
 
                // driver.start()
 

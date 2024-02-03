@@ -6,12 +6,13 @@ package frc.robot.commands;
 
 import com.pathplanner.lib.path.PathPlannerPath;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.Constants.ShooterAngleConstants;
-import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.BottomShooterRollerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.HoldNoteSubsystem;
@@ -47,6 +48,22 @@ public class CommandFactory {
                 m_topshooter = topShooter;
                 m_bottomshooter = bottomShooter;
                 m_shooterangle = shooterAngle;
+        }
+
+        public Command setStartPosebyAlliance(PathPlannerPath path, Pose2d redstart) {
+
+                Pose2d temp = new Pose2d();
+
+                var alliance = DriverStation.getAlliance();
+
+                if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red)
+
+                return Commands.runOnce(() -> m_swerve.resetPoseEstimator(redstart));     
+
+                else
+                         
+                return Commands.runOnce(() -> m_swerve.resetPoseEstimator(path.getPreviewStartingHolonomicPose()));
+
         }
 
         public Command moveAndPickup(PathPlannerPath path) {
