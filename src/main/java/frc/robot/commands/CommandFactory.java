@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.LeftShooterRollerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.FeedShooterSubsystem;
 import frc.robot.subsystems.HoldNoteSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterAngleSubsystem;
@@ -33,6 +34,8 @@ public class CommandFactory {
 
         private final LeftShooterRollerSubsystem m_leftshooter;
 
+        private final FeedShooterSubsystem m_shooterFeed;
+
         private final ShooterAngleSubsystem m_shooterangle;
 
         private final HoldNoteSubsystem m_holdnote;
@@ -40,7 +43,7 @@ public class CommandFactory {
         public CommandFactory(SwerveSubsystem swerve, IntakeSubsystem intake, ElevatorSubsystem elevator,
                         HoldNoteSubsystem holdNote,
                         ShooterAngleSubsystem shooterAngle, RightShooterRollerSubsystem rightShooter,
-                        LeftShooterRollerSubsystem leftShooter) {
+                        LeftShooterRollerSubsystem leftShooter, FeedShooterSubsystem shooterFeed) {
                 m_swerve = swerve;
                 m_elevator = elevator;
                 m_intake = intake;
@@ -48,6 +51,7 @@ public class CommandFactory {
                 m_rightshooter = rightShooter;
                 m_leftshooter = leftShooter;
                 m_shooterangle = shooterAngle;
+                m_shooterFeed = shooterFeed;
         }
 
         public Command setStartPosebyAlliance(PathPlannerPath path, Pose2d redstart) {
@@ -58,11 +62,12 @@ public class CommandFactory {
 
                 if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red)
 
-                return Commands.runOnce(() -> m_swerve.resetPoseEstimator(redstart));     
+                        return Commands.runOnce(() -> m_swerve.resetPoseEstimator(redstart));
 
                 else
-                         
-                return Commands.runOnce(() -> m_swerve.resetPoseEstimator(path.getPreviewStartingHolonomicPose()));
+
+                        return Commands.runOnce(
+                                        () -> m_swerve.resetPoseEstimator(path.getPreviewStartingHolonomicPose()));
 
         }
 
@@ -73,9 +78,7 @@ public class CommandFactory {
                                 new RunPPath(m_swerve, path, true)
                                                 .asProxy(),
 
-                                m_holdnote.feedShooterCommand()
-                                                .andThen(m_holdnote
-                                                                .stopHoldNoteCommand()),
+                                m_holdnote.intakeToNoteSeenCommand(),
 
                                 m_intake.runIntakeCommand().withTimeout(.5)
                                                 .andThen(m_intake.stopIntakeCommand()));
@@ -83,27 +86,24 @@ public class CommandFactory {
 
         public Command shootNote() {
                 return new SequentialCommandGroup(
-                                m_holdnote.feedShooterCommand().withTimeout(.25)
+                                m_holdnote.feedShooterCommand().withTimeout(.1)
                                                 .andThen(m_holdnote.stopHoldNoteCommand()),
                                 new WaitCommand(1));
         }
 
-        public Command runShooters(double shooterAngle, double rightRPM, double leftRPM) {
+        public Command runShooters(double shooterAngle, double rightRPM, double leftRPM, double feedRPM) {
 
                 return new ParallelCommandGroup(
 
-                                m_shooterangle.positionCommand(
-                                                shooterAngle)
-                                                .asProxy(),
+                                m_shooterangle.positionCommand(shooterAngle).asProxy(),
                                 m_elevator.positionToIntakeCommand().asProxy(),
-                                m_rightshooter.setShooterSpeed(
-                                                rightRPM),
-
-                                m_leftshooter.setShooterSpeed(
-                                                leftRPM),
+                                m_rightshooter.setShooterSpeed(rightRPM),
+                                m_leftshooter.setShooterSpeed(leftRPM),
+                                m_shooterFeed.setFeedShooterSpeed(feedRPM),
 
                                 m_leftshooter.runLeftRollerCommand(),
-                                m_rightshooter.runRightRollerCommand())
+                                m_rightshooter.runRightRollerCommand(),
+                                m_shooterFeed.runFeedBeltsCommand())
 
                                 .withName("RunShooters");
         }

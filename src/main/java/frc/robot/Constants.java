@@ -32,9 +32,13 @@ public final class Constants {
                 public static final int rearLeftSensor = 20;
                 public static final int rearRightSensor = 21;
 
+                public static final int noteSensor = 23;
+
                 public static int holdNoteID = 22;
 
-                public static int shooterangleID = 23;
+                public static int shooterangleID = 24;
+
+                public static int feedShooterID = 25;
 
         }
 
@@ -127,7 +131,7 @@ public final class Constants {
                         public static final int driveMotorID = 4;
                         public static final int angleMotorID = 5;
                         public static final int cancoderID = 6;
-                        public static final Rotation2d angleOffset = Rotation2d.fromDegrees(0);//253
+                        public static final Rotation2d angleOffset = Rotation2d.fromDegrees(0);// 253
                         public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID,
                                         angleMotorID,
                                         cancoderID, angleOffset, false);
@@ -138,7 +142,7 @@ public final class Constants {
                         public static final int driveMotorID = 7;
                         public static final int angleMotorID = 8;
                         public static final int cancoderID = 9;
-                        public static final Rotation2d angleOffset = Rotation2d.fromDegrees(0);//108
+                        public static final Rotation2d angleOffset = Rotation2d.fromDegrees(0);// 108
                         public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID,
                                         angleMotorID,
                                         cancoderID, angleOffset, true);
@@ -149,7 +153,7 @@ public final class Constants {
                         public static final int driveMotorID = 10;
                         public static final int angleMotorID = 11;
                         public static final int cancoderID = 12;
-                        public static final Rotation2d angleOffset = Rotation2d.fromDegrees(0);//207
+                        public static final Rotation2d angleOffset = Rotation2d.fromDegrees(0);// 207
                         public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID,
                                         angleMotorID,
                                         cancoderID, angleOffset, false);
@@ -160,7 +164,7 @@ public final class Constants {
                         public static final int driveMotorID = 13;
                         public static final int angleMotorID = 14;
                         public static final int cancoderID = 15;
-                        public static final Rotation2d angleOffset = Rotation2d.fromDegrees(0);//239
+                        public static final Rotation2d angleOffset = Rotation2d.fromDegrees(0);// 239
                         public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID,
                                         angleMotorID,
                                         cancoderID, angleOffset, true);
@@ -249,6 +253,26 @@ public final class Constants {
 
         }
 
+        public static final class ShooterFeederConstants {
+
+                public static final double maxShooterFeederMotorRPM = 5700;
+                public static final double shooterfeederConversionVelocityFactor = 1; // TODO change value
+                public static final double shooterfeederConversionPositionFactor = 1; // TODO change value
+                public static final double shooterfeederKP = .001;
+                public static final double shooterfeederKI = 0;
+                public static final double shooterfeederKD = 0;
+                public static final double shooterfeederKFF = 1 / maxShooterFeederMotorRPM;
+                public static final double voltageComp = 12;
+                public static final IdleMode shooterfeederIdleMode = IdleMode.kCoast;
+                public static final int shooterfeederContinuousCurrentLimit = 30;
+
+                public static final double closeShootSpeed = 1000;
+                public static final double dist1ShootSpeed = 1000;
+                public static final double dist2ShootSpeed = 1000;
+                public static final double dist3ShootSpeed = 1000;
+
+        }
+
         public static final class IntakeConstants {
 
                 public static final double maxIntakeMotorRPM = 5700;
@@ -276,6 +300,8 @@ public final class Constants {
                 public static final double voltageComp = 12;
                 public static final IdleMode holdnoteIdleMode = IdleMode.kCoast;
                 public static final int holdnoteContinuousCurrentLimit = 30;
+                public static final double noteSeenInches = 3;
+                public static double intakeSpeed = 550;
 
         }
 

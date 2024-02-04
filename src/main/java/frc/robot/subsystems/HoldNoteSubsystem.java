@@ -4,12 +4,16 @@
 
 package frc.robot.subsystems;
 
+import com.playingwithfusion.TimeOfFlight;
+import com.playingwithfusion.TimeOfFlight.RangingMode;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVPhysicsSim;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -20,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.CANSparkMaxUtil;
 import frc.lib.util.CANSparkMaxUtil.Usage;
 import frc.robot.Constants;
+import frc.robot.Constants.CANIDConstants;
 import frc.robot.Pref;
 
 public class HoldNoteSubsystem extends SubsystemBase {
@@ -27,6 +32,7 @@ public class HoldNoteSubsystem extends SubsystemBase {
   CANSparkMax holdnoteMotor;
   SparkPIDController holdnoteController;
   RelativeEncoder holdnoteEncoder;
+  private final TimeOfFlight m_noteSensor;
 
   /** Creates a new HoldNote. */
   public HoldNoteSubsystem() {
@@ -36,7 +42,8 @@ public class HoldNoteSubsystem extends SubsystemBase {
     configMotor(holdnoteMotor, holdnoteEncoder, holdnoteController, true);
     if (RobotBase.isSimulation())
       REVPhysicsSim.getInstance().addSparkMax(holdnoteMotor, 3, 5600);
-
+    m_noteSensor = new TimeOfFlight(CANIDConstants.noteSensor);
+    m_noteSensor.setRangingMode(RangingMode.Short, 40);
   }
 
   private void configMotor(CANSparkMax motor, RelativeEncoder encoder, SparkPIDController controller,
@@ -86,19 +93,32 @@ public class HoldNoteSubsystem extends SubsystemBase {
 
   public void runHoldNote() {
     if (RobotBase.isReal())
-      this.runOnce(() -> holdnoteController.setReference(2500, ControlType.kVelocity));
+      this.runOnce(() -> holdnoteController
+          .setReference(Constants.HoldNoteConstants.intakeSpeed, ControlType.kVelocity));
     else
       Commands.runOnce(() -> holdnoteMotor.setVoltage(.5));
   }
 
+  public Command intakeToNoteSeenCommand() {
+    return Commands.run(() -> runHoldNote()).until(() -> getNoteSeen());
+  }
+
   public Command feedShooterCommand() {
 
-    return this.runOnce(() -> runHoldNote());
+    return this.run(() -> runHoldNote());
 
   }
 
   public Command stopHoldNoteCommand() {
     return this.runOnce(() -> stopMotor());
+  }
+
+  public double getNoteSensorInches() {
+    return Units.metersToInches(m_noteSensor.getRange() / 1000);
+  }
+
+  public boolean getNoteSeen() {
+    return getNoteSensorInches() < Constants.HoldNoteConstants.noteSeenInches;
   }
 
   @Override

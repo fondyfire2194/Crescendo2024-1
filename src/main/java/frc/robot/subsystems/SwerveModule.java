@@ -204,7 +204,6 @@ public class SwerveModule extends SubsystemBase {
       return driveEncoder.getVelocity();
     else {
       return currentDesiredState.speedMetersPerSecond;
-
     }
   }
 
@@ -222,6 +221,9 @@ public class SwerveModule extends SubsystemBase {
     //  SmartDashboard.putNumber(String.valueOf(moduleNumber) + " DRIVEVEL", getDriveVelocity());
     //  SmartDashboard.putNumber(String.valueOf(moduleNumber) + " SETVEL", currentDesiredState.speedMetersPerSecond);
     //  SmartDashboard.putNumber(String.valueOf(moduleNumber) + " ABS POS", m_turnCancoder.getAbsolutePosition().getValueAsDouble());
+  
+    SmartDashboard.putNumber(String.valueOf(moduleNumber) + " setptangdeg", angleDegrees);
+    SmartDashboard.putNumber(String.valueOf(moduleNumber) + " actualangdeg", getAngle().getDegrees());
   }
 
   public boolean isStopped() {
@@ -230,8 +232,6 @@ public class SwerveModule extends SubsystemBase {
 
   @Override
   public void simulationPeriodic() {
-
-    // SmartDashboard.putNumber(String.valueOf(moduleNumber) + " angdeg", angleDegrees);
     // SmartDashboard.putNumber(String.valueOf(moduleNumber) + " simAng", simAngle);
 
     double diff = angleDegrees - simAngle;

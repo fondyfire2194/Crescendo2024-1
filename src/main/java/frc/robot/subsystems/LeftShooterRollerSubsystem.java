@@ -12,7 +12,6 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -43,12 +42,12 @@ public class LeftShooterRollerSubsystem extends SubsystemBase {
     configMotor(leftRoller, leftEncoder, leftController, true);
 
     Shuffleboard.getTab("ShooterSubsystem").add(this)
-        .withSize(3, 1)
-        .withPosition(3, 0);
+        .withSize(2, 1)
+        .withPosition(0, 0);
 
     Shuffleboard.getTab("ShooterSubsystem").addNumber("LeftRPM", () -> getRPMLeft())
         .withSize(1, 1)
-        .withPosition(3, 1);
+        .withPosition(0, 1);
 
     if (RobotBase.isSimulation())
       REVPhysicsSim.getInstance().addSparkMax(leftRoller, 3, 5600);

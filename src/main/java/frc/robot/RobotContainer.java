@@ -16,6 +16,7 @@ import frc.robot.commands.LoadAndRunPPath;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.LeftShooterRollerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.FeedShooterSubsystem;
 import frc.robot.subsystems.HoldNoteSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterAngleSubsystem;
@@ -32,6 +33,8 @@ public class RobotContainer {
 
         final LeftShooterRollerSubsystem m_leftShooter = new LeftShooterRollerSubsystem();
 
+        final FeedShooterSubsystem m_shooterFeeder = new FeedShooterSubsystem();
+
         final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
 
         final HoldNoteSubsystem m_holdNote = new HoldNoteSubsystem();
@@ -39,7 +42,7 @@ public class RobotContainer {
         final ShooterAngleSubsystem m_shooterAngle = new ShooterAngleSubsystem();
 
         final CommandFactory m_cf = new CommandFactory(m_swerve, m_intake, m_elevator,
-                        m_holdNote, m_shooterAngle, m_rightShooter, m_leftShooter);
+                        m_holdNote, m_shooterAngle, m_rightShooter, m_leftShooter,m_shooterFeeder);
 
         // final LimelightSubsystem m_llv1 = new LimelightSubsystem("limelight");
 
@@ -47,7 +50,8 @@ public class RobotContainer {
 
         // final LimelightSubsystem m_llv3 = new LimelightSubsystem("limelight_2");
 
-        public final AutoFactory m_af = new AutoFactory(m_cf, m_swerve, m_elevator, m_intake, m_holdNote, m_rightShooter,
+        public final AutoFactory m_af = new AutoFactory(m_cf, m_swerve, m_elevator, m_intake, m_holdNote,
+                        m_rightShooter,
                         m_leftShooter, m_shooterAngle);
 
         private final CommandXboxController driver = new CommandXboxController(0);
@@ -95,7 +99,7 @@ public class RobotContainer {
                                                 m_swerve,
                                                 () -> -driver.getLeftY(),
                                                 () -> -driver.getLeftX(),
-                                                () -> -driver.getRightX()/4,
+                                                () -> -driver.getRightX() / 4,
                                                 fieldCentric));
 
                 m_elevator.setDefaultCommand(m_elevator.positionHold());
@@ -116,7 +120,7 @@ public class RobotContainer {
 
         private void configureBindings() {
 
-              //  SmartDashboard.putData("CommSchd", CommandScheduler.getInstance());
+                // SmartDashboard.putData("CommSchd", CommandScheduler.getInstance());
 
                 driver.y().onTrue(m_swerve.setPoseToX0Y0());
 
@@ -129,7 +133,7 @@ public class RobotContainer {
                 driver.back().onTrue(m_intake.runIntakeCommand())
                                 .onFalse(m_intake.stopIntakeCommand());
 
-               // driver.start()
+                // driver.start()
 
                 codriver.leftBumper().onTrue(m_intake.runIntakeCommand());
 

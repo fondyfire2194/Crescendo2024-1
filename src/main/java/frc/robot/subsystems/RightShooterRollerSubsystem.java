@@ -44,12 +44,12 @@ public class RightShooterRollerSubsystem extends SubsystemBase {
       REVPhysicsSim.getInstance().addSparkMax(rightRoller, 3, 5600);
 
     Shuffleboard.getTab("ShooterSubsystem").add(this)
-        .withSize(3, 1)
-        .withPosition(0, 0);
+        .withSize(2, 1)
+        .withPosition(2, 0);
 
     Shuffleboard.getTab("ShooterSubsystem").addNumber("RightRPM", () -> getRPMRight())
         .withSize(1, 1)
-        .withPosition(0, 1);
+        .withPosition(2, 1);
   }
 
   private void configMotor(CANSparkMax motor, RelativeEncoder encoder, SparkPIDController controller, boolean reverse) {

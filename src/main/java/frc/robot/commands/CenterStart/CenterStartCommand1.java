@@ -54,7 +54,7 @@ public class CenterStartCommand1 extends SequentialCommandGroup {
                                                 cf.setStartPosebyAlliance(af.activePaths.get(0),
                                                                 redStart),
 
-                                                cf.runShooters(60, 2500, 2500),
+                                                cf.runShooters(60, 2500, 2500,500),
 
                                                 cf.shootNote(),
 

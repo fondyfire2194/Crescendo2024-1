@@ -35,6 +35,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Pref;
 import frc.robot.Robot;
 import frc.robot.Constants.CANIDConstants;
 
@@ -132,22 +133,32 @@ public class SwerveSubsystem extends SubsystemBase {
         .withSize(2, 1).withPosition(0, 0);
 
     Shuffleboard.getTab("Drivetrain").add("SetDriveKp", setDriveKp())
-        .withSize(2, 1).withPosition(4, 0);
-
-    Shuffleboard.getTab("Drivetrain").add("SetDriveFF", setDriveFF())
-        .withSize(2, 1).withPosition(4, 1);
+        .withSize(1, 1).withPosition(5, 0);
 
     Shuffleboard.getTab("Drivetrain").addNumber("DriveKp", () -> getDriveKp())
-        .withSize(2, 1).withPosition(6, 0);
+        .withSize(1, 1).withPosition(5, 1);
+
+    Shuffleboard.getTab("Drivetrain").addNumber("DriveKpSet", () -> Pref.getPref("DriveKp"))
+        .withSize(1, 1).withPosition(5, 2);
+
+    Shuffleboard.getTab("Drivetrain").add("SetDriveFF", setDriveFF())
+        .withSize(1, 1).withPosition(6, 0);
 
     Shuffleboard.getTab("Drivetrain").addNumber("DriveFF", () -> getDriveFF() * 3.25)
-        .withSize(2, 1).withPosition(6, 1);
+        .withSize(1, 1).withPosition(6, 1);
 
-        Shuffleboard.getTab("Drivetrain").add("SetAngleKp", setAngleKp())
-        .withSize(2, 1).withPosition(4, 2);
+        Shuffleboard.getTab("Drivetrain").addNumber("DriveFFSet", () -> Pref.getPref("DriveFF"))
+        .withSize(1, 1).withPosition(6, 2);
 
-        Shuffleboard.getTab("Drivetrain").addNumber("AngleKp", () -> getAngleKp())
-        .withSize(2, 1).withPosition(6, 2);
+
+    Shuffleboard.getTab("Drivetrain").add("SetAngleKp", setAngleKp())
+        .withSize(1, 1).withPosition(7, 0);
+
+    Shuffleboard.getTab("Drivetrain").addNumber("AngleKp", () -> getAngleKp())
+        .withSize(1, 1).withPosition(7, 1);
+
+        Shuffleboard.getTab("Drivetrain").addNumber("AngleKpSet", () -> Pref.getPref("AngleKp"))
+        .withSize(1, 1).withPosition(7, 2);
 
 
     Shuffleboard.getTab("Drivetrain").add("ResetPose", this.setPoseToX0Y0())
@@ -196,7 +207,11 @@ public class SwerveSubsystem extends SubsystemBase {
 
       AutoBuilder.followPath(path).schedule();
     }))
-        .withSize(2, 1).withPosition(4, 1);
+        .withSize(1, 1).withPosition(3, 0);
+
+        setModuleDriveFF();
+        setModuleDriveKp();
+        setModuleAngleKp();
 
   }
 
@@ -395,47 +410,13 @@ public class SwerveSubsystem extends SubsystemBase {
     return m_rearRightSensor.getRangeSigma();
   }
 
-  // public Command followPathCommand(String pathName) {
-  // PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
-
-  // return new FollowPathHolonomic(
-  // path,
-  // this::getPose, // Robot pose supplier
-  // this::getSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-  // this::driveRobotRelative, // Method that will drive the robot given ROBOT
-  // RELATIVE ChassisSpeeds
-  // new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should
-  // likely live in your Constants class
-  // new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-  // new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
-  // 3., // Max module speed, in m/s
-  // 0.446, // Drive base radius in meters. Distance from robot center to furthest
-  // module.
-  // new ReplanningConfig() // Default path replanning config. See the API for the
-  // options here
-  // ),
-  // () -> {
-  // // Boolean supplier that controls when the path will be mirrored for the red
-  // // alliance
-  // // This will flip the path being followed to the red side of the field.
-  // // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-
-  // var alliance = DriverStation.getAlliance();
-  // if (alliance.isPresent()) {
-  // return alliance.get() == DriverStation.Alliance.Red;
-  // }
-  // return false;
-  // },
-  // this // Reference to this subsystem to set requirements
-  // );
-
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("LeftInches",
-        round2dp(Units.metersToInches(getRearLeftSensorMM() / 1000), 1));
-    SmartDashboard.putNumber("RightInches",
-        round2dp(Units.metersToInches(getRearRightSensorMM() / 1000), 1));
-
+    // SmartDashboard.putNumber("LeftInches",
+    // round2dp(Units.metersToInches(getRearLeftSensorMM() / 1000), 1));
+    // SmartDashboard.putNumber("RightInches",
+    // round2dp(Units.metersToInches(getRearRightSensorMM() / 1000), 1));
+    // SmartDashboard.putBoolean("Note Seen", getRearRightSensorMM() < 50);
     swervePoseEstimator.update(getYaw(), getPositions());
     // swervePoseEstimator.addVisionMeasurement(previousposeleft,
     // timestampsecondsl);
