@@ -53,8 +53,7 @@ public class FeedShooterSubsystem extends SubsystemBase {
         .withSize(1, 1).withPosition(5, 1);
 
     Shuffleboard.getTab("ShooterSubsystem").add("StartFeeder",
-        this.setFeedShooterSpeed(Pref.getPref("FeedRPM"))
-            .andThen(this.runFeedBeltsCommand()))
+        this.runFeedBeltsCommand(Pref.getPref("FeedRPM")))
         .withPosition(4, 1).withSize(1, 1);
 
     Shuffleboard.getTab("ShooterSubsystem").add("SetFeederKp", setFeederKpCommand())
@@ -91,10 +90,6 @@ public class FeedShooterSubsystem extends SubsystemBase {
     encoder.setPosition(0.0);
   }
 
-  public Command setFeedShooterSpeed(double rpm) {
-    return Commands.runOnce(() -> commandRPM = rpm);
-  }
-
   public void runBelts() {
     if (RobotBase.isReal())
       feedController.setReference(commandRPM, ControlType.kVelocity);
@@ -113,7 +108,8 @@ public class FeedShooterSubsystem extends SubsystemBase {
     return this.runOnce(() -> stopMotor());
   }
 
-  public Command runFeedBeltsCommand() {
+  public Command runFeedBeltsCommand(double rpm) {
+    commandRPM = rpm;
     if (RobotBase.isReal())
       return this.runOnce(() -> runBelts());
     else

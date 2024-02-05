@@ -52,8 +52,7 @@ public class RightShooterRollerSubsystem extends SubsystemBase {
         .withPosition(3, 1).withSize(1, 1);
 
     Shuffleboard.getTab("ShooterSubsystem").add("StartRight",
-        this.setShooterSpeed(Pref.getPref("RightRPM"))
-            .andThen(this.runRightRollerCommand()))
+        this.runRightRollerCommand(Pref.getPref("LeftRPM")))
         .withPosition(2, 1).withSize(1, 1);
 
     Shuffleboard.getTab("ShooterSubsystem").add("SetRightKp", setRightKpCommand())
@@ -89,11 +88,8 @@ public class RightShooterRollerSubsystem extends SubsystemBase {
     encoder.setPosition(0.0);
   }
 
-  public Command setShooterSpeed(double rpm) {
-    return Commands.runOnce(() -> commandRPM = rpm);
-  }
-
-  public void runRoller() {
+  public void runRoller(double rpm) {
+    commandRPM = rpm;
     if (RobotBase.isReal())
       rightController.setReference(commandRPM, ControlType.kVelocity);
     else
@@ -111,9 +107,10 @@ public class RightShooterRollerSubsystem extends SubsystemBase {
     return this.runOnce(() -> stopMotor());
   }
 
-  public Command runRightRollerCommand() {
+  public Command runRightRollerCommand(double rpm) {
+    commandRPM = rpm;
     if (RobotBase.isReal())
-      return this.runOnce(() -> runRoller());
+      return this.runOnce(() -> runRoller(commandRPM));
     else
       return Commands.runOnce(() -> rightRoller.setVoltage(.5));
   }

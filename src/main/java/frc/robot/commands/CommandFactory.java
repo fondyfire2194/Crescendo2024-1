@@ -16,12 +16,15 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.LeftShooterRollerSubsystem;
+import frc.robot.commands.Pathplanner.RunPPath;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.FeedShooterSubsystem;
 import frc.robot.subsystems.HoldNoteSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.utils.InterpolatingTable;
+import frc.robot.utils.ShotParameter;
 import frc.robot.subsystems.RightShooterRollerSubsystem;
 
 /** Add your docs here. */
@@ -75,8 +78,8 @@ public class CommandFactory {
                 {
                         return Commands.runOnce(() -> m_swerve.resetPoseEstimator(flipPose(temp)));
                 } else
-                        return new DoNothing(); //Commands.runOnce(
-                                      //  () -> m_swerve.resetPoseEstimator(temp));
+                        return new DoNothing(); // Commands.runOnce(
+                // () -> m_swerve.resetPoseEstimator(temp));
         }
 
         public Command moveAndPickup(PathPlannerPath path) {
@@ -99,21 +102,27 @@ public class CommandFactory {
                                 new WaitCommand(1));
         }
 
-        public Command runShooters(double shooterAngle, double rightRPM, double leftRPM, double feedRPM) {
+        public Command runShooters(double distance, double feedRPM) {
 
-                return new ParallelCommandGroup(
+                return new SequentialCommandGroup(
 
-                                m_shooterangle.positionCommand(shooterAngle).asProxy(),
-                                m_elevator.positionToIntakeCommand().asProxy(),
-                                m_rightshooter.setShooterSpeed(rightRPM),
-                                m_leftshooter.setShooterSpeed(leftRPM),
-                                m_shooterFeed.setFeedShooterSpeed(feedRPM),
+                                distanceShot(distance),
 
-                                m_leftshooter.runLeftRollerCommand(),
-                                m_rightshooter.runRightRollerCommand(),
-                                m_shooterFeed.runFeedBeltsCommand())
+                                new ParallelCommandGroup(
+
+                                                m_elevator.positionToIntakeCommand().asProxy(),
+
+                                                m_shooterFeed.runFeedBeltsCommand(feedRPM)))
 
                                 .withName("RunShooters");
         }
 
+        private Command distanceShot(double distance) {
+                ShotParameter shot = InterpolatingTable.get(distance);
+                return m_leftshooter.runLeftRollerCommand(shot.rpm)
+                                .alongWith(m_rightshooter.runRightRollerCommand(shot.rpm),
+                                                m_shooterangle.runOnce(
+                                                                () -> m_shooterangle.positionShooterAngle(shot.angle)));
+
+        }
 }

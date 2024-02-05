@@ -7,8 +7,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.RobotBase;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
 
@@ -115,9 +114,22 @@ public class LimelightSubsystem extends SubsystemBase {
     limelighttypename = getCurrentPipelineTypeName();
   }
 
-  public String getLLName(){
+  public String getLLName() {
     return m_name;
   }
+
+  public boolean hasTarget() {
+   return LimelightHelpers.getTV(m_name);
+  }
+
+public double getTX(){
+  return LimelightHelpers.getTX(m_name);
+}
+
+public double getTY(){
+  return LimelightHelpers.getTY(m_name);
+}
+
 
 
   public double round2dp(double number) {

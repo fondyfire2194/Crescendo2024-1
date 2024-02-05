@@ -71,6 +71,11 @@
       "/SmartDashboard/SourceStartChooser": "String Chooser"
     },
     "windows": {
+      "/Shuffleboard/Autonomous/CenterStart": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Field": {
         "bottom": 1476,
         "height": 8.210550308227539,
@@ -90,6 +95,22 @@
     },
     "Retained Values": {
       "open": false
+    },
+    "transitory": {
+      "Shuffleboard": {
+        "Autonomous": {
+          "CenterStart": {
+            "open": true,
+            "string[]##v_/Shuffleboard/Autonomous/CenterStart/options": {
+              "open": true
+            }
+          },
+          "open": true
+        },
+        "Drivetrain": {
+          "open": true
+        }
+      }
     }
   },
   "NetworkTables Info": {
@@ -103,8 +124,5 @@
       "open": true
     },
     "visible": true
-  },
-  "NetworkTables View": {
-    "visible": false
   }
 }

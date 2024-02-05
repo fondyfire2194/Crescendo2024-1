@@ -12,8 +12,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.CommandFactory;
-import frc.robot.commands.LoadAndRunPPath;
-import frc.robot.commands.TeleopSwerve;
+import frc.robot.commands.Drive.TeleopSwerve;
+import frc.robot.commands.Pathplanner.LoadAndRunPPath;
 import frc.robot.subsystems.LeftShooterRollerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.FeedShooterSubsystem;
@@ -138,8 +138,8 @@ public class RobotContainer {
                 codriver.leftBumper().onTrue(m_intake.runIntakeCommand());
 
                 codriver.leftTrigger().onTrue(m_intake.stopIntakeCommand());
-                codriver.rightBumper().onTrue(m_rightShooter.runRightRollerCommand())
-                                .onTrue(m_leftShooter.runLeftRollerCommand());
+
+                //codriver.rightBumper()
 
                 codriver.rightTrigger().onTrue(m_rightShooter.stopShooterCommand())
                                 .onTrue(m_leftShooter.stopShooterCommand());

@@ -39,9 +39,7 @@ public class LeftShooterRollerSubsystem extends SubsystemBase {
   /** Creates a new Shooter. */
   public LeftShooterRollerSubsystem() {
     leftRoller = new CANSparkMax(Constants.CANIDConstants.leftShooterID, MotorType.kBrushless);
-
     leftController = leftRoller.getPIDController();
-
     leftEncoder = leftRoller.getEncoder();
     configMotor(leftRoller, leftEncoder, leftController, true);
 
@@ -50,13 +48,13 @@ public class LeftShooterRollerSubsystem extends SubsystemBase {
         .withPosition(0, 0);
 
     Shuffleboard.getTab("ShooterSubsystem").add("StartLeft",
-        this.setShooterSpeed(Pref.getPref("LeftRPM"))
-            .andThen(this.runLeftRollerCommand()))
+        this.runLeftRollerCommand(Pref.getPref("LeftRPM")))
         .withPosition(0, 1).withSize(1, 1);
 
-    Shuffleboard.getTab("ShooterSubsystem").addNumber("LeftRPMSet",
+        Shuffleboard.getTab("ShooterSubsystem").addNumber("LeftRPMSet",
         () -> Pref.getPref("LeftRPM"))
         .withPosition(1, 1).withSize(1, 1);
+
 
     Shuffleboard.getTab("ShooterSubsystem").add("SetLeftKp", setLeftKp())
         .withPosition(0, 2).withSize(1, 1);
@@ -93,9 +91,9 @@ public class LeftShooterRollerSubsystem extends SubsystemBase {
     encoder.setPosition(0.0);
   }
 
-  public Command setShooterSpeed(double rpm) {
-    return Commands.runOnce(() -> commandRPM = rpm);
-  }
+  // public Command setShooterSpeed(double rpm) {
+  // return Commands.runOnce(() -> commandRPM = rpm);
+  // }
 
   public void runRoller() {
     if (RobotBase.isReal())
@@ -111,7 +109,8 @@ public class LeftShooterRollerSubsystem extends SubsystemBase {
     leftRoller.stopMotor();
   }
 
-  public Command runLeftRollerCommand() {
+  public Command runLeftRollerCommand(double rpm) {
+    commandRPM = rpm;
     return this.runOnce(() -> runRoller());
 
   }
