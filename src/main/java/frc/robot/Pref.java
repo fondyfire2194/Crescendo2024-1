@@ -39,6 +39,35 @@ public class Pref {
     // angle tune
 
     prefDict.put("AngleKp", .01);
+
+    //shooter
+
+    prefDict.put("LeftRPM", 500.);
+    prefDict.put("RightRPM", 500.);
+    prefDict.put("FeedRPM", 500.);
+
+    prefDict.put("ShooterKp", .01);
+    prefDict.put("FeederKp", .01);
+    prefDict.put("ShooterAngleKp", .01);
+
+
+    prefDict.put("IntakeKp", .01);
+    prefDict.put("NoteHoldKp", .01);
+
+    prefDict.put("ElevatorKp", .01);
+
+
+
+
+    //intake / holdnote
+
+    prefDict.put("IntakeRPM", 500.);
+    prefDict.put("HoldNoteInRPM", 500.);
+    prefDict.put("HoldNoteShootRPM", 500.);
+    prefDict.put("HoldNoteAmpRPM", 500.);
+    
+
+
   }
 
   public static void ensureRioPrefs() {

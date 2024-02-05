@@ -4,16 +4,13 @@ import java.util.List;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.FollowPathHolonomic;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
-import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.PathPlannerLogging;
-import com.pathplanner.lib.util.ReplanningConfig;
 import com.playingwithfusion.TimeOfFlight;
 import com.playingwithfusion.TimeOfFlight.RangingMode;
+
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -35,9 +32,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.CANIDConstants;
 import frc.robot.Pref;
 import frc.robot.Robot;
-import frc.robot.Constants.CANIDConstants;
 
 public class SwerveSubsystem extends SubsystemBase {
   // The gyro sensor
@@ -147,9 +144,9 @@ public class SwerveSubsystem extends SubsystemBase {
     Shuffleboard.getTab("Drivetrain").addNumber("DriveFF", () -> getDriveFF() * 3.25)
         .withSize(1, 1).withPosition(6, 1);
 
-        Shuffleboard.getTab("Drivetrain").addNumber("DriveFFSet", () -> Pref.getPref("DriveFF"))
+    Shuffleboard.getTab("Drivetrain").addNumber("DriveFFSet",
+        () -> Pref.getPref("DriveFF"))
         .withSize(1, 1).withPosition(6, 2);
-
 
     Shuffleboard.getTab("Drivetrain").add("SetAngleKp", setAngleKp())
         .withSize(1, 1).withPosition(7, 0);
@@ -157,9 +154,8 @@ public class SwerveSubsystem extends SubsystemBase {
     Shuffleboard.getTab("Drivetrain").addNumber("AngleKp", () -> getAngleKp())
         .withSize(1, 1).withPosition(7, 1);
 
-        Shuffleboard.getTab("Drivetrain").addNumber("AngleKpSet", () -> Pref.getPref("AngleKp"))
+    Shuffleboard.getTab("Drivetrain").addNumber("AngleKpSet", () -> Pref.getPref("AngleKp"))
         .withSize(1, 1).withPosition(7, 2);
-
 
     Shuffleboard.getTab("Drivetrain").add("ResetPose", this.setPoseToX0Y0())
         .withSize(2, 1).withPosition(2, 0);
@@ -209,9 +205,9 @@ public class SwerveSubsystem extends SubsystemBase {
     }))
         .withSize(1, 1).withPosition(3, 0);
 
-        setModuleDriveFF();
-        setModuleDriveKp();
-        setModuleAngleKp();
+    setModuleDriveFF();
+    setModuleDriveKp();
+    setModuleAngleKp();
 
   }
 
@@ -499,9 +495,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
   public static double round2dp(double number, int dp) {
     double temp = Math.pow(10, dp);
-
     double temp1 = Math.round(number * temp);
-
     return temp1 / temp;
   }
 

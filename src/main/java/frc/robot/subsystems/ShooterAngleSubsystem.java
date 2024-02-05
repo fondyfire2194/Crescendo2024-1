@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.CANSparkMaxUtil;
 import frc.lib.util.CANSparkMaxUtil.Usage;
 import frc.robot.Constants;
+import frc.robot.Pref;
 
 public class ShooterAngleSubsystem extends SubsystemBase {
 
@@ -48,10 +49,6 @@ public class ShooterAngleSubsystem extends SubsystemBase {
         .withSize(1, 1)
         .withPosition(7, 1);
 
-    Shuffleboard.getTab("ShooterSubsystem").addNumber("Velocity", () -> round2dp(getVelocity(), 2))
-        .withSize(1, 1)
-        .withPosition(8, 1);
-
     Shuffleboard.getTab("ShooterSubsystem").add("ShooterToMaxAngle",
         positionCommand(Constants.ShooterAngleConstants.shooterangleMaxDegrees))
         .withSize(2, 1)
@@ -61,6 +58,17 @@ public class ShooterAngleSubsystem extends SubsystemBase {
         positionToIntakeCommand())
         .withSize(2, 1)
         .withPosition(6, 3);
+
+ Shuffleboard.getTab("ShooterSubsystem").add("SetShooterAngleKp", setShooterAngleKpCommand())
+        .withPosition(8, 1).withSize(1, 1);
+
+    Shuffleboard.getTab("ShooterSubsystem").addNumber("ShooterAngleKpSet",
+        () -> Pref.getPref("ShooterAngleKp"))
+        .withPosition(8, 2).withSize(1, 1);
+
+    Shuffleboard.getTab("ShooterSubsystem").addNumber("ShooterAngleKp", () -> getShooterAngleKp())
+        .withPosition(8, 3).withSize(1, 1);
+
 
     if (RobotBase.isSimulation()) {
       REVPhysicsSim.getInstance().addSparkMax(shooterangleMotor, 3, 5600);
@@ -159,6 +167,18 @@ public class ShooterAngleSubsystem extends SubsystemBase {
     return commandDegrees - getPosition();
   }
 
+  public Command setShooterAngleKpCommand() {
+    return Commands.runOnce(() -> setShooterAngleKp());
+  }
+
+  public void setShooterAngleKp() {
+    shooterangleController.setP(Pref.getPref("ShooterAngleKp"));
+  }
+
+  public double getShooterAngleKp() {
+    return shooterangleController.getP();
+  }
+
   @Override
   public void simulationPeriodic() {
     REVPhysicsSim.getInstance().run();
@@ -166,9 +186,7 @@ public class ShooterAngleSubsystem extends SubsystemBase {
 
   public static double round2dp(double number, int dp) {
     double temp = Math.pow(10, dp);
-
     double temp1 = Math.round(number * temp);
-
     return temp1 / temp;
   }
 

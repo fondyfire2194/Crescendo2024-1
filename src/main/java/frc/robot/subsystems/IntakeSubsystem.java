@@ -60,7 +60,7 @@ public class IntakeSubsystem extends SubsystemBase {
     controller.setP(Constants.IntakeConstants.intakeKP);
     controller.setI(Constants.IntakeConstants.intakeKI);
     controller.setD(Constants.IntakeConstants.intakeKD);
-    controller.setFF(Constants.IntakeConstants.intakeKFF);
+    controller.setFF(Constants.IntakeConstants.intakeKFF/IntakeConstants.maxIntakeMotorRPM);
     motor.enableVoltageCompensation(Constants.IntakeConstants.voltageComp);
     motor.burnFlash();
     encoder.setPosition(0.0);
@@ -69,7 +69,7 @@ public class IntakeSubsystem extends SubsystemBase {
         .withSize(2, 1)
         .withPosition(0, 0);
 
-    Shuffleboard.getTab("IntakeSubsystem").addNumber("IntakeRPM", () -> getRPM())
+    Shuffleboard.getTab("IntakeSubsystem").addNumber("IntakeRPM", () -> round2dp(getRPM(), 0))
         .withSize(2, 1)
         .withPosition(0, 1);
 
@@ -113,6 +113,15 @@ public class IntakeSubsystem extends SubsystemBase {
     return this.runOnce(() -> stopMotor());
   }
 
+  public void setAngleKp() {
+    intakeController.setP(Pref.getPref("IntakeKp"));
+  }
+
+  public double getIntakeKp() {
+    return intakeController.getP();
+   }
+
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -128,4 +137,11 @@ public class IntakeSubsystem extends SubsystemBase {
   public void jog(double speed) {
     intakeMotor.setVoltage(speed * 12);
   }
+
+  public static double round2dp(double number, int dp) {
+    double temp = Math.pow(10, dp);
+    double temp1 = Math.round(number * temp);
+    return temp1 / temp;
+  }
+
 }

@@ -241,7 +241,7 @@ public final class Constants {
                 public static final double shooterKP = .001;
                 public static final double shooterKI = 0;
                 public static final double shooterKD = 0;
-                public static final double shooterKFF = 1 / maxShooterMotorRPM;
+                public static final double shooterKFF = .9;
                 public static final double voltageComp = 12;
                 public static final IdleMode shooterIdleMode = IdleMode.kCoast;
                 public static final int shooterContinuousCurrentLimit = 30;
@@ -261,7 +261,7 @@ public final class Constants {
                 public static final double shooterfeederKP = .001;
                 public static final double shooterfeederKI = 0;
                 public static final double shooterfeederKD = 0;
-                public static final double shooterfeederKFF = 1 / maxShooterFeederMotorRPM;
+                public static final double shooterfeederKFF =.9;
                 public static final double voltageComp = 12;
                 public static final IdleMode shooterfeederIdleMode = IdleMode.kCoast;
                 public static final int shooterfeederContinuousCurrentLimit = 30;
@@ -281,7 +281,7 @@ public final class Constants {
                 public static final double intakeKP = .000001;
                 public static final double intakeKI = 0;
                 public static final double intakeKD = 0;
-                public static final double intakeKFF = 1 / maxIntakeMotorRPM;
+                public static final double intakeKFF = .9;
                 public static final double voltageComp = 12;
                 public static final IdleMode intakeIdleMode = IdleMode.kCoast;
                 public static final int intakeContinuousCurrentLimit = 30;
@@ -296,7 +296,7 @@ public final class Constants {
                 public static final double holdnoteKP = .000001;
                 public static final double holdnoteKI = 0;
                 public static final double holdnoteKD = 0;
-                public static final double holdnoteKFF = 1 / maxHoldNoteMotorRPM;
+                public static final double holdnoteKFF = .9;
                 public static final double voltageComp = 12;
                 public static final IdleMode holdnoteIdleMode = IdleMode.kCoast;
                 public static final int holdnoteContinuousCurrentLimit = 30;

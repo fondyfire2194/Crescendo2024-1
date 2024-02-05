@@ -6,6 +6,9 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import javax.print.attribute.SetOfIntegerSyntax;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVPhysicsSim;
 import com.revrobotics.RelativeEncoder;
@@ -19,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.CANSparkMaxUtil;
 import frc.lib.util.CANSparkMaxUtil.Usage;
 import frc.robot.Constants;
+import frc.robot.Pref;
 import frc.robot.Constants.ShooterConstants;
 
 public class LeftShooterRollerSubsystem extends SubsystemBase {
@@ -45,9 +49,28 @@ public class LeftShooterRollerSubsystem extends SubsystemBase {
         .withSize(2, 1)
         .withPosition(0, 0);
 
-    Shuffleboard.getTab("ShooterSubsystem").addNumber("LeftRPM", () -> getRPMLeft())
-        .withSize(1, 1)
-        .withPosition(0, 1);
+    Shuffleboard.getTab("ShooterSubsystem").add("StartLeft",
+        this.setShooterSpeed(Pref.getPref("LeftRPM"))
+            .andThen(this.runLeftRollerCommand()))
+        .withPosition(0, 1).withSize(1, 1);
+
+    Shuffleboard.getTab("ShooterSubsystem").addNumber("LeftRPMSet",
+        () -> Pref.getPref("LeftRPM"))
+        .withPosition(1, 1).withSize(1, 1);
+
+    Shuffleboard.getTab("ShooterSubsystem").add("SetLeftKp", setLeftKp())
+        .withPosition(0, 2).withSize(1, 1);
+
+    Shuffleboard.getTab("ShooterSubsystem").addNumber("LeftKpSet",
+        () -> Pref.getPref("LeftShooterKp"))
+        .withPosition(1, 2).withSize(1, 1);
+
+    Shuffleboard.getTab("ShooterSubsystem").addNumber("LeftRPM",
+        () -> round2dp(getRPMLeft(), 0))
+        .withPosition(0, 3).withSize(1, 1);
+
+    Shuffleboard.getTab("ShooterSubsystem").addNumber("LeftKp", () -> getLeftShooterKp())
+        .withPosition(1, 3).withSize(1, 1);
 
     if (RobotBase.isSimulation())
       REVPhysicsSim.getInstance().addSparkMax(leftRoller, 3, 5600);
@@ -64,7 +87,7 @@ public class LeftShooterRollerSubsystem extends SubsystemBase {
     controller.setP(Constants.ShooterConstants.shooterKP);
     controller.setI(Constants.ShooterConstants.shooterKI);
     controller.setD(Constants.ShooterConstants.shooterKD);
-    controller.setFF(Constants.ShooterConstants.shooterKFF);
+    controller.setFF(Constants.ShooterConstants.shooterKFF / ShooterConstants.maxShooterMotorRPM);
     motor.enableVoltageCompensation(Constants.ShooterConstants.voltageComp);
     motor.burnFlash();
     encoder.setPosition(0.0);
@@ -101,15 +124,31 @@ public class LeftShooterRollerSubsystem extends SubsystemBase {
     return leftEncoder.getVelocity();
   }
 
+  public Command setLeftKp() {
+    return Commands.runOnce(() -> setLeftKp());
+  }
+
+  public void setLeftShooterKp() {
+    leftController.setP(Pref.getPref("ShooterKp"));
+  }
+
+  public double getLeftShooterKp() {
+    return leftController.getP();
+  }
+
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-    // SmartDashboard.putNumber("CANTopRoller", topRoller.getFirmwareVersion());
   }
 
   @Override
   public void simulationPeriodic() {
     REVPhysicsSim.getInstance().run();
+  }
+
+  public static double round2dp(double number, int dp) {
+    double temp = Math.pow(10, dp);
+    double temp1 = Math.round(number * temp);
+    return temp1 / temp;
   }
 
 }

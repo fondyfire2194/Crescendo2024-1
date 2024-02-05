@@ -20,6 +20,7 @@ import frc.lib.util.CANSparkMaxUtil;
 import frc.lib.util.CANSparkMaxUtil.Usage;
 import frc.robot.Constants;
 import frc.robot.Constants.ShooterFeederConstants;
+import frc.robot.Pref;
 
 public class FeedShooterSubsystem extends SubsystemBase {
 
@@ -47,9 +48,29 @@ public class FeedShooterSubsystem extends SubsystemBase {
         .withSize(2, 1)
         .withPosition(4, 0);
 
-    Shuffleboard.getTab("ShooterSubsystem").addNumber("FeederRPM", () -> getRPMBelts())
-        .withSize(1, 1)
-        .withPosition(4, 1);
+    Shuffleboard.getTab("ShooterSubsystem").addNumber("FeedRPMSet",
+        () -> Pref.getPref("FeedRPM"))
+        .withSize(1, 1).withPosition(5, 1);
+
+    Shuffleboard.getTab("ShooterSubsystem").add("StartFeeder",
+        this.setFeedShooterSpeed(Pref.getPref("FeedRPM"))
+            .andThen(this.runFeedBeltsCommand()))
+        .withPosition(4, 1).withSize(1, 1);
+
+    Shuffleboard.getTab("ShooterSubsystem").add("SetFeederKp", setFeederKpCommand())
+        .withPosition(4, 2).withSize(1, 1);
+
+    Shuffleboard.getTab("ShooterSubsystem").addNumber("FeederKpSet",
+        () -> Pref.getPref("FeederKp"))
+        .withPosition(5, 2).withSize(1, 1);
+
+    Shuffleboard.getTab("ShooterSubsystem").addNumber("FeederRPM",
+        () -> round2dp(getRPMBelts(), 0))
+        .withPosition(4, 3).withSize(1, 1);
+
+    Shuffleboard.getTab("ShooterSubsystem").addNumber("FeederKp", () -> getFeederKp())
+        .withPosition(5, 3).withSize(1, 1);
+
   }
 
   private void configMotor(CANSparkMax motor, RelativeEncoder encoder, SparkPIDController controller, boolean reverse) {
@@ -63,7 +84,8 @@ public class FeedShooterSubsystem extends SubsystemBase {
     controller.setP(Constants.ShooterFeederConstants.shooterfeederKP);
     controller.setI(Constants.ShooterFeederConstants.shooterfeederKI);
     controller.setD(Constants.ShooterFeederConstants.shooterfeederKD);
-    controller.setFF(Constants.ShooterFeederConstants.shooterfeederKFF);
+    controller.setFF(
+        Constants.ShooterFeederConstants.shooterfeederKFF / Constants.ShooterFeederConstants.maxShooterFeederMotorRPM);
     motor.enableVoltageCompensation(Constants.ShooterFeederConstants.voltageComp);
     motor.burnFlash();
     encoder.setPosition(0.0);
@@ -102,6 +124,18 @@ public class FeedShooterSubsystem extends SubsystemBase {
     return feedEncoder.getVelocity();
   }
 
+  public Command setFeederKpCommand() {
+    return Commands.runOnce(() -> setFeederKp());
+  }
+
+  public void setFeederKp() {
+    feedController.setP(Pref.getPref("FeederKp"));
+  }
+
+  public double getFeederKp() {
+    return feedController.getP();
+  }
+
   @Override
   public void periodic() {
   }
@@ -109,6 +143,12 @@ public class FeedShooterSubsystem extends SubsystemBase {
   @Override
   public void simulationPeriodic() {
     REVPhysicsSim.getInstance().run();
+  }
+
+  public static double round2dp(double number, int dp) {
+    double temp = Math.pow(10, dp);
+    double temp1 = Math.round(number * temp);
+    return temp1 / temp;
   }
 
 }

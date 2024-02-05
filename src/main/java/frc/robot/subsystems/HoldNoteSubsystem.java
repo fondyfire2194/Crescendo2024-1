@@ -58,7 +58,7 @@ public class HoldNoteSubsystem extends SubsystemBase {
     controller.setP(Constants.HoldNoteConstants.holdnoteKP);
     controller.setI(Constants.HoldNoteConstants.holdnoteKI);
     controller.setD(Constants.HoldNoteConstants.holdnoteKD);
-    controller.setFF(Constants.HoldNoteConstants.holdnoteKFF);
+    controller.setFF(Constants.HoldNoteConstants.holdnoteKFF / Constants.HoldNoteConstants.maxHoldNoteMotorRPM);
     motor.enableVoltageCompensation(Constants.HoldNoteConstants.voltageComp);
     motor.burnFlash();
     encoder.setPosition(0.0);
@@ -67,7 +67,7 @@ public class HoldNoteSubsystem extends SubsystemBase {
         .withSize(2, 1)
         .withPosition(4, 0);
 
-    Shuffleboard.getTab("IntakeSubsystem").addNumber("HoldNoteRPM", () -> getRPM())
+    Shuffleboard.getTab("IntakeSubsystem").addNumber("HoldNoteRPM", () -> round2dp(getRPM(), 0))
         .withSize(2, 1)
         .withPosition(4, 1);
 
@@ -121,6 +121,14 @@ public class HoldNoteSubsystem extends SubsystemBase {
     return getNoteSensorInches() < Constants.HoldNoteConstants.noteSeenInches;
   }
 
+  public void setHoldNoteKp() {
+    holdnoteController.setP(Pref.getPref("AngleKp"));
+  }
+
+  public double getHoldNoteKp() {
+    return holdnoteController.getP();
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -134,5 +142,11 @@ public class HoldNoteSubsystem extends SubsystemBase {
 
   public void jog(double speed) {
     holdnoteMotor.setVoltage(speed * 12);
+  }
+
+  public static double round2dp(double number, int dp) {
+    double temp = Math.pow(10, dp);
+    double temp1 = Math.round(number * temp);
+    return temp1 / temp;
   }
 }
