@@ -5,8 +5,10 @@
 package frc.robot.commands;
 
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.util.GeometryUtil;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -54,21 +56,27 @@ public class CommandFactory {
                 m_shooterFeed = shooterFeed;
         }
 
-        public Command setStartPosebyAlliance(PathPlannerPath path, Pose2d redstart) {
+        public static Rotation2d flipFieldRotation(Rotation2d rotation) {
+                return new Rotation2d(Math.PI).minus(rotation);
+        }
 
-                Pose2d temp = new Pose2d();
+        public static Pose2d flipPose(Pose2d pose) {
+                return GeometryUtil.flipFieldPose(pose);
+        }
+
+        public Command setStartPosebyAlliance(PathPlannerPath path) {
+
+                Pose2d temp = path.getPreviewStartingHolonomicPose();
 
                 var alliance = DriverStation.getAlliance();
 
                 if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red)
 
-                        return Commands.runOnce(() -> m_swerve.resetPoseEstimator(redstart));
-
-                else
-
-                        return Commands.runOnce(
-                                        () -> m_swerve.resetPoseEstimator(path.getPreviewStartingHolonomicPose()));
-
+                {
+                        return Commands.runOnce(() -> m_swerve.resetPoseEstimator(flipPose(temp)));
+                } else
+                        return new DoNothing(); //Commands.runOnce(
+                                      //  () -> m_swerve.resetPoseEstimator(temp));
         }
 
         public Command moveAndPickup(PathPlannerPath path) {

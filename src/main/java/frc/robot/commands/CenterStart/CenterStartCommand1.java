@@ -27,8 +27,6 @@ import frc.robot.subsystems.RightShooterRollerSubsystem;
 /** Add your docs here. */
 public class CenterStartCommand1 extends SequentialCommandGroup {
 
-        Pose2d redStart = new Pose2d(15.69, 5.5, Rotation2d.fromDegrees(180));
-
         public PathPlannerPath getPath(String pathname) {
                 return PathPlannerPath.fromPathFile(pathname);
         }
@@ -51,10 +49,9 @@ public class CenterStartCommand1 extends SequentialCommandGroup {
 
                                 new SequentialCommandGroup(
 
-                                                cf.setStartPosebyAlliance(af.activePaths.get(0),
-                                                                redStart),
+                                                cf.setStartPosebyAlliance(af.activePaths.get(0)),
 
-                                                cf.runShooters(60, 2500, 2500,500),
+                                                cf.runShooters(60, 2500, 2500, 500),
 
                                                 cf.shootNote(),
 

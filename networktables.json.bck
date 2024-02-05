@@ -15,5 +15,13 @@
       "persistent": true,
       "retained": true
     }
+  },
+  {
+    "name": "/Preferences/AngleKp",
+    "type": "double",
+    "value": 0.01,
+    "properties": {
+      "persistent": true
+    }
   }
 ]
