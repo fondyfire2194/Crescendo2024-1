@@ -12,18 +12,17 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.DoNothing;
 import frc.robot.commands.CenterStart.CenterStartCommand1;
 import frc.robot.commands.CenterStart.CenterStartCommand2;
-import frc.robot.subsystems.LeftShooterRollerSubsystem;
+import frc.robot.subsystems.LeftShooterSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.HoldNoteSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.RightShooterRollerSubsystem;
+import frc.robot.subsystems.RightShooterSubsystem;
 
 /** Add your docs here. */
 public class AutoFactory {
@@ -34,9 +33,9 @@ public class AutoFactory {
 
     private final IntakeSubsystem m_intake;
 
-    private final RightShooterRollerSubsystem m_rightshooter;
+    private final RightShooterSubsystem m_rightshooter;
 
-    private final LeftShooterRollerSubsystem m_leftshooter;
+    private final LeftShooterSubsystem m_leftshooter;
 
     private final ShooterAngleSubsystem m_shooterangle;
 
@@ -70,8 +69,8 @@ public class AutoFactory {
     public ArrayList<PathPlannerPath> activePaths = new ArrayList<PathPlannerPath>(5);
 
     public AutoFactory(CommandFactory cf, SwerveSubsystem swerve, ElevatorSubsystem elevator,
-            IntakeSubsystem intake, HoldNoteSubsystem holdNote, RightShooterRollerSubsystem rightshooter,
-            LeftShooterRollerSubsystem leftshooter, ShooterAngleSubsystem shooterAngle) {
+            IntakeSubsystem intake, HoldNoteSubsystem holdNote, RightShooterSubsystem rightshooter,
+            LeftShooterSubsystem leftshooter, ShooterAngleSubsystem shooterAngle) {
         m_cf = cf;
         m_swerve = swerve;
         m_elevator = elevator;

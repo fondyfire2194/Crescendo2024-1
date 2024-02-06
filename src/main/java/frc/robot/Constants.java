@@ -86,6 +86,7 @@ public final class Constants {
                 public static final int driveContinuousCurrentLimit = 30;
 
                 /* Swerve Profiling Values */
+                public static final double maxTheoreticalSpeed = 4.0;// mps
                 public static final double maxSpeed = 3.25; // meters per second
                 public static final double maxAngularVelocity = 2.0;
 
@@ -99,7 +100,7 @@ public final class Constants {
                 public static final double driveKP = 0.0;
                 public static final double driveKI = 0.0;
                 public static final double driveKD = 0.0;
-                public static final double driveKFF = .5;
+                public static final double driveKFF = .5 / maxTheoreticalSpeed;
 
                 /* Drive Motor Characterization Values */
                 public static final double driveKS = 0.667;
@@ -261,7 +262,7 @@ public final class Constants {
                 public static final double shooterfeederKP = .001;
                 public static final double shooterfeederKI = 0;
                 public static final double shooterfeederKD = 0;
-                public static final double shooterfeederKFF =.9;
+                public static final double shooterfeederKFF = .9;
                 public static final double voltageComp = 12;
                 public static final IdleMode shooterfeederIdleMode = IdleMode.kCoast;
                 public static final int shooterfeederContinuousCurrentLimit = 30;

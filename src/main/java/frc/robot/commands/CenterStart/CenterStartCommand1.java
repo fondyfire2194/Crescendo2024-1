@@ -16,13 +16,13 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.AutoFactory;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.Pathplanner.RunPPath;
-import frc.robot.subsystems.LeftShooterRollerSubsystem;
+import frc.robot.subsystems.LeftShooterSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.HoldNoteSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.RightShooterRollerSubsystem;
+import frc.robot.subsystems.RightShooterSubsystem;
 
 /** Add your docs here. */
 public class CenterStartCommand1 extends SequentialCommandGroup {
@@ -42,8 +42,8 @@ public class CenterStartCommand1 extends SequentialCommandGroup {
 
         public CenterStartCommand1(AutoFactory af, CommandFactory cf, SwerveSubsystem swerve,
                         ElevatorSubsystem elevator,
-                        IntakeSubsystem intake, HoldNoteSubsystem holdNote, RightShooterRollerSubsystem rightshooter,
-                        LeftShooterRollerSubsystem leftshooter, ShooterAngleSubsystem shooterAngle) {
+                        IntakeSubsystem intake, HoldNoteSubsystem holdNote, RightShooterSubsystem rightshooter,
+                        LeftShooterSubsystem leftshooter, ShooterAngleSubsystem shooterAngle) {
 
                 addCommands(
 

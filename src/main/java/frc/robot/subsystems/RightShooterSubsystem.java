@@ -22,7 +22,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Pref;
 
-public class RightShooterRollerSubsystem extends SubsystemBase {
+public class RightShooterSubsystem extends SubsystemBase {
 
   CANSparkMax rightRoller;
 
@@ -34,7 +34,7 @@ public class RightShooterRollerSubsystem extends SubsystemBase {
   double commandRPM = 500;
 
   /** Creates a new Shooter. */
-  public RightShooterRollerSubsystem() {
+  public RightShooterSubsystem() {
     rightRoller = new CANSparkMax(Constants.CANIDConstants.rightShooterID, MotorType.kBrushless);
     rightController = rightRoller.getPIDController();
     rightEncoder = rightRoller.getEncoder();

@@ -43,8 +43,8 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
 
-    if (m_robotContainer.m_af.checkChoiceChange())
-      m_robotContainer.m_af.validStartChoice = m_robotContainer.m_af.selectAndLoadPathFiles();
+    // if (m_robotContainer.m_af.checkChoiceChange())
+    //   m_robotContainer.m_af.validStartChoice = m_robotContainer.m_af.selectAndLoadPathFiles();
   }
 
   @Override
@@ -54,7 +54,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
-    m_autonomousCommand = m_robotContainer.m_af.getAutonomousCommand();
+    //m_autonomousCommand = m_robotContainer.m_af.getAutonomousCommand();
 
     SmartDashboard.putString("ACName", m_autonomousCommand.getName());
 

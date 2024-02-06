@@ -9,40 +9,31 @@ import java.util.function.BooleanSupplier;
 import edu.wpi.first.wpilibj.shuffleboard.EventImportance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.CommandFactory;
 import frc.robot.commands.Drive.TeleopSwerve;
 import frc.robot.commands.Pathplanner.LoadAndRunPPath;
-import frc.robot.subsystems.LeftShooterRollerSubsystem;
-import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.FeedShooterSubsystem;
-import frc.robot.subsystems.HoldNoteSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.RightShooterRollerSubsystem;
 
 public class RobotContainer {
         /* Subsystems */
         final SwerveSubsystem m_swerve = new SwerveSubsystem();
 
-        final IntakeSubsystem m_intake = new IntakeSubsystem();
+        // final IntakeSubsystem m_intake = new IntakeSubsystem();
 
-        final RightShooterRollerSubsystem m_rightShooter = new RightShooterRollerSubsystem();
+        // final RightShooterSubsystem m_rightShooter = new RightShooterSubsystem();
 
-        final LeftShooterRollerSubsystem m_leftShooter = new LeftShooterRollerSubsystem();
+        // final LeftRollerSubsystem m_leftShooter = new LeftShooterSubsystem();
 
-        final FeedShooterSubsystem m_shooterFeeder = new FeedShooterSubsystem();
+        // final FeedShooterSubsystem m_shooterFeeder = new FeedShooterSubsystem();
 
-        final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
+        // final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
 
-        final HoldNoteSubsystem m_holdNote = new HoldNoteSubsystem();
+        // final HoldNoteSubsystem m_holdNote = new HoldNoteSubsystem();
 
-        final ShooterAngleSubsystem m_shooterAngle = new ShooterAngleSubsystem();
+        // final ShooterAngleSubsystem m_shooterAngle = new ShooterAngleSubsystem();
 
-        final CommandFactory m_cf = new CommandFactory(m_swerve, m_intake, m_elevator,
-                        m_holdNote, m_shooterAngle, m_rightShooter, m_leftShooter,m_shooterFeeder);
+        // final CommandFactory m_cf = new CommandFactory(m_swerve, m_intake, m_elevator,
+        //                 m_holdNote, m_shooterAngle, m_rightShooter, m_leftShooter,m_shooterFeeder);
 
         // final LimelightSubsystem m_llv1 = new LimelightSubsystem("limelight");
 
@@ -50,9 +41,9 @@ public class RobotContainer {
 
         // final LimelightSubsystem m_llv3 = new LimelightSubsystem("limelight_2");
 
-        public final AutoFactory m_af = new AutoFactory(m_cf, m_swerve, m_elevator, m_intake, m_holdNote,
-                        m_rightShooter,
-                        m_leftShooter, m_shooterAngle);
+        // public final AutoFactory m_af = new AutoFactory(m_cf, m_swerve, m_elevator, m_intake, m_holdNote,
+        //                 m_rightShooter,
+        //                 m_leftShooter, m_shooterAngle);
 
         private final CommandXboxController driver = new CommandXboxController(0);
 
@@ -102,9 +93,9 @@ public class RobotContainer {
                                                 () -> -driver.getRightX() / 4,
                                                 fieldCentric));
 
-                m_elevator.setDefaultCommand(m_elevator.positionHold());
+                // m_elevator.setDefaultCommand(m_elevator.positionHold());
 
-                m_shooterAngle.setDefaultCommand(m_shooterAngle.positionHold());
+                // m_shooterAngle.setDefaultCommand(m_shooterAngle.positionHold());
 
                 // m_intake.setDefaultCommand(Commands.runOnce(() -> m_intake.stopMotor(),
                 // m_intake));
@@ -130,31 +121,31 @@ public class RobotContainer {
 
                 driver.b().onTrue(new LoadAndRunPPath(m_swerve, "TestPath3", true));
 
-                driver.back().onTrue(m_intake.runIntakeCommand())
-                                .onFalse(m_intake.stopIntakeCommand());
+                // driver.back().onTrue(m_intake.runIntakeCommand())
+                //                 .onFalse(m_intake.stopIntakeCommand());
 
                 // driver.start()
 
-                codriver.leftBumper().onTrue(m_intake.runIntakeCommand());
+                // codriver.leftBumper().onTrue(m_intake.runIntakeCommand());
 
-                codriver.leftTrigger().onTrue(m_intake.stopIntakeCommand());
+                // codriver.leftTrigger().onTrue(m_intake.stopIntakeCommand());
 
                 //codriver.rightBumper()
 
-                codriver.rightTrigger().onTrue(m_rightShooter.stopShooterCommand())
-                                .onTrue(m_leftShooter.stopShooterCommand());
+                // codriver.rightTrigger().onTrue(m_rightShooter.stopShooterCommand())
+                //                 .onTrue(m_leftShooter.stopShooterCommand());
 
-                codriver.y().whileTrue(m_elevator.jogCommand(.2))
-                                .onFalse(Commands.runOnce(() -> m_elevator.stopMotor()));
+                // codriver.y().whileTrue(m_elevator.jogCommand(.2))
+                //                 .onFalse(Commands.runOnce(() -> m_elevator.stopMotor()));
 
-                codriver.a().whileTrue(m_shooterAngle.jogCommand(-.2))
-                                .onFalse(Commands.runOnce(() -> m_shooterAngle.stopMotor()));
+                // codriver.a().whileTrue(m_shooterAngle.jogCommand(-.2))
+                //                 .onFalse(Commands.runOnce(() -> m_shooterAngle.stopMotor()));
 
-                codriver.x().whileTrue(m_shooterAngle.jogCommand(.2))
-                                .onFalse(Commands.runOnce(() -> m_shooterAngle.stopMotor()));
+                // codriver.x().whileTrue(m_shooterAngle.jogCommand(.2))
+                //                 .onFalse(Commands.runOnce(() -> m_shooterAngle.stopMotor()));
 
-                codriver.b().whileTrue(m_shooterAngle.jogCommand(-.2))
-                                .onFalse(Commands.runOnce(() -> m_elevator.stopMotor()));
+                // codriver.b().whileTrue(m_shooterAngle.jogCommand(-.2))
+                //                 .onFalse(Commands.runOnce(() -> m_elevator.stopMotor()));
 
         }
 

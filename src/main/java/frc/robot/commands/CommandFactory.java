@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.subsystems.LeftShooterRollerSubsystem;
+import frc.robot.subsystems.LeftShooterSubsystem;
 import frc.robot.commands.Pathplanner.RunPPath;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.FeedShooterSubsystem;
@@ -25,7 +25,7 @@ import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.utils.InterpolatingTable;
 import frc.robot.utils.ShotParameter;
-import frc.robot.subsystems.RightShooterRollerSubsystem;
+import frc.robot.subsystems.RightShooterSubsystem;
 
 /** Add your docs here. */
 public class CommandFactory {
@@ -35,9 +35,9 @@ public class CommandFactory {
 
         private final IntakeSubsystem m_intake;
 
-        private final RightShooterRollerSubsystem m_rightshooter;
+        private final RightShooterSubsystem m_rightshooter;
 
-        private final LeftShooterRollerSubsystem m_leftshooter;
+        private final LeftShooterSubsystem m_leftshooter;
 
         private final FeedShooterSubsystem m_shooterFeed;
 
@@ -47,8 +47,8 @@ public class CommandFactory {
 
         public CommandFactory(SwerveSubsystem swerve, IntakeSubsystem intake, ElevatorSubsystem elevator,
                         HoldNoteSubsystem holdNote,
-                        ShooterAngleSubsystem shooterAngle, RightShooterRollerSubsystem rightShooter,
-                        LeftShooterRollerSubsystem leftShooter, FeedShooterSubsystem shooterFeed) {
+                        ShooterAngleSubsystem shooterAngle, RightShooterSubsystem rightShooter,
+                        LeftShooterSubsystem leftShooter, FeedShooterSubsystem shooterFeed) {
                 m_swerve = swerve;
                 m_elevator = elevator;
                 m_intake = intake;

@@ -141,7 +141,8 @@ public class SwerveSubsystem extends SubsystemBase {
     Shuffleboard.getTab("Drivetrain").add("SetDriveFF", setDriveFF())
         .withSize(1, 1).withPosition(6, 0);
 
-    Shuffleboard.getTab("Drivetrain").addNumber("DriveFF", () -> getDriveFF() * 3.25)
+    Shuffleboard.getTab("Drivetrain").addNumber("DriveFF%", 
+    () -> getDriveFF() * Constants.SwerveConstants.maxTheoreticalSpeed)
         .withSize(1, 1).withPosition(6, 1);
 
     Shuffleboard.getTab("Drivetrain").addNumber("DriveFFSet",
@@ -196,7 +197,7 @@ public class SwerveSubsystem extends SubsystemBase {
       PathPlannerPath path = new PathPlannerPath(
           bezierPoints,
           new PathConstraints(
-              1, 1,
+              3, 3,
               Units.degreesToRadians(360), Units.degreesToRadians(540)),
           new GoalEndState(0.0, currentPose.getRotation()));
 
@@ -206,9 +207,9 @@ public class SwerveSubsystem extends SubsystemBase {
     }))
         .withSize(1, 1).withPosition(3, 0);
 
-    setModuleDriveFF();
-    setModuleDriveKp();
-    setModuleAngleKp();
+    // setModuleDriveFF();
+    // setModuleDriveKp();
+    // setModuleAngleKp();
 
   }
 
@@ -285,9 +286,9 @@ public class SwerveSubsystem extends SubsystemBase {
 
   public void setModuleDriveFF() {
     mSwerveMods[0].setDriveFF();
-    mSwerveMods[1].setDriveKp();
-    mSwerveMods[2].setDriveKp();
-    mSwerveMods[3].setDriveKp();
+    mSwerveMods[1].setDriveFF();
+    mSwerveMods[2].setDriveFF();
+    mSwerveMods[3].setDriveFF();
   }
 
   public void setModuleAngleKp() {

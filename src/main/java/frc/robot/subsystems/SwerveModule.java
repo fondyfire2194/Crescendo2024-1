@@ -133,7 +133,7 @@ public class SwerveModule extends SubsystemBase {
     driveController.setP(Constants.SwerveConstants.driveKP);
     driveController.setI(Constants.SwerveConstants.driveKI);
     driveController.setD(Constants.SwerveConstants.driveKD);
-    driveController.setFF(.0154);//Constants.SwerveConstants.driveKFF / 3.25);// 3.24=max speed
+    driveController.setFF(Constants.SwerveConstants.driveKFF);// 3.24=max speed
     driveMotor.enableVoltageCompensation(Constants.SwerveConstants.voltageComp);
     driveMotor.burnFlash();
     driveEncoder.setPosition(0.0);
