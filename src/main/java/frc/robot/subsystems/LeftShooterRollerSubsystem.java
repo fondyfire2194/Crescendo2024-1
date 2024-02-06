@@ -43,32 +43,32 @@ public class LeftShooterRollerSubsystem extends SubsystemBase {
     leftEncoder = leftRoller.getEncoder();
     configMotor(leftRoller, leftEncoder, leftController, true);
 
-    Shuffleboard.getTab("ShooterSubsystem").add(this)
-        .withSize(2, 1)
-        .withPosition(0, 0);
+    // Shuffleboard.getTab("ShooterSubsystem").add(this)
+    //     .withSize(2, 1)
+    //     .withPosition(0, 0);
 
-    Shuffleboard.getTab("ShooterSubsystem").add("StartLeft",
-        this.runLeftRollerCommand(Pref.getPref("LeftRPM")))
-        .withPosition(0, 1).withSize(1, 1);
+    // Shuffleboard.getTab("ShooterSubsystem").add("StartLeft",
+    //     this.runLeftRollerCommand(Pref.getPref("LeftRPM")))
+    //     .withPosition(0, 1).withSize(1, 1);
 
-        Shuffleboard.getTab("ShooterSubsystem").addNumber("LeftRPMSet",
-        () -> Pref.getPref("LeftRPM"))
-        .withPosition(1, 1).withSize(1, 1);
+    //     Shuffleboard.getTab("ShooterSubsystem").addNumber("LeftRPMSet",
+    //     () -> Pref.getPref("LeftRPM"))
+    //     .withPosition(1, 1).withSize(1, 1);
 
 
-    Shuffleboard.getTab("ShooterSubsystem").add("SetLeftKp", setLeftKp())
-        .withPosition(0, 2).withSize(1, 1);
+    // Shuffleboard.getTab("ShooterSubsystem").add("SetLeftKp", setLeftKp())
+    //     .withPosition(0, 2).withSize(1, 1);
 
-    Shuffleboard.getTab("ShooterSubsystem").addNumber("LeftKpSet",
-        () -> Pref.getPref("LeftShooterKp"))
-        .withPosition(1, 2).withSize(1, 1);
+    // Shuffleboard.getTab("ShooterSubsystem").addNumber("LeftKpSet",
+    //     () -> Pref.getPref("LeftShooterKp"))
+    //     .withPosition(1, 2).withSize(1, 1);
 
-    Shuffleboard.getTab("ShooterSubsystem").addNumber("LeftRPM",
-        () -> round2dp(getRPMLeft(), 0))
-        .withPosition(0, 3).withSize(1, 1);
+    // Shuffleboard.getTab("ShooterSubsystem").addNumber("LeftRPM",
+    //     () -> round2dp(getRPMLeft(), 0))
+    //     .withPosition(0, 3).withSize(1, 1);
 
-    Shuffleboard.getTab("ShooterSubsystem").addNumber("LeftKp", () -> getLeftShooterKp())
-        .withPosition(1, 3).withSize(1, 1);
+    // Shuffleboard.getTab("ShooterSubsystem").addNumber("LeftKp", () -> getLeftShooterKp())
+    //     .withPosition(1, 3).withSize(1, 1);
 
     if (RobotBase.isSimulation())
       REVPhysicsSim.getInstance().addSparkMax(leftRoller, 3, 5600);

@@ -44,31 +44,31 @@ public class FeedShooterSubsystem extends SubsystemBase {
     if (RobotBase.isSimulation())
       REVPhysicsSim.getInstance().addSparkMax(feedBelts, 3, 5600);
 
-    Shuffleboard.getTab("ShooterSubsystem").add(this)
-        .withSize(2, 1)
-        .withPosition(4, 0);
+    // Shuffleboard.getTab("ShooterSubsystem").add(this)
+    //     .withSize(2, 1)
+    //     .withPosition(4, 0);
 
-    Shuffleboard.getTab("ShooterSubsystem").addNumber("FeedRPMSet",
-        () -> Pref.getPref("FeedRPM"))
-        .withSize(1, 1).withPosition(5, 1);
+    // Shuffleboard.getTab("ShooterSubsystem").addNumber("FeedRPMSet",
+    //     () -> Pref.getPref("FeedRPM"))
+    //     .withSize(1, 1).withPosition(5, 1);
 
-    Shuffleboard.getTab("ShooterSubsystem").add("StartFeeder",
-        this.runFeedBeltsCommand(Pref.getPref("FeedRPM")))
-        .withPosition(4, 1).withSize(1, 1);
+    // Shuffleboard.getTab("ShooterSubsystem").add("StartFeeder",
+    //     this.runFeedBeltsCommand(Pref.getPref("FeedRPM")))
+    //     .withPosition(4, 1).withSize(1, 1);
 
-    Shuffleboard.getTab("ShooterSubsystem").add("SetFeederKp", setFeederKpCommand())
-        .withPosition(4, 2).withSize(1, 1);
+    // Shuffleboard.getTab("ShooterSubsystem").add("SetFeederKp", setFeederKpCommand())
+    //     .withPosition(4, 2).withSize(1, 1);
 
-    Shuffleboard.getTab("ShooterSubsystem").addNumber("FeederKpSet",
-        () -> Pref.getPref("FeederKp"))
-        .withPosition(5, 2).withSize(1, 1);
+    // Shuffleboard.getTab("ShooterSubsystem").addNumber("FeederKpSet",
+    //     () -> Pref.getPref("FeederKp"))
+    //     .withPosition(5, 2).withSize(1, 1);
 
-    Shuffleboard.getTab("ShooterSubsystem").addNumber("FeederRPM",
-        () -> round2dp(getRPMBelts(), 0))
-        .withPosition(4, 3).withSize(1, 1);
+    // Shuffleboard.getTab("ShooterSubsystem").addNumber("FeederRPM",
+    //     () -> round2dp(getRPMBelts(), 0))
+    //     .withPosition(4, 3).withSize(1, 1);
 
-    Shuffleboard.getTab("ShooterSubsystem").addNumber("FeederKp", () -> getFeederKp())
-        .withPosition(5, 3).withSize(1, 1);
+    // Shuffleboard.getTab("ShooterSubsystem").addNumber("FeederKp", () -> getFeederKp())
+    //     .withPosition(5, 3).withSize(1, 1);
 
   }
 

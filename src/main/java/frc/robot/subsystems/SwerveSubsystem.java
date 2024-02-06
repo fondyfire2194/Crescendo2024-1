@@ -181,8 +181,9 @@ public class SwerveSubsystem extends SubsystemBase {
             0,
             0))
         .withSize(2, 1).withPosition(2, 1);
-
-    Shuffleboard.getTab("Drivetrain").add("On-the-fly path", Commands.runOnce(() -> {
+      
+   
+        Shuffleboard.getTab("Drivetrain").add("On-the-fly path", Commands.runOnce(() -> {
 
       Pose2d currentPose = this.getPose();
 
@@ -195,7 +196,7 @@ public class SwerveSubsystem extends SubsystemBase {
       PathPlannerPath path = new PathPlannerPath(
           bezierPoints,
           new PathConstraints(
-              3.0, 3.0,
+              1, 1,
               Units.degreesToRadians(360), Units.degreesToRadians(540)),
           new GoalEndState(0.0, currentPose.getRotation()));
 

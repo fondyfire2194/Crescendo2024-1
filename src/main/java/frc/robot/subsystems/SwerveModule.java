@@ -57,7 +57,8 @@ public class SwerveModule extends SubsystemBase {
     m_turnCancoder = new CANcoder(moduleConstants.canCoderID, "CV1");
 
     // var can_config = new CANcoderConfiguration();
-    // can_config.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
+    // can_config.MagnetSensor.AbsoluteSensorRange =
+    // AbsoluteSensorRangeValue.Unsigned_0To1;
     // m_turnCancoder.getConfigurator().apply(can_config);
 
     /* Drive Motor Config */
@@ -132,7 +133,7 @@ public class SwerveModule extends SubsystemBase {
     driveController.setP(Constants.SwerveConstants.driveKP);
     driveController.setI(Constants.SwerveConstants.driveKI);
     driveController.setD(Constants.SwerveConstants.driveKD);
-    driveController.setFF(Constants.SwerveConstants.driveKFF/3.25);//3.24=max speed
+    driveController.setFF(.0154);//Constants.SwerveConstants.driveKFF / 3.25);// 3.24=max speed
     driveMotor.enableVoltageCompensation(Constants.SwerveConstants.voltageComp);
     driveMotor.burnFlash();
     driveEncoder.setPosition(0.0);
@@ -141,12 +142,15 @@ public class SwerveModule extends SubsystemBase {
   public void setDriveKp() {
     driveController.setP(Pref.getPref("DriveKp"));
   }
+
   public void setDriveFF() {
     driveController.setFF(Pref.getPref("DriveFF"));
   }
+
   public double getDriveKp() {
-   return driveController.getP();
+    return driveController.getP();
   }
+
   public double getDriveFF() {
     return driveController.getFF();
   }
@@ -157,12 +161,13 @@ public class SwerveModule extends SubsystemBase {
 
   public double getAngleKp() {
     return angleController.getP();
-   }
+  }
 
   private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop) {
 
-    // SmartDashboard.putNumber(Constants.SwerveConstants.modNames[moduleNumber] + "Set Speed",
-    //     desiredState.speedMetersPerSecond);
+    // SmartDashboard.putNumber(Constants.SwerveConstants.modNames[moduleNumber] +
+    // "Set Speed",
+    // desiredState.speedMetersPerSecond);
     if (isOpenLoop) {
       double percentOutput = desiredState.speedMetersPerSecond / Constants.SwerveConstants.maxSpeed;
       driveMotor.setVoltage(percentOutput * 12);
@@ -218,12 +223,21 @@ public class SwerveModule extends SubsystemBase {
 
   @Override
   public void periodic() {
-    //  SmartDashboard.putNumber(String.valueOf(moduleNumber) + " DRIVEVEL", getDriveVelocity());
-    //  SmartDashboard.putNumber(String.valueOf(moduleNumber) + " SETVEL", currentDesiredState.speedMetersPerSecond);
-    //  SmartDashboard.putNumber(String.valueOf(moduleNumber) + " ABS POS", m_turnCancoder.getAbsolutePosition().getValueAsDouble());
-  
-    SmartDashboard.putNumber(String.valueOf(moduleNumber) + " setptangdeg", angleDegrees);
-    SmartDashboard.putNumber(String.valueOf(moduleNumber) + " actualangdeg", getAngle().getDegrees());
+    SmartDashboard.putNumber(String.valueOf(moduleNumber) + " DRIVEVEL", getDriveVelocity());
+    // SmartDashboard.putNumber(String.valueOf(moduleNumber) + " SETVEL",
+    // currentDesiredState.speedMetersPerSecond);
+    SmartDashboard.putNumber(String.valueOf(moduleNumber) + " FF",
+        driveController.getFF() );//* currentDesiredState.speedMetersPerSecond);
+    // SmartDashboard.putNumber(String.valueOf(moduleNumber) + " AMPS",
+    // driveMotor.getOutputCurrent());
+
+    // SmartDashboard.putNumber(String.valueOf(moduleNumber) + " ABS POS",
+    // m_turnCancoder.getAbsolutePosition().getValueAsDouble());
+
+    // SmartDashboard.putNumber(String.valueOf(moduleNumber) + " setptangdeg",
+    // angleDegrees);
+    // SmartDashboard.putNumber(String.valueOf(moduleNumber) + " actualangdeg",
+    // getAngle().getDegrees());
   }
 
   public boolean isStopped() {

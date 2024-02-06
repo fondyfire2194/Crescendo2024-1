@@ -38,25 +38,25 @@ public class ElevatorSubsystem extends SubsystemBase {
     elevatorEncoder = elevatorMotor.getEncoder();
     configMotor(elevatorMotor, elevatorEncoder, elevatorController, true);
 
-    Shuffleboard.getTab("IntakeSubsystem").add(this)
-        .withSize(2, 1)
-        .withPosition(2, 0);
+    // Shuffleboard.getTab("IntakeSubsystem").add(this)
+    //     .withSize(2, 1)
+    //     .withPosition(2, 0);
 
-    Shuffleboard.getTab("IntakeSubsystem").addNumber("PositionInches", () -> round2dp(getPosition(), 2))
-        .withSize(1, 1)
-        .withPosition(2, 1);
+    // Shuffleboard.getTab("IntakeSubsystem").addNumber("PositionInches", () -> round2dp(getPosition(), 2))
+    //     .withSize(1, 1)
+    //     .withPosition(2, 1);
 
-    Shuffleboard.getTab("IntakeSubsystem").addNumber("Velocity", () -> round2dp(getVelocity(), 2))
-        .withSize(1, 1)
-        .withPosition(3, 1);
+    // Shuffleboard.getTab("IntakeSubsystem").addNumber("Velocity", () -> round2dp(getVelocity(), 2))
+    //     .withSize(1, 1)
+    //     .withPosition(3, 1);
 
-    Shuffleboard.getTab("IntakeSubsystem").add("ElevatorToIntake", positionToIntakeCommand())
-        .withSize(2, 1)
-        .withPosition(2, 2);
+    // Shuffleboard.getTab("IntakeSubsystem").add("ElevatorToIntake", positionToIntakeCommand())
+    //     .withSize(2, 1)
+    //     .withPosition(2, 2);
 
-    Shuffleboard.getTab("IntakeSubsystem").add("ElevatorToAmp", positionToAmpCommand())
-        .withSize(2, 1)
-        .withPosition(2, 3);
+    // Shuffleboard.getTab("IntakeSubsystem").add("ElevatorToAmp", positionToAmpCommand())
+    //     .withSize(2, 1)
+    //     .withPosition(2, 3);
 
     if (RobotBase.isSimulation()) {
       REVPhysicsSim.getInstance().addSparkMax(elevatorMotor, 3, 5600);

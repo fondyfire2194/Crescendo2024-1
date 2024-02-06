@@ -38,33 +38,33 @@ public class ShooterAngleSubsystem extends SubsystemBase {
     shooterangleEncoder = shooterangleMotor.getEncoder();
     configMotor(shooterangleMotor, shooterangleEncoder, shooterangleController, true);
 
-    Shuffleboard.getTab("ShooterSubsystem").add(this).withSize(3, 1)
-        .withPosition(6, 0);
+//     Shuffleboard.getTab("ShooterSubsystem").add(this).withSize(3, 1)
+//         .withPosition(6, 0);
 
-    Shuffleboard.getTab("ShooterSubsystem").addNumber("ActlDegrees", () -> round2dp(getPosition(), 2))
-        .withSize(1, 1)
-        .withPosition(6, 1);
+//     Shuffleboard.getTab("ShooterSubsystem").addNumber("ActlDegrees", () -> round2dp(getPosition(), 2))
+//         .withSize(1, 1)
+//         .withPosition(6, 1);
 
-    Shuffleboard.getTab("ShooterSubsystem").addNumber("CmdDegrees", () -> round2dp(commandDegrees, 2))
-        .withSize(1, 1)
-        .withPosition(7, 1);
+//     Shuffleboard.getTab("ShooterSubsystem").addNumber("CmdDegrees", () -> round2dp(commandDegrees, 2))
+//         .withSize(1, 1)
+//         .withPosition(7, 1);
 
-    Shuffleboard.getTab("ShooterSubsystem").add("ShooterToMaxAngle",
-        positionCommand(Constants.ShooterAngleConstants.shooterangleMaxDegrees))
-        .withSize(2, 1)
-        .withPosition(6, 2);
+//     Shuffleboard.getTab("ShooterSubsystem").add("ShooterToMaxAngle",
+//         positionCommand(Constants.ShooterAngleConstants.shooterangleMaxDegrees))
+//         .withSize(2, 1)
+//         .withPosition(6, 2);
 
-    Shuffleboard.getTab("ShooterSubsystem").add("ShooterToIntake",
-        positionToIntakeCommand())
-        .withSize(2, 1)
-        .withPosition(6, 3);
+//     Shuffleboard.getTab("ShooterSubsystem").add("ShooterToIntake",
+//         positionToIntakeCommand())
+//         .withSize(2, 1)
+//         .withPosition(6, 3);
 
- Shuffleboard.getTab("ShooterSubsystem").add("SetShooterAngleKp", setShooterAngleKpCommand())
-        .withPosition(8, 1).withSize(1, 1);
+//  Shuffleboard.getTab("ShooterSubsystem").add("SetShooterAngleKp", setShooterAngleKpCommand())
+//         .withPosition(8, 1).withSize(1, 1);
 
-    Shuffleboard.getTab("ShooterSubsystem").addNumber("ShooterAngleKpSet",
-        () -> Pref.getPref("ShooterAngleKp"))
-        .withPosition(8, 2).withSize(1, 1);
+//     Shuffleboard.getTab("ShooterSubsystem").addNumber("ShooterAngleKpSet",
+//         () -> Pref.getPref("ShooterAngleKp"))
+//         .withPosition(8, 2).withSize(1, 1);
 
     Shuffleboard.getTab("ShooterSubsystem").addNumber("ShooterAngleKp", () -> getShooterAngleKp())
         .withPosition(8, 3).withSize(1, 1);

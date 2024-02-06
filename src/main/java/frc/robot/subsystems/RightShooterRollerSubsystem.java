@@ -44,30 +44,30 @@ public class RightShooterRollerSubsystem extends SubsystemBase {
     if (RobotBase.isSimulation())
       REVPhysicsSim.getInstance().addSparkMax(rightRoller, 3, 5600);
 
-    Shuffleboard.getTab("ShooterSubsystem").add(this)
-        .withPosition(2, 0).withSize(2, 1);
+    // Shuffleboard.getTab("ShooterSubsystem").add(this)
+    //     .withPosition(2, 0).withSize(2, 1);
 
-    Shuffleboard.getTab("ShooterSubsystem").addNumber("RightRPMSet",
-        () -> Pref.getPref("RightRPM"))
-        .withPosition(3, 1).withSize(1, 1);
+    // Shuffleboard.getTab("ShooterSubsystem").addNumber("RightRPMSet",
+    //     () -> Pref.getPref("RightRPM"))
+    //     .withPosition(3, 1).withSize(1, 1);
 
-    Shuffleboard.getTab("ShooterSubsystem").add("StartRight",
-        this.runRightRollerCommand(Pref.getPref("LeftRPM")))
-        .withPosition(2, 1).withSize(1, 1);
+    // Shuffleboard.getTab("ShooterSubsystem").add("StartRight",
+    //     this.runRightRollerCommand(Pref.getPref("LeftRPM")))
+    //     .withPosition(2, 1).withSize(1, 1);
 
-    Shuffleboard.getTab("ShooterSubsystem").add("SetRightKp", setRightKpCommand())
-        .withPosition(2, 2).withSize(1, 1);
+    // Shuffleboard.getTab("ShooterSubsystem").add("SetRightKp", setRightKpCommand())
+    //     .withPosition(2, 2).withSize(1, 1);
 
-    Shuffleboard.getTab("ShooterSubsystem").addNumber("RightKpSet",
-        () -> Pref.getPref("RightShooterKp"))
-        .withPosition(3, 2).withSize(1, 1);
+    // Shuffleboard.getTab("ShooterSubsystem").addNumber("RightKpSet",
+    //     () -> Pref.getPref("RightShooterKp"))
+    //     .withPosition(3, 2).withSize(1, 1);
 
-    Shuffleboard.getTab("ShooterSubsystem").addNumber("RightRPM",
-        () -> round2dp(getRPMRight(), 0))
-        .withPosition(2, 3).withSize(1, 1);
+    // Shuffleboard.getTab("ShooterSubsystem").addNumber("RightRPM",
+    //     () -> round2dp(getRPMRight(), 0))
+    //     .withPosition(2, 3).withSize(1, 1);
 
-    Shuffleboard.getTab("ShooterSubsystem").addNumber("RightKp", () -> getRightShooterKp())
-        .withPosition(3, 3).withSize(1, 1);
+    // Shuffleboard.getTab("ShooterSubsystem").addNumber("RightKp", () -> getRightShooterKp())
+    //     .withPosition(3, 3).withSize(1, 1);
 
   }
 

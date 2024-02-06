@@ -63,21 +63,21 @@ public class HoldNoteSubsystem extends SubsystemBase {
     motor.burnFlash();
     encoder.setPosition(0.0);
 
-    Shuffleboard.getTab("IntakeSubsystem").add(this)
-        .withSize(2, 1)
-        .withPosition(4, 0);
+    // Shuffleboard.getTab("IntakeSubsystem").add(this)
+    //     .withSize(2, 1)
+    //     .withPosition(4, 0);
 
-    Shuffleboard.getTab("IntakeSubsystem").addNumber("HoldNoteRPM", () -> round2dp(getRPM(), 0))
-        .withSize(2, 1)
-        .withPosition(4, 1);
+    // Shuffleboard.getTab("IntakeSubsystem").addNumber("HoldNoteRPM", () -> round2dp(getRPM(), 0))
+    //     .withSize(2, 1)
+    //     .withPosition(4, 1);
 
-    Shuffleboard.getTab("IntakeSubsystem").add("StartHoldNote", feedShooterCommand())
-        .withSize(2, 1)
-        .withPosition(4, 2);
+    // Shuffleboard.getTab("IntakeSubsystem").add("StartHoldNote", feedShooterCommand())
+    //     .withSize(2, 1)
+    //     .withPosition(4, 2);
 
-    Shuffleboard.getTab("IntakeSubsystem").add("StopHoldNote", stopHoldNoteCommand())
-        .withSize(2, 1)
-        .withPosition(4, 3);
+    // Shuffleboard.getTab("IntakeSubsystem").add("StopHoldNote", stopHoldNoteCommand())
+    //     .withSize(2, 1)
+    //     .withPosition(4, 3);
 
   }
 

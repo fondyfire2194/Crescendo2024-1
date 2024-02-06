@@ -65,21 +65,21 @@ public class IntakeSubsystem extends SubsystemBase {
     motor.burnFlash();
     encoder.setPosition(0.0);
 
-    Shuffleboard.getTab("IntakeSubsystem").add(this)
-        .withSize(2, 1)
-        .withPosition(0, 0);
+    // Shuffleboard.getTab("IntakeSubsystem").add(this)
+    //     .withSize(2, 1)
+    //     .withPosition(0, 0);
 
-    Shuffleboard.getTab("IntakeSubsystem").addNumber("IntakeRPM", () -> round2dp(getRPM(), 0))
-        .withSize(2, 1)
-        .withPosition(0, 1);
+    // Shuffleboard.getTab("IntakeSubsystem").addNumber("IntakeRPM", () -> round2dp(getRPM(), 0))
+    //     .withSize(2, 1)
+    //     .withPosition(0, 1);
 
-    Shuffleboard.getTab("IntakeSubsystem").add("StartIntake", runIntakeCommand())
-        .withSize(2, 1)
-        .withPosition(0, 2);
+    // Shuffleboard.getTab("IntakeSubsystem").add("StartIntake", runIntakeCommand())
+    //     .withSize(2, 1)
+    //     .withPosition(0, 2);
 
-    Shuffleboard.getTab("IntakeSubsystem").add("StopIntake", stopIntakeCommand())
-        .withSize(2, 1)
-        .withPosition(0, 3);
+    // Shuffleboard.getTab("IntakeSubsystem").add("StopIntake", stopIntakeCommand())
+    //     .withSize(2, 1)
+    //     .withPosition(0, 3);
 
   }
 
