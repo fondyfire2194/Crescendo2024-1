@@ -86,7 +86,7 @@ public final class Constants {
                 public static final int driveContinuousCurrentLimit = 30;
 
                 /* Swerve Profiling Values */
-                public static final double maxTheoreticalSpeed = 4.0;// mps
+                public static final double maxTheoreticalSpeed = 3.7;// mps
                 public static final double maxSpeed = 3.25; // meters per second
                 public static final double maxAngularVelocity = 2.0;
 
@@ -114,8 +114,8 @@ public final class Constants {
                 public static final double angleConversionFactor = 360.0 / angleGearRatio;
 
                 /* Neutral Modes */
-                public static final IdleMode angleNeutralMode = IdleMode.kCoast;
-                public static final IdleMode driveNeutralMode = IdleMode.kCoast;
+                public static final IdleMode angleNeutralMode = IdleMode.kBrake;
+                public static final IdleMode driveNeutralMode = IdleMode.kBrake;
 
                 /* Motor Inverts */
                 public static final boolean driveInvert = false;
@@ -173,7 +173,7 @@ public final class Constants {
 
                 public static final HolonomicPathFollowerConfig pathFollowerConfig = new HolonomicPathFollowerConfig(
                                 new PIDConstants(5.0, 0, 0), // Translation constants
-                                new PIDConstants(0.5, 0, 0), // Rotation constants
+                                new PIDConstants(5.0, 0, 0), // Rotation constants
                                 maxSpeed,
                                 flModuleOffset.getNorm(), // Drive base radius (distance from center to furthest module)
                                 new ReplanningConfig());

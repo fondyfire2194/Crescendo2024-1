@@ -7,10 +7,10 @@ package frc.robot;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-
 
 public class Robot extends TimedRobot {
 
@@ -18,6 +18,9 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
+  private double m_disableStartTime;
+
+  private double brakeOffTime = 3;
 
   @Override
   public void robotInit() {
@@ -44,7 +47,20 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {
 
     // if (m_robotContainer.m_af.checkChoiceChange())
-    //   m_robotContainer.m_af.validStartChoice = m_robotContainer.m_af.selectAndLoadPathFiles();
+    // m_robotContainer.m_af.validStartChoice =
+    // m_robotContainer.m_af.selectAndLoadPathFiles();
+
+    // turn off drive brakes if they are on and robotis not moving
+    // allows easier manual pushing of robot
+
+    if (m_robotContainer.m_swerve.driveIsBraked() && m_robotContainer.m_swerve.isStopped()) {
+      if (m_disableStartTime == 0)
+        m_disableStartTime = Timer.getFPGATimestamp();
+
+      if (m_disableStartTime != 0 && Timer.getFPGATimestamp() > m_disableStartTime + brakeOffTime) {
+        m_robotContainer.m_swerve.setIdleMode(false);
+      }
+    }
   }
 
   @Override
@@ -54,7 +70,9 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
-    //m_autonomousCommand = m_robotContainer.m_af.getAutonomousCommand();
+    m_robotContainer.m_swerve.setIdleMode(false);
+
+    // m_autonomousCommand = m_robotContainer.m_af.getAutonomousCommand();
 
     SmartDashboard.putString("ACName", m_autonomousCommand.getName());
 
@@ -69,7 +87,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousExit() {
-   
+
   }
 
   @Override
@@ -77,6 +95,8 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+
+    m_robotContainer.m_swerve.setIdleMode(true);
   }
 
   @Override

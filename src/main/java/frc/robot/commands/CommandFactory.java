@@ -119,8 +119,8 @@ public class CommandFactory {
 
         private Command distanceShot(double distance) {
                 ShotParameter shot = InterpolatingTable.get(distance);
-                return m_leftshooter.runLeftRollerCommand(shot.rpm)
-                                .alongWith(m_rightshooter.runRightRollerCommand(shot.rpm),
+                return m_leftshooter.runLeftRollerCommand(shot.leftrpm)
+                                .alongWith(m_rightshooter.runRightRollerCommand(shot.rightrpm),
                                                 m_shooterangle.runOnce(
                                                                 () -> m_shooterangle.positionShooterAngle(shot.angle)));
 

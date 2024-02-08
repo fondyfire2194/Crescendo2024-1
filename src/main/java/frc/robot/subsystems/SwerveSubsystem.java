@@ -10,6 +10,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.playingwithfusion.TimeOfFlight;
 import com.playingwithfusion.TimeOfFlight.RangingMode;
+import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -135,14 +136,14 @@ public class SwerveSubsystem extends SubsystemBase {
     Shuffleboard.getTab("Drivetrain").addNumber("DriveKp", () -> getDriveKp())
         .withSize(1, 1).withPosition(5, 1);
 
-    Shuffleboard.getTab("Drivetrain").addNumber("DriveKpSet", () -> Pref.getPref("DriveKp"))
+    Shuffleboard.getTab("Drivetrain").addNumber("DriveKpSet1", () -> Pref.getPref("DriveKp"))
         .withSize(1, 1).withPosition(5, 2);
 
     Shuffleboard.getTab("Drivetrain").add("SetDriveFF", setDriveFF())
         .withSize(1, 1).withPosition(6, 0);
 
-    Shuffleboard.getTab("Drivetrain").addNumber("DriveFF%", 
-    () -> getDriveFF() * Constants.SwerveConstants.maxTheoreticalSpeed)
+    Shuffleboard.getTab("Drivetrain").addNumber("DriveFF%",
+        () -> getDriveFF() * Constants.SwerveConstants.maxTheoreticalSpeed)
         .withSize(1, 1).withPosition(6, 1);
 
     Shuffleboard.getTab("Drivetrain").addNumber("DriveFFSet",
@@ -182,9 +183,8 @@ public class SwerveSubsystem extends SubsystemBase {
             0,
             0))
         .withSize(2, 1).withPosition(2, 1);
-      
-   
-        Shuffleboard.getTab("Drivetrain").add("On-the-fly path", Commands.runOnce(() -> {
+
+    Shuffleboard.getTab("Drivetrain").add("On-the-fly path", Commands.runOnce(() -> {
 
       Pose2d currentPose = this.getPose();
 
@@ -207,9 +207,9 @@ public class SwerveSubsystem extends SubsystemBase {
     }))
         .withSize(1, 1).withPosition(3, 0);
 
-    // setModuleDriveFF();
-    // setModuleDriveKp();
-    // setModuleAngleKp();
+    setModuleDriveFF();
+    setModuleDriveKp();
+    setModuleAngleKp();
 
   }
 
@@ -322,6 +322,17 @@ public class SwerveSubsystem extends SubsystemBase {
     return mSwerveMods[0].getAngleKp();
   }
 
+  public boolean driveIsBraked() {
+    return mSwerveMods[0].driveIsBraked();
+  }
+
+  public void setIdleMode(boolean brake){
+    mSwerveMods[0].setIdleMode(brake);
+    mSwerveMods[1].setIdleMode(brake);
+    mSwerveMods[2].setIdleMode(brake);
+    mSwerveMods[3].setIdleMode(brake);
+  }
+
   public double getPoseHeading() {
     return getPose().getRotation().getDegrees();
   }
@@ -430,7 +441,7 @@ public class SwerveSubsystem extends SubsystemBase {
     SmartDashboard.putNumberArray("Odometry",
         new double[] { getPose().getX(), getPose().getY(), getPose().getRotation().getDegrees() });
 
-    // putStates();
+     putStates();
 
   }
 

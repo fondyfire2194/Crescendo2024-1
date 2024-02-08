@@ -1,9 +1,9 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -144,7 +144,7 @@ public class SwerveModule extends SubsystemBase {
   }
 
   public void setDriveFF() {
-    driveController.setFF(Pref.getPref("DriveFF"));
+    driveController.setFF(Pref.getPref("DriveFF") / Constants.SwerveConstants.maxTheoreticalSpeed);
   }
 
   public double getDriveKp() {
@@ -163,16 +163,22 @@ public class SwerveModule extends SubsystemBase {
     return angleController.getP();
   }
 
+  public boolean driveIsBraked() {
+    return driveMotor.getIdleMode() == IdleMode.kBrake;
+  }
+
   private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop) {
 
-    // SmartDashboard.putNumber(Constants.SwerveConstants.modNames[moduleNumber] +
-    // "Set Speed",
-    // desiredState.speedMetersPerSecond);
+    SmartDashboard.putNumber(Constants.SwerveConstants.modNames[moduleNumber] +
+        "Set Speed",
+        desiredState.speedMetersPerSecond);
     if (isOpenLoop) {
       double percentOutput = desiredState.speedMetersPerSecond / Constants.SwerveConstants.maxSpeed;
       driveMotor.setVoltage(percentOutput * 12);
 
     } else {
+      // driveController.setReference(desiredState.speedMetersPerSecond,
+      // CANSparkMax.ControlType.kVelocity, 0, 0.25);
       driveController.setReference(desiredState.speedMetersPerSecond, CANSparkMax.ControlType.kVelocity);
 
     }
@@ -180,10 +186,11 @@ public class SwerveModule extends SubsystemBase {
 
   private void setAngle(SwerveModuleState desiredState) {
     // Prevent rotating module if speed is less then 1%. Prevents jittering.
-    Rotation2d angle = (Math.abs(desiredState.speedMetersPerSecond) <= (Constants.SwerveConstants.maxSpeed * 0.01))
-        ? lastAngle
-        : desiredState.angle;
-
+    // Rotation2d angle = (Math.abs(desiredState.speedMetersPerSecond) <=
+    // (Constants.SwerveConstants.maxSpeed * 0.01))
+    // ? lastAngle
+    // : desiredState.angle;
+    Rotation2d angle = desiredState.angle;
     angleController.setReference(angle.getDegrees(), ControlType.kPosition);
     lastAngle = angle;
     angleDegrees = angle.getDegrees();
@@ -191,7 +198,7 @@ public class SwerveModule extends SubsystemBase {
 
   private Rotation2d getAngle() {
     if (RobotBase.isReal())
-      return Rotation2d.fromDegrees(integratedAngleEncoder.getPosition());
+      return Rotation2d.fromDegrees(Math.IEEEremainder(integratedAngleEncoder.getPosition(), 360));
     else
       return Rotation2d.fromDegrees(simAngle);
   }
@@ -224,24 +231,34 @@ public class SwerveModule extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber(String.valueOf(moduleNumber) + " DRIVEVEL", getDriveVelocity());
-    // SmartDashboard.putNumber(String.valueOf(moduleNumber) + " SETVEL",
-    // currentDesiredState.speedMetersPerSecond);
-    SmartDashboard.putNumber(String.valueOf(moduleNumber) + " FF",
-        driveController.getFF() );//* currentDesiredState.speedMetersPerSecond);
+    SmartDashboard.putNumber(String.valueOf(moduleNumber) + " SETVEL",
+        currentDesiredState.speedMetersPerSecond);
+    SmartDashboard.putNumber(String.valueOf(moduleNumber) + " ACTPOS",
+        getDrivePosition());
     // SmartDashboard.putNumber(String.valueOf(moduleNumber) + " AMPS",
     // driveMotor.getOutputCurrent());
 
     // SmartDashboard.putNumber(String.valueOf(moduleNumber) + " ABS POS",
     // m_turnCancoder.getAbsolutePosition().getValueAsDouble());
 
-    // SmartDashboard.putNumber(String.valueOf(moduleNumber) + " setptangdeg",
-    // angleDegrees);
-    // SmartDashboard.putNumber(String.valueOf(moduleNumber) + " actualangdeg",
-    // getAngle().getDegrees());
+    SmartDashboard.putNumber(String.valueOf(moduleNumber) + " setptangdeg",
+        angleDegrees);
+    SmartDashboard.putNumber(String.valueOf(moduleNumber) + " actualangdeg",
+        getAngle().getDegrees());
   }
 
   public boolean isStopped() {
     return Math.abs(getDriveVelocity()) < .1;
+  }
+
+  public void setIdleMode(boolean brake) {
+    if (brake) {
+      driveMotor.setIdleMode(IdleMode.kBrake);
+      angleMotor.setIdleMode(IdleMode.kBrake);
+    } else {
+      driveMotor.setIdleMode(IdleMode.kCoast);
+      angleMotor.setIdleMode(IdleMode.kCoast);
+    }
   }
 
   @Override
