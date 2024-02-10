@@ -183,16 +183,16 @@ public class SwerveModule extends SubsystemBase {
       // CANSparkMax.ControlType.kVelocity, 0, 0.25);
       driveController.setReference(desiredState.speedMetersPerSecond, CANSparkMax.ControlType.kVelocity);
     }
-    m_simDrivePosition += desiredState.speedMetersPerSecond * GlobalConstants.ROBOT_LOOP_PERIOD;
+    if (RobotBase.isSimulation())
+      m_simDrivePosition += desiredState.speedMetersPerSecond * GlobalConstants.ROBOT_LOOP_PERIOD;
   }
 
   private void setAngle(SwerveModuleState desiredState) {
     // Prevent rotating module if speed is less then 1%. Prevents jittering.
-    // Rotation2d angle = (Math.abs(desiredState.speedMetersPerSecond) <=
-    // (Constants.SwerveConstants.maxSpeed * 0.01))
-    // ? lastAngle
-    // : desiredState.angle;
-    Rotation2d angle = desiredState.angle;
+    Rotation2d angle = (Math.abs(desiredState.speedMetersPerSecond) <= (Constants.SwerveConstants.kmaxSpeed * 0.01))
+        ? lastAngle
+        : desiredState.angle;
+
     angleController.setReference(angle.getDegrees(), ControlType.kPosition);
     lastAngle = angle;
     angleDegrees = angle.getDegrees();
