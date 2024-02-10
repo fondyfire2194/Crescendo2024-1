@@ -57,6 +57,7 @@
       "/Shuffleboard/ShooterSubsystem/TopShooterRollerSubsystem": "Subsystem",
       "/Shuffleboard/TuneTab/SetDriveKp": "Command",
       "/SmartDashboard/AmpStartChooser": "String Chooser",
+      "/SmartDashboard/Auto Chooser": "String Chooser",
       "/SmartDashboard/Auto Mode": "String Chooser",
       "/SmartDashboard/CenterStartChooser": "String Chooser",
       "/SmartDashboard/CommSchd": "Scheduler",
@@ -71,7 +72,7 @@
       "/SmartDashboard/SourceStartChooser": "String Chooser"
     },
     "windows": {
-      "/Shuffleboard/Autonomous/CenterStart": {
+      "/SmartDashboard/Auto Chooser": {
         "window": {
           "visible": true
         }

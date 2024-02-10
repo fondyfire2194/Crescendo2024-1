@@ -2,7 +2,6 @@ package frc.robot.commands.Drive;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
@@ -49,12 +48,12 @@ public class TeleopSwerve extends Command {
     /* Drive */
     s_Swerve.drive(
 
-        translationVal *= Constants.SwerveConstants.maxSpeed,
-        strafeVal *= Constants.SwerveConstants.maxSpeed,
+        translationVal *= Constants.SwerveConstants.kmaxSpeed,
+        strafeVal *= Constants.SwerveConstants.kmaxSpeed,
 
         // new Translation2d(translationVal,
         // strafeVal).times(Constants.SwerveConstants.maxSpeed),
-        rotationVal *= Constants.SwerveConstants.maxAngularVelocity / 6,
+        rotationVal *= Constants.SwerveConstants.kmaxAngularVelocity ,
         fieldCentric.getAsBoolean(),
         true);
 

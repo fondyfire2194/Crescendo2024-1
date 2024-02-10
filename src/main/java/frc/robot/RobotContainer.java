@@ -6,12 +6,17 @@ package frc.robot;
 
 import java.util.function.BooleanSupplier;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathPlannerPath;
+
 import edu.wpi.first.wpilibj.shuffleboard.EventImportance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.Drive.TeleopSwerve;
-import frc.robot.commands.Pathplanner.LoadAndRunPPath;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class RobotContainer {
@@ -32,8 +37,9 @@ public class RobotContainer {
 
         // final ShooterAngleSubsystem m_shooterAngle = new ShooterAngleSubsystem();
 
-        // final CommandFactory m_cf = new CommandFactory(m_swerve, m_intake, m_elevator,
-        //                 m_holdNote, m_shooterAngle, m_rightShooter, m_leftShooter,m_shooterFeeder);
+        // final CommandFactory m_cf = new CommandFactory(m_swerve, m_intake,
+        // m_elevator,
+        // m_holdNote, m_shooterAngle, m_rightShooter, m_leftShooter,m_shooterFeeder);
 
         // final LimelightSubsystem m_llv1 = new LimelightSubsystem("limelight");
 
@@ -41,13 +47,16 @@ public class RobotContainer {
 
         // final LimelightSubsystem m_llv3 = new LimelightSubsystem("limelight_2");
 
-        // public final AutoFactory m_af = new AutoFactory(m_cf, m_swerve, m_elevator, m_intake, m_holdNote,
-        //                 m_rightShooter,
-        //                 m_leftShooter, m_shooterAngle);
+        // public final AutoFactory m_af = new AutoFactory(m_cf, m_swerve, m_elevator,
+        // m_intake, m_holdNote,
+        // m_rightShooter,
+        // m_leftShooter, m_shooterAngle);
 
         private final CommandXboxController driver = new CommandXboxController(0);
 
         private final CommandXboxController codriver = new CommandXboxController(1);
+
+        private final SendableChooser<Command> autoChooser;
 
         public RobotContainer() {
 
@@ -59,8 +68,12 @@ public class RobotContainer {
 
                 registerNamedCommands();
 
-                configureBindings();
+                // Build an auto chooser. This will use Commands.none() as the default option.
+                autoChooser = AutoBuilder.buildAutoChooser();
 
+                SmartDashboard.putData("Auto Chooser", autoChooser);
+
+                configureBindings();
                 // Set the scheduler to log Shuffleboard events for command initialize,
                 // interrupt, finish
                 CommandScheduler.getInstance()
@@ -90,7 +103,7 @@ public class RobotContainer {
                                                 m_swerve,
                                                 () -> -driver.getLeftY(),
                                                 () -> -driver.getLeftX(),
-                                                () -> -driver.getRightX() / 4,
+                                                () -> -driver.getRawAxis(2),
                                                 fieldCentric));
 
                 // m_elevator.setDefaultCommand(m_elevator.positionHold());
@@ -115,38 +128,32 @@ public class RobotContainer {
 
                 driver.y().onTrue(m_swerve.setPoseToX0Y0());
 
-                driver.x().onTrue(new LoadAndRunPPath(m_swerve, "TestPath1", true));
+                // driver.a()
 
-                driver.a().onTrue(new LoadAndRunPPath(m_swerve, "TestPath2", true));
+                // driver.x().
 
-                driver.b().onTrue(new LoadAndRunPPath(m_swerve, "TestPath3", true));
+                // driver.b()
 
-                // driver.back().onTrue(m_intake.runIntakeCommand())
-                //                 .onFalse(m_intake.stopIntakeCommand());
+                // driver.back()
 
                 // driver.start()
 
-                // codriver.leftBumper().onTrue(m_intake.runIntakeCommand());
+                // codriver.leftBumper()
 
-                // codriver.leftTrigger().onTrue(m_intake.stopIntakeCommand());
+                // codriver.leftTrigger()
 
-                //codriver.rightBumper()
+                // codriver.rightBumper()
 
-                // codriver.rightTrigger().onTrue(m_rightShooter.stopShooterCommand())
-                //                 .onTrue(m_leftShooter.stopShooterCommand());
+                // codriver.rightTrigger()
 
-                // codriver.y().whileTrue(m_elevator.jogCommand(.2))
-                //                 .onFalse(Commands.runOnce(() -> m_elevator.stopMotor()));
+                // codriver.y()
 
-                // codriver.a().whileTrue(m_shooterAngle.jogCommand(-.2))
-                //                 .onFalse(Commands.runOnce(() -> m_shooterAngle.stopMotor()));
-
-                // codriver.x().whileTrue(m_shooterAngle.jogCommand(.2))
-                //                 .onFalse(Commands.runOnce(() -> m_shooterAngle.stopMotor()));
-
-                // codriver.b().whileTrue(m_shooterAngle.jogCommand(-.2))
-                //                 .onFalse(Commands.runOnce(() -> m_elevator.stopMotor()));
-
+                // codriver.a()
+                // codriver.x()
+                // codriver.b()
         }
 
+        public Command getAutonomousCommand() {
+                return autoChooser.getSelected();
+              }
 }

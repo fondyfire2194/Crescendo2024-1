@@ -49,8 +49,8 @@ public final class Constants {
                 public static final boolean invertGyro = true; // Always ensure Gyro is CCW+ CW-
 
                 /* Drivetrain Constants */
-                public static final Measure<Distance> trackWidth = Inches.of(22.125);
-                public static final Measure<Distance> wheelBase = Inches.of(27.25);
+                public static final Measure<Distance> trackWidth = Meters.of(Meters.convertFrom(22.125, Inches));
+                public static final Measure<Distance> wheelBase = Meters.of(Meters.convertFrom(27.25, Inches));
                 public static final Measure<Distance> wheelDiameter = Meters.of(Meters.convertFrom(4.0, Inches));
                 public static final Measure<Distance> wheelCircumference = Meters
                                 .of(wheelDiameter.magnitude() * Math.PI);
@@ -86,9 +86,9 @@ public final class Constants {
                 public static final int driveContinuousCurrentLimit = 30;
 
                 /* Swerve Profiling Values */
-                public static final double maxTheoreticalSpeed = 3.7;// mps
-                public static final double maxSpeed = 3.25; // meters per second
-                public static final double maxAngularVelocity = 2.0;
+                public static final double kmaxTheoreticalSpeed = 3.7;// mps
+                public static final double kmaxSpeed = 3.25; // meters per second
+                public static final double kmaxAngularVelocity = 1.0 * Math.PI;
 
                 /* Angle Motor PID Values */
                 public static final double angleKP = 0.01;
@@ -100,7 +100,7 @@ public final class Constants {
                 public static final double driveKP = 0.0;
                 public static final double driveKI = 0.0;
                 public static final double driveKD = 0.0;
-                public static final double driveKFF = .5 / maxTheoreticalSpeed;
+                public static final double driveKFF = .5 / kmaxTheoreticalSpeed;
 
                 /* Drive Motor Characterization Values */
                 public static final double driveKS = 0.667;
@@ -174,7 +174,7 @@ public final class Constants {
                 public static final HolonomicPathFollowerConfig pathFollowerConfig = new HolonomicPathFollowerConfig(
                                 new PIDConstants(5.0, 0, 0), // Translation constants
                                 new PIDConstants(5.0, 0, 0), // Rotation constants
-                                maxSpeed,
+                                kmaxSpeed,
                                 flModuleOffset.getNorm(), // Drive base radius (distance from center to furthest module)
                                 new ReplanningConfig());
 

@@ -143,7 +143,7 @@ public class SwerveSubsystem extends SubsystemBase {
         .withSize(1, 1).withPosition(6, 0);
 
     Shuffleboard.getTab("Drivetrain").addNumber("DriveFF%",
-        () -> getDriveFF() * Constants.SwerveConstants.maxTheoreticalSpeed)
+        () -> getDriveFF() * Constants.SwerveConstants.kmaxTheoreticalSpeed)
         .withSize(1, 1).withPosition(6, 1);
 
     Shuffleboard.getTab("Drivetrain").addNumber("DriveFFSet",
@@ -231,7 +231,7 @@ public class SwerveSubsystem extends SubsystemBase {
                 translation, strafe, rotation, getYaw())
             : new ChassisSpeeds(translation, strafe, rotation));
 
-    SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.SwerveConstants.maxSpeed);
+    SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.SwerveConstants.kmaxSpeed);
 
     for (SwerveModule mod : mSwerveMods) {
       mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop);
@@ -241,7 +241,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
   /* Used by SwerveControllerCommand in Auto */
   public void setStates(SwerveModuleState[] desiredStates) {
-    SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.SwerveConstants.maxSpeed);
+    SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.SwerveConstants.kmaxSpeed);
     for (SwerveModule mod : mSwerveMods) {
       mod.setDesiredState(desiredStates[mod.moduleNumber], false);
     }
@@ -372,14 +372,20 @@ public class SwerveSubsystem extends SubsystemBase {
 
   }
 
+  // public Rotation2d getYaw() {
+  //   if (RobotBase.isReal())
+  //     return (Constants.SwerveConstants.invertGyro) ? Rotation2d.fromDegrees(360 - gyro.getYaw())
+  //         : Rotation2d.fromDegrees(gyro.getYaw());
+
+  //   else
+  //     return simOdometryPose.getRotation();
+
+  // }
   public Rotation2d getYaw() {
-    if (RobotBase.isReal())
-      return (Constants.SwerveConstants.invertGyro) ? Rotation2d.fromDegrees(360 - gyro.getYaw())
-          : Rotation2d.fromDegrees(gyro.getYaw());
-
+    if(RobotBase.isReal())
+    return gyro.getRotation2d();
     else
-      return simOdometryPose.getRotation();
-
+    return simOdometryPose.getRotation();
   }
 
   public float getPitch() {
@@ -390,9 +396,6 @@ public class SwerveSubsystem extends SubsystemBase {
     return gyro.getRoll();
   }
 
-  public double getHeadingDegrees() {
-    return -Math.IEEEremainder((gyro.getAngle()), 360);
-  }
 
   public ChassisSpeeds getSpeeds() {
     return Constants.SwerveConstants.swerveKinematics.toChassisSpeeds(getStates());
@@ -437,7 +440,7 @@ public class SwerveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Y Meters", round2dp(getY(), 2));
     SmartDashboard.putNumber("Est Pose Heaading", round2dp(getPoseHeading(), 2));
 
-    SmartDashboard.putNumber("Yaw", round2dp(getHeadingDegrees(), 2));
+    SmartDashboard.putNumber("GyroYaw", round2dp(getYaw().getDegrees(), 2));
     SmartDashboard.putNumberArray("Odometry",
         new double[] { getPose().getX(), getPose().getY(), getPose().getRotation().getDegrees() });
 
@@ -448,7 +451,7 @@ public class SwerveSubsystem extends SubsystemBase {
   private void resetAll() {
     // gyro.reset();
     resetModuleEncoders();
-    swervePoseEstimator.resetPosition(getYaw(), getPositions(), new Pose2d());
+   swervePoseEstimator.resetPosition(getYaw(), getPositions(), new Pose2d());
     simOdometryPose = new Pose2d();
 
   }
@@ -470,6 +473,10 @@ public class SwerveSubsystem extends SubsystemBase {
         };
 
     ChassisSpeeds speeds = Constants.SwerveConstants.swerveKinematics.toChassisSpeeds(measuredStates);
+    SmartDashboard.putNumber("VX",speeds.vxMetersPerSecond);
+    SmartDashboard.putNumber("VTH",speeds.vyMetersPerSecond);
+    SmartDashboard.putNumber("VOM",speeds.omegaRadiansPerSecond);
+ 
     simOdometryPose = simOdometryPose.exp(
         new Twist2d(
             speeds.vxMetersPerSecond * .02,

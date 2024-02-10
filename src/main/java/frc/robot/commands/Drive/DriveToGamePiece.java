@@ -47,8 +47,8 @@ public class DriveToGamePiece extends Command {
       }
     }
 
-    drivetrain.drive(-xOutput * SwerveConstants.maxSpeed, yOutput * SwerveConstants.maxSpeed,
-        thetaOutput * SwerveConstants.maxAngularVelocity, false, false);
+    drivetrain.drive(-xOutput * SwerveConstants.kmaxSpeed, yOutput * SwerveConstants.kmaxSpeed,
+        thetaOutput * SwerveConstants.kmaxAngularVelocity, false, false);
   }
 
   // Called once the command ends or is interrupted.

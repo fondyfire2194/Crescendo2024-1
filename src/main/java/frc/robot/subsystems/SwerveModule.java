@@ -1,11 +1,14 @@
 package frc.robot.subsystems;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.REVPhysicsSim;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
@@ -20,6 +23,7 @@ import frc.lib.math.OnboardModuleState;
 import frc.lib.util.CANSparkMaxUtil;
 import frc.lib.util.CANSparkMaxUtil.Usage;
 import frc.robot.Constants;
+import frc.robot.Constants.GlobalConstants;
 import frc.robot.Pref;
 
 public class SwerveModule extends SubsystemBase {
@@ -40,8 +44,8 @@ public class SwerveModule extends SubsystemBase {
 
   private SwerveModuleState currentDesiredState = new SwerveModuleState();
   private double angleDegrees;
-  private double simAngle;
-  private double simPosition;
+  private double m_simDrivePosition;
+  private double m_simRotatePosition;
   private boolean driveReversed;
 
   public SwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants) {
@@ -53,7 +57,8 @@ public class SwerveModule extends SubsystemBase {
     integratedAngleEncoder = angleMotor.getEncoder();
     angleController = angleMotor.getPIDController();
     configAngleMotor();
-
+    this.m_simDrivePosition = 0.0;
+    this.m_simRotatePosition = 0.0;
     m_turnCancoder = new CANcoder(moduleConstants.canCoderID, "CV1");
 
     // var can_config = new CANcoderConfiguration();
@@ -68,8 +73,6 @@ public class SwerveModule extends SubsystemBase {
     configDriveMotor();
 
     lastAngle = getState().angle;
-
-    simPosition = 0;
 
   }
 
@@ -88,13 +91,13 @@ public class SwerveModule extends SubsystemBase {
   }
 
   public void resetAngleToAbsolute() {
-    double angle = ((m_turnCancoder.getAbsolutePosition().getValueAsDouble() * 360) - angleOffset.getDegrees());
+    double angle = ((m_turnCancoder.getAbsolutePosition().getValueAsDouble() * 360)); // -angleOffset
     integratedAngleEncoder.setPosition(angle);
   }
 
   public void resetAngleEncoder(double angle) {
     integratedAngleEncoder.setPosition(angle);
-    simAngle = 0;
+    this.m_simRotatePosition = 0.0;
   }
 
   private void configAngleMotor() {
@@ -144,7 +147,7 @@ public class SwerveModule extends SubsystemBase {
   }
 
   public void setDriveFF() {
-    driveController.setFF(Pref.getPref("DriveFF") / Constants.SwerveConstants.maxTheoreticalSpeed);
+    driveController.setFF(Pref.getPref("DriveFF") / Constants.SwerveConstants.kmaxTheoreticalSpeed);
   }
 
   public double getDriveKp() {
@@ -173,15 +176,14 @@ public class SwerveModule extends SubsystemBase {
         "Set Speed",
         desiredState.speedMetersPerSecond);
     if (isOpenLoop) {
-      double percentOutput = desiredState.speedMetersPerSecond / Constants.SwerveConstants.maxSpeed;
+      double percentOutput = desiredState.speedMetersPerSecond / Constants.SwerveConstants.kmaxSpeed;
       driveMotor.setVoltage(percentOutput * 12);
-
     } else {
       // driveController.setReference(desiredState.speedMetersPerSecond,
       // CANSparkMax.ControlType.kVelocity, 0, 0.25);
       driveController.setReference(desiredState.speedMetersPerSecond, CANSparkMax.ControlType.kVelocity);
-
     }
+    m_simDrivePosition += desiredState.speedMetersPerSecond * GlobalConstants.ROBOT_LOOP_PERIOD;
   }
 
   private void setAngle(SwerveModuleState desiredState) {
@@ -194,13 +196,15 @@ public class SwerveModule extends SubsystemBase {
     angleController.setReference(angle.getDegrees(), ControlType.kPosition);
     lastAngle = angle;
     angleDegrees = angle.getDegrees();
+    if (RobotBase.isSimulation())
+      m_simRotatePosition = angle.getDegrees();
   }
 
   private Rotation2d getAngle() {
     if (RobotBase.isReal())
-      return Rotation2d.fromDegrees(Math.IEEEremainder(integratedAngleEncoder.getPosition(), 360));
+      return Rotation2d.fromDegrees(integratedAngleEncoder.getPosition());
     else
-      return Rotation2d.fromDegrees(simAngle);
+      return Rotation2d.fromDegrees(m_simRotatePosition);
   }
 
   public SwerveModulePosition getPosition() {
@@ -222,9 +226,11 @@ public class SwerveModule extends SubsystemBase {
   public double getDrivePosition() {
     if (RobotBase.isReal())
       return driveEncoder.getPosition();
+
     else {
-      simPosition += currentDesiredState.speedMetersPerSecond / 50;
-      return simPosition;
+
+      return m_simDrivePosition;
+
     }
   }
 
@@ -235,8 +241,8 @@ public class SwerveModule extends SubsystemBase {
         currentDesiredState.speedMetersPerSecond);
     SmartDashboard.putNumber(String.valueOf(moduleNumber) + " ACTPOS",
         getDrivePosition());
-    // SmartDashboard.putNumber(String.valueOf(moduleNumber) + " AMPS",
-    // driveMotor.getOutputCurrent());
+    SmartDashboard.putNumber(String.valueOf(moduleNumber) + " CC",
+        m_turnCancoder.getAbsolutePosition().getValueAsDouble() * 360);
 
     // SmartDashboard.putNumber(String.valueOf(moduleNumber) + " ABS POS",
     // m_turnCancoder.getAbsolutePosition().getValueAsDouble());
@@ -263,11 +269,6 @@ public class SwerveModule extends SubsystemBase {
 
   @Override
   public void simulationPeriodic() {
-    // SmartDashboard.putNumber(String.valueOf(moduleNumber) + " simAng", simAngle);
-
-    double diff = angleDegrees - simAngle;
-
-    simAngle += diff / 3;
 
   }
 

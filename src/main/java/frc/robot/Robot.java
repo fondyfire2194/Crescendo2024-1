@@ -72,9 +72,7 @@ public class Robot extends TimedRobot {
 
     m_robotContainer.m_swerve.setIdleMode(false);
 
-    // m_autonomousCommand = m_robotContainer.m_af.getAutonomousCommand();
-
-    SmartDashboard.putString("ACName", m_autonomousCommand.getName());
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();

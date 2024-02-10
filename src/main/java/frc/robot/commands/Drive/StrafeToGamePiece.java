@@ -44,8 +44,8 @@ public class StrafeToGamePiece extends Command {
       yOutput = 0;
     }
 
-    drivetrain.drive(-xOutput * SwerveConstants.maxSpeed, yOutput * SwerveConstants.maxAngularVelocity,
-        thetaOutput * SwerveConstants.maxAngularVelocity, false, false);
+    drivetrain.drive(-xOutput * SwerveConstants.kmaxSpeed, yOutput * SwerveConstants.kmaxAngularVelocity,
+        thetaOutput * SwerveConstants.kmaxAngularVelocity, false, false);
   }
 
   @Override
