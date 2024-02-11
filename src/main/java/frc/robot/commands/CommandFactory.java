@@ -22,11 +22,13 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.LeftShooterSubsystem;
+import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.AutoFactory;
 import frc.robot.PathFactory;
 import frc.robot.commands.CenterStart.CenterStartCommand1;
 import frc.robot.commands.CenterStart.CenterStartCommand1Paths;
 import frc.robot.commands.Pathplanner.RunPPath;
+import frc.robot.commands.Vision.LimelightSetStartPose;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.FeedShooterSubsystem;
 import frc.robot.subsystems.HoldNoteSubsystem;
@@ -55,13 +57,16 @@ public class CommandFactory {
 
     private final HoldNoteSubsystem m_holdnote;
 
+    private final LimelightSubsystem m_ll;
+
     private final AutoFactory m_af;
 
     private final PathFactory m_pf;
 
     private boolean runAll = false;
 
-    public CommandFactory(PathFactory pf, AutoFactory af, SwerveSubsystem swerve, IntakeSubsystem intake,
+    public CommandFactory(PathFactory pf, AutoFactory af, LimelightSubsystem ll, SwerveSubsystem swerve,
+            IntakeSubsystem intake,
             ElevatorSubsystem elevator,
             HoldNoteSubsystem holdNote,
             ShooterAngleSubsystem shooterAngle, RightShooterSubsystem rightShooter,
@@ -75,6 +80,7 @@ public class CommandFactory {
         m_leftshooter = leftShooter;
         m_shooterangle = shooterAngle;
         m_shooterFeed = shooterFeed;
+        m_ll = ll;
         m_af = af;
     }
 
@@ -96,7 +102,8 @@ public class CommandFactory {
             case 3:
                 return new DoNothing();
             case 11:
-                return new CenterStartCommand1(this, m_pf, m_swerve, m_elevator, m_intake, m_holdnote, m_rightshooter,
+                return new CenterStartCommand1(this, m_pf, m_ll, m_swerve, m_elevator, m_intake, m_holdnote,
+                        m_rightshooter,
                         m_leftshooter, m_shooterangle).withName("CC1");
             case 12:
                 return new CenterStartCommand1Paths(m_pf, m_swerve).withName("CC2");
@@ -112,6 +119,13 @@ public class CommandFactory {
                 return new DoNothing();
 
         }
+    }
+
+    public Command setStartPoseWithLimeLight() {
+
+        return new LimelightSetStartPose(
+            m_ll, m_swerve, m_af.activePaths.get(0).getPreviewStartingHolonomicPose());
+
     }
 
     public Command setStartPosebyAlliance(PathPlannerPath path) {

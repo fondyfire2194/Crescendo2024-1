@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
+import frc.robot.LimelightHelpers.LimelightResults;
 
 public class LimelightSubsystem extends SubsystemBase {
   /** Creates a new LimelightVision. */
@@ -23,8 +24,6 @@ public class LimelightSubsystem extends SubsystemBase {
   public double llHeartbeat = 0;
 
   public double llHeartbeatLast = 0;
-
-  public boolean allianceBlue;
 
   public enum pipelinetype {
     retroreflective,
@@ -40,8 +39,8 @@ public class LimelightSubsystem extends SubsystemBase {
   //
   public enum pipelines {
     APRILTAG(0, pipelinetype.fiducialmarkers),
-    APRILTAG3D(1, pipelinetype.fiducialmarkers),
-    SPARE_2(2, pipelinetype.fiducialmarkers),
+    APRILTAGSTARTRED(1, pipelinetype.fiducialmarkers), // tags 3 and 4 only
+    APRILTAGSTARTBLUE(2, pipelinetype.fiducialmarkers), // tags 7 and 8 only
     SPART_3(3, pipelinetype.fiducialmarkers),
     SPARE_4(4, pipelinetype.fiducialmarkers),
     SPARE_5(5, pipelinetype.fiducialmarkers),
@@ -80,7 +79,7 @@ public class LimelightSubsystem extends SubsystemBase {
   private boolean limelightExist;
 
   public LimelightSubsystem(String name) {
-    currentPipeline = pipelines.APRILTAG3D;
+    currentPipeline = pipelines.APRILTAGSTARTBLUE;
     m_name = name;
 
   }
@@ -119,18 +118,16 @@ public class LimelightSubsystem extends SubsystemBase {
   }
 
   public boolean hasTarget() {
-   return LimelightHelpers.getTV(m_name);
+    return LimelightHelpers.getTV(m_name);
   }
 
-public double getTX(){
-  return LimelightHelpers.getTX(m_name);
-}
+  public double getTX() {
+    return LimelightHelpers.getTX(m_name);
+  }
 
-public double getTY(){
-  return LimelightHelpers.getTY(m_name);
-}
-
-
+  public double getTY() {
+    return LimelightHelpers.getTY(m_name);
+  }
 
   public double round2dp(double number) {
     number = Math.round(number * 100);
@@ -154,14 +151,21 @@ public double getTY(){
     return currentPipeline;
   }
 
+  public LimelightResults getLatestResults() {
+    return LimelightHelpers.getLatestResults(m_name);
+  }
+
   public void setAprilTag_0_Pipeline() {
     if (limelightExists)
       LimelightHelpers.setPipelineIndex(m_name, pipelines.APRILTAG.ordinal());
   }
 
-  public void setAprilTag3D_Pipeline() {
+  public void setAprilTagStartPipelineRed() {
+    LimelightHelpers.setPipelineIndex(m_name, pipelines.APRILTAGSTARTRED.ordinal());
+  }
 
-    LimelightHelpers.setPipelineIndex(m_name, pipelines.APRILTAG3D.ordinal());
+  public void setAprilTagStartPipelineBlue() {
+    LimelightHelpers.setPipelineIndex(m_name, pipelines.APRILTAGSTARTBLUE.ordinal());
   }
 
   public void setNoteDetectorPipeline() {
