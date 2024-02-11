@@ -20,7 +20,6 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.HoldNoteSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LeftShooterSubsystem;
-import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.RightShooterSubsystem;
 import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -41,7 +40,7 @@ public class CenterStartCommand1 extends SequentialCommandGroup {
                 return AutoBuilder.pathfindToPose(pose, constraints, 0, 2);
         }
 
-        public CenterStartCommand1(CommandFactory cf, PathFactory af, LimelightSubsystem ll,
+        public CenterStartCommand1(CommandFactory cf, PathFactory af, String llName,
                         SwerveSubsystem swerve,
                         ElevatorSubsystem elevator,
                         IntakeSubsystem intake, HoldNoteSubsystem holdNote, RightShooterSubsystem rightshooter,

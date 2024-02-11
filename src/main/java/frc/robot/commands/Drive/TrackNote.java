@@ -6,26 +6,27 @@ package frc.robot.commands.Drive;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.LimelightHelpers;
-import frc.robot.subsystems.LimelightSubsystem;
+
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.utils.LLPipelines;
 
 public class TrackNote extends Command {
   /** Creates a new TrackNote. */
-  private final LimelightSubsystem m_llv;
+ 
   private final SwerveSubsystem m_drive;
-  private final String m_llname;
+  private final String m_llName;
 
-  public TrackNote(LimelightSubsystem llv, String llname,SwerveSubsystem drive) {
+  public TrackNote(String llName,SwerveSubsystem drive) {
     // Use addRequirements() here to declare subsystem dependencies.
-    m_llv = llv;
+
     m_drive = drive;
-    m_llname=llname;
+    m_llName=llName;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_llv.setNoteDetectorPipeline();
+   LimelightHelpers.setPipelineIndex(m_llName, LLPipelines.pipelines.NOTE_DETECT.ordinal());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -38,21 +39,21 @@ public class TrackNote extends Command {
     double tarea = 0;
     double latencyms = 0;
 
-    hasTarget = LimelightHelpers.getTV(m_llname);
+     hasTarget = LimelightHelpers.getTV(m_llName);
 
     if (hasTarget) {
 
-      classid = LimelightHelpers.getNeuralClassID(m_llname);
+      classid = LimelightHelpers.getNeuralClassID(m_llName);
 
       if (classid == 0) {
 
-        tx = LimelightHelpers.getTX(m_llname);
+        tx = LimelightHelpers.getTX(m_llName);
 
-        ty = LimelightHelpers.getTY(m_llname);
+        ty = LimelightHelpers.getTY(m_llName);
 
-        tarea = LimelightHelpers.getTA(m_llname);
+        tarea = LimelightHelpers.getTA(m_llName);
 
-        latencyms = LimelightHelpers.getLatency_Pipeline(m_llname);
+        latencyms = LimelightHelpers.getLatency_Pipeline(m_llName);
       }
     }
 

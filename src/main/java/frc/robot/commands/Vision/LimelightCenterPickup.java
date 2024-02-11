@@ -4,22 +4,25 @@
 
 package frc.robot.commands.Vision;
 
+import com.pathplanner.lib.path.PathPlannerPath;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.LimelightHelpers;
+import frc.robot.LimelightHelpers.LimelightResults;
 import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.utils.GeometryUtil;
 import frc.robot.utils.LLPipelines;
 
-public class LimelightSetStartPose extends Command {
+public class LimelightCenterPickup extends Command {
   /** Creates a new LimelightSetStartPose. */
 
   private final String m_llName;
   private final SwerveSubsystem m_swerve;
-  private final Pose2d m_pathStartPose;
+  private final PathPlannerPath m_path;
+  private final Pose2d m_targetPose;
   private boolean redAlliance;
   private boolean blueAlliance;
   private Pose2d useAsStartPose;
@@ -28,12 +31,14 @@ public class LimelightSetStartPose extends Command {
   private boolean endIt;
   private int loopctr;
   private int validResults = 3;
+  private int notePipeline = 8;
 
-  public LimelightSetStartPose(String llName, SwerveSubsystem swerve, Pose2d pathStartPose) {
+  public LimelightCenterPickup(String llName, SwerveSubsystem swerve, PathPlannerPath path, Pose2d targetPose) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_llName = llName;
     m_swerve = swerve;
-    m_pathStartPose = pathStartPose;
+    m_path = path;
+    m_targetPose=targetPose;
     startTime = Timer.getFPGATimestamp();
     endIt = false;
     loopctr = 0;
@@ -46,27 +51,43 @@ public class LimelightSetStartPose extends Command {
     redAlliance = alliance.isPresent() && alliance.get() == Alliance.Red;
     blueAlliance = alliance.isPresent() && alliance.get() == Alliance.Blue;
 
-    if (redAlliance)
-      LimelightHelpers.setPipelineIndex(m_llName, LLPipelines.pipelines.APRILTAGSTARTRED.ordinal());
-    if (blueAlliance)
-      LimelightHelpers.setPipelineIndex(m_llName, LLPipelines.pipelines.APRILTAGSTARTBLUE.ordinal());
-
-    useAsStartPose = m_pathStartPose;
-
-    if (redAlliance)
-      useAsStartPose = GeometryUtil.flipFieldPose(m_pathStartPose);
+    LimelightHelpers.setPipelineIndex(m_llName, LLPipelines.pipelines.NOTE_DETECT.ordinal());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
 
-    boolean llhastarget = LimelightHelpers.getTV(m_llName);
+    LimelightResults llr = LimelightHelpers.getLatestResults(m_llName);
 
-    if (llhastarget) {
+    if (llr.targetingResults.valid) {
       loopctr++;
-      Pose2d botPose2d = LimelightHelpers.getBotPose2d(m_llName);
-      useAsStartPose = botPose2d;
+
+      boolean llhastarget = LimelightHelpers.getTV(m_llName);
+
+      if (llhastarget) {
+
+        double tx = LimelightHelpers.getTX(m_llName);
+
+        double ty = LimelightHelpers.getTY(m_llName);
+
+        double ta = LimelightHelpers.getTA(m_llName);
+
+        if (m_swerve.getLookForNote()) {
+
+          Pose2d currentPose = m_swerve.getPose();
+
+          double currentPoseY = currentPose.getY();
+
+          double targetPoseY = m_targetPose.getY();
+
+
+
+
+
+        }
+      }
+
     }
 
     else

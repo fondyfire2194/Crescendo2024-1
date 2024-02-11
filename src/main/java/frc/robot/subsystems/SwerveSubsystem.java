@@ -60,6 +60,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
   private boolean allowVisionCorrection;
 
+  private boolean lookForNote;
+
   public SwerveSubsystem() {
 
     if (RobotBase.isSimulation()) {
@@ -432,6 +434,21 @@ public class SwerveSubsystem extends SubsystemBase {
   public double getRearRightSensorStdDevMM() {
     return m_rearRightSensor.getRangeSigma();
   }
+
+  public void setLookForNote(){
+    lookForNote=true;
+  }
+
+
+  public void resetLookForNote(){
+    lookForNote=false;
+  }
+
+  public boolean getLookForNote(){
+    return lookForNote;
+  }
+
+  
 
   @Override
   public void periodic() {

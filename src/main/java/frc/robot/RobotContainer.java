@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.Drive.TeleopSwerve;
 import frc.robot.commands.Pathplanner.SetStartByAlliance;
-import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class RobotContainer {
@@ -43,11 +42,6 @@ public class RobotContainer {
         // m_elevator,
         // m_holdNote, m_shooterAngle, m_rightShooter, m_leftShooter,m_shooterFeeder);
 
-         final LimelightSubsystem m_llv1 = new LimelightSubsystem("limelight");
-
-        // final LimelightSubsystem m_llv2 = new LimelightSubsystem("limelight_1");
-
-        // final LimelightSubsystem m_llv3 = new LimelightSubsystem("limelight_2");
         public final PathFactory m_pf = new PathFactory(m_swerve);
 
         public final AutoFactory m_af = new AutoFactory(m_pf);
@@ -124,6 +118,8 @@ public class RobotContainer {
                 // Register Named Commands
                 NamedCommands.registerCommand("LimelightSetStartPose1",
                                 new SetStartByAlliance(m_swerve, "CentOneP1"));
+                NamedCommands.registerCommand("LookForNote",
+                                Commands.runOnce(() -> m_swerve.setLookForNote()));
                 NamedCommands.registerCommand("SetAngleSpeed1",
                                 Commands.runOnce(() -> SmartDashboard.putString("AngleSpeed1", "")));
                 NamedCommands.registerCommand("SetAngleSpeed2",
@@ -171,12 +167,10 @@ public class RobotContainer {
                 // codriver.x()
                 // codriver.b()
 
-                                               
         }
 
         public Command getTestPathCommand() {
                 return autoChooser.getSelected();
         }
 
-        
 }

@@ -4,17 +4,12 @@
 
 package frc.robot.commands;
 
-import java.nio.file.Path;
-
-import org.ejml.dense.block.MatrixOps_DDRB;
-
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.GeometryUtil;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -22,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.LeftShooterSubsystem;
-import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.AutoFactory;
 import frc.robot.PathFactory;
 import frc.robot.commands.CenterStart.CenterStartCommand1;
@@ -57,7 +51,7 @@ public class CommandFactory {
 
     private final HoldNoteSubsystem m_holdnote;
 
-    private final LimelightSubsystem m_ll;
+    private final String m_llName;
 
     private final AutoFactory m_af;
 
@@ -65,7 +59,7 @@ public class CommandFactory {
 
     private boolean runAll = false;
 
-    public CommandFactory(PathFactory pf, AutoFactory af, LimelightSubsystem ll, SwerveSubsystem swerve,
+    public CommandFactory(PathFactory pf, AutoFactory af, String llName, SwerveSubsystem swerve,
             IntakeSubsystem intake,
             ElevatorSubsystem elevator,
             HoldNoteSubsystem holdNote,
@@ -80,7 +74,7 @@ public class CommandFactory {
         m_leftshooter = leftShooter;
         m_shooterangle = shooterAngle;
         m_shooterFeed = shooterFeed;
-        m_ll = ll;
+        m_llName = llName;
         m_af = af;
     }
 
@@ -102,7 +96,7 @@ public class CommandFactory {
             case 3:
                 return new DoNothing();
             case 11:
-                return new CenterStartCommand1(this, m_pf, m_ll, m_swerve, m_elevator, m_intake, m_holdnote,
+                return new CenterStartCommand1(this, m_pf, m_llName, m_swerve, m_elevator, m_intake, m_holdnote,
                         m_rightshooter,
                         m_leftshooter, m_shooterangle).withName("CC1");
             case 12:
@@ -124,7 +118,7 @@ public class CommandFactory {
     public Command setStartPoseWithLimeLight() {
 
         return new LimelightSetStartPose(
-            m_ll, m_swerve, m_af.activePaths.get(0).getPreviewStartingHolonomicPose());
+            m_llName, m_swerve, m_af.activePaths.get(0).getPreviewStartingHolonomicPose());
 
     }
 

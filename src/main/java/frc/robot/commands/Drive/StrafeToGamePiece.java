@@ -6,21 +6,21 @@ package frc.robot.commands.Drive;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.LimelightHelpers;
 import frc.robot.Constants.SwerveConstants;
-import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 /** Add your docs here. */
 public class StrafeToGamePiece extends Command {
 
-  private LimelightSubsystem ll;
+  private String m_llName;
   private SwerveSubsystem drivetrain;
   private PIDController yController = new PIDController(0.1, 0, 0);
 
-  public StrafeToGamePiece(SwerveSubsystem drivetrain, LimelightSubsystem Limelight) {
+  public StrafeToGamePiece(SwerveSubsystem drivetrain, String llName) {
     addRequirements(drivetrain);
     this.drivetrain = drivetrain;
-    ll = Limelight;
+    m_llName = llName;
   }
 
   private final double thetaOutput = 0;
@@ -38,8 +38,10 @@ public class StrafeToGamePiece extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (ll.hasTarget()) {
-      yOutput = yController.calculate(-ll.getTX(), setpoint);
+
+    boolean hasTarget = LimelightHelpers.getTV(m_llName);
+    if (hasTarget) {
+      yOutput = yController.calculate(-LimelightHelpers.getTX(m_llName), setpoint);
     } else {
       yOutput = 0;
     }
