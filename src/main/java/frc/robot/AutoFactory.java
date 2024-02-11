@@ -11,37 +11,15 @@ import java.util.Map;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.commands.CommandFactory;
-import frc.robot.commands.DoNothing;
-import frc.robot.commands.CenterStart.CenterStartCommand1;
-import frc.robot.commands.CenterStart.CenterStartCommand2;
-import frc.robot.subsystems.LeftShooterSubsystem;
-import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.HoldNoteSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.ShooterAngleSubsystem;
-import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.RightShooterSubsystem;
+
 
 /** Add your docs here. */
 public class AutoFactory {
 
-    private final SwerveSubsystem m_swerve;
+ 
 
-    private final ElevatorSubsystem m_elevator;
+    private final PathFactory m_pf;
 
-    private final IntakeSubsystem m_intake;
-
-    private final RightShooterSubsystem m_rightshooter;
-
-    private final LeftShooterSubsystem m_leftshooter;
-
-    private final ShooterAngleSubsystem m_shooterangle;
-
-    private final HoldNoteSubsystem m_holdnote;
-
-    private final CommandFactory m_cf;
 
     public final SendableChooser<Integer> m_ampStartChooser = new SendableChooser<Integer>();
 
@@ -51,7 +29,7 @@ public class AutoFactory {
 
     public final SendableChooser<Double> m_startDelayChooser = new SendableChooser<Double>();
 
-    int finalChoice = 0;
+    public int finalChoice = 0;
 
     int ampChoice;
     int ampChoiceLast;
@@ -68,17 +46,10 @@ public class AutoFactory {
 
     public ArrayList<PathPlannerPath> activePaths = new ArrayList<PathPlannerPath>(5);
 
-    public AutoFactory(CommandFactory cf, SwerveSubsystem swerve, ElevatorSubsystem elevator,
-            IntakeSubsystem intake, HoldNoteSubsystem holdNote, RightShooterSubsystem rightshooter,
-            LeftShooterSubsystem leftshooter, ShooterAngleSubsystem shooterAngle) {
-        m_cf = cf;
-        m_swerve = swerve;
-        m_elevator = elevator;
-        m_intake = intake;
-        m_holdnote = holdNote;
-        m_rightshooter = rightshooter;
-        m_leftshooter = leftshooter;
-        m_shooterangle = shooterAngle;
+    public AutoFactory( PathFactory pf) {
+        
+        m_pf = pf;
+       
 
         m_startDelayChooser.setDefaultOption("Zero Seconds", 0.);
         m_startDelayChooser.addOption("One Second", 1.);
@@ -93,7 +64,7 @@ public class AutoFactory {
 
         m_centerStartChooser.setDefaultOption("Not Used", 10);
         m_centerStartChooser.addOption("Score 4", 11);
-        m_centerStartChooser.addOption("Paths Test", 12);
+        m_centerStartChooser.addOption("Not Used", 12);
 
         m_sourceStartChooser.setDefaultOption("Not Used", 20);
         m_sourceStartChooser.addOption("Not Assigned", 21);
@@ -151,9 +122,10 @@ public class AutoFactory {
 
         if (finalChoice != 0 && finalChoice == centerChoice) {
 
-            setFilenames(finalChoice);
+            m_pf.setFilenames(finalChoice);
 
-            loadPathFiles(usedPathFiles);
+            m_pf.loadPathFiles(usedPathFiles);
+
 
         }
 
@@ -161,84 +133,5 @@ public class AutoFactory {
 
     }
 
-    private List<String> setFilenames(int index) {
-
-        usedPathFiles.clear();
-
-        switch (finalChoice) {
-
-            case 11:
-
-                usedPathFiles.add("CentOneP1");
-                usedPathFiles.add("CentOneP1R");
-                usedPathFiles.add("CentOneP2");
-                usedPathFiles.add("CentOneP2R");
-                usedPathFiles.add("CentOneP3");
-                usedPathFiles.add("CentOneP3R");
-
-                return usedPathFiles;
-
-            case 12:
-
-                usedPathFiles.add("CentOneP1");
-                usedPathFiles.add("CentOneP1R");
-                usedPathFiles.add("CentOneP2");
-                usedPathFiles.add("CentOneP2R");
-                usedPathFiles.add("CentOneP3");
-                usedPathFiles.add("CentOneP3R");
-
-                return usedPathFiles;
-
-            default:
-                return usedPathFiles;
-
-        }
-
-    }
-
-    private Command finalCommand(int choice) {
-
-        switch (choice) {
-            case 1:
-                return new DoNothing();
-            case 2:
-                return new DoNothing();
-            case 3:
-                return new DoNothing();
-            case 11:
-                return new CenterStartCommand1(this,m_cf, m_swerve, m_elevator, m_intake, m_holdnote, m_rightshooter,
-                        m_leftshooter, m_shooterangle).withName("CC1");
-            case 12:
-                return new CenterStartCommand2(this, m_swerve).withName("CC2");
-            case 13:
-                return new DoNothing();
-            case 21:
-                return new DoNothing();
-            case 22:
-                return new DoNothing();
-            case 23:
-                return new DoNothing();
-            default:
-                return new DoNothing();
-
-        }
-    }
-
-    public Command getAutonomousCommand() {
-        return finalCommand(finalChoice);
-    }
-
-    public PathPlannerPath getPath(String pathname) {
-        return PathPlannerPath.fromPathFile(pathname);
-    }
-
-    public void loadPathFiles(List<String> fileNames) {
-        activePaths.clear();
-        for (String i : fileNames) {
-            activePaths.add(getPath(i));
-
-        }
-
-    }
-
+   
 }

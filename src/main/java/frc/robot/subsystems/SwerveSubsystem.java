@@ -10,6 +10,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.playingwithfusion.TimeOfFlight;
 import com.playingwithfusion.TimeOfFlight.RangingMode;
+import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.math.VecBuilder;
@@ -26,6 +27,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.ADXL345_I2C.AllAxes;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -34,6 +37,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.CANIDConstants;
+import frc.robot.commands.CenterStart.CenterStartCommand1Paths;
 import frc.robot.Pref;
 import frc.robot.Robot;
 
@@ -160,9 +164,9 @@ public class SwerveSubsystem extends SubsystemBase {
         .withSize(1, 1).withPosition(7, 2);
 
     Shuffleboard.getTab("Drivetrain").add("ResetPose", this.setPoseToX0Y0())
-        .withSize(2, 1).withPosition(2, 0);
+        .withSize(1, 1).withPosition(2, 0);
 
-    Shuffleboard.getTab("Drivetrain").add("Pathfind to Pickup Pos",
+    Shuffleboard.getTab("Drivetrain").add("PathfindPickup",
 
         AutoBuilder.pathfindToPose(
             new Pose2d(2.0, 1.5, Rotation2d.fromDegrees(0)),
@@ -171,9 +175,9 @@ public class SwerveSubsystem extends SubsystemBase {
                 Units.degreesToRadians(360), Units.degreesToRadians(540)),
             0,
             2.0))
-        .withSize(2, 1).withPosition(0, 1);
+        .withSize(1, 1).withPosition(0, 1);
 
-    Shuffleboard.getTab("Drivetrain").add("Pathfind to Scoring Pos",
+    Shuffleboard.getTab("Drivetrain").add("PathfindScore",
 
         AutoBuilder.pathfindToPose(
             new Pose2d(1.15, 1.0, Rotation2d.fromDegrees(180)),
@@ -182,7 +186,7 @@ public class SwerveSubsystem extends SubsystemBase {
                 Units.degreesToRadians(360), Units.degreesToRadians(540)),
             0,
             0))
-        .withSize(2, 1).withPosition(2, 1);
+        .withSize(1, 1).withPosition(1, 1);
 
     Shuffleboard.getTab("Drivetrain").add("On-the-fly path", Commands.runOnce(() -> {
 
@@ -205,7 +209,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
       AutoBuilder.followPath(path).schedule();
     }))
-        .withSize(1, 1).withPosition(3, 0);
+        .withSize(1, 1).withPosition(2, 1);
+
 
     setModuleDriveFF();
     setModuleDriveKp();
@@ -227,8 +232,7 @@ public class SwerveSubsystem extends SubsystemBase {
     SwerveModuleState[] swerveModuleStates = Constants.SwerveConstants.swerveKinematics.toSwerveModuleStates(
 
         fieldRelative
-            ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                translation, strafe, rotation, getYaw())
+            ? fieldRelativeByAlliance(translation, strafe, rotation)
             : new ChassisSpeeds(translation, strafe, rotation));
 
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.SwerveConstants.kmaxSpeed);
@@ -237,6 +241,14 @@ public class SwerveSubsystem extends SubsystemBase {
       mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop);
     }
 
+  }
+
+  ChassisSpeeds fieldRelativeByAlliance(double translation, double strafe, double rotation) {
+    Rotation2d temp = getYaw();
+    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red)
+      temp = getYaw().plus(new Rotation2d(Math.PI));
+    return ChassisSpeeds.fromFieldRelativeSpeeds(
+        translation, strafe, rotation, temp);
   }
 
   /* Used by SwerveControllerCommand in Auto */
@@ -260,6 +272,11 @@ public class SwerveSubsystem extends SubsystemBase {
     mSwerveMods[2].resetAngleEncoder(0);
     mSwerveMods[3].resetAngleEncoder(180);
 
+  }
+
+ 
+  public double getHeadingDegrees() {
+    return Math.IEEEremainder((gyro.getAngle()), 360);
   }
 
   public Pose2d getPose() {
@@ -326,7 +343,11 @@ public class SwerveSubsystem extends SubsystemBase {
     return mSwerveMods[0].driveIsBraked();
   }
 
-  public void setIdleMode(boolean brake){
+  public boolean getIsRotating(){
+    return gyro.isRotating();
+  }
+
+  public void setIdleMode(boolean brake) {
     mSwerveMods[0].setIdleMode(brake);
     mSwerveMods[1].setIdleMode(brake);
     mSwerveMods[2].setIdleMode(brake);
@@ -372,20 +393,11 @@ public class SwerveSubsystem extends SubsystemBase {
 
   }
 
-  // public Rotation2d getYaw() {
-  //   if (RobotBase.isReal())
-  //     return (Constants.SwerveConstants.invertGyro) ? Rotation2d.fromDegrees(360 - gyro.getYaw())
-  //         : Rotation2d.fromDegrees(gyro.getYaw());
-
-  //   else
-  //     return simOdometryPose.getRotation();
-
-  // }
   public Rotation2d getYaw() {
-    if(RobotBase.isReal())
-    return gyro.getRotation2d();
+    if (RobotBase.isReal())
+      return gyro.getRotation2d();
     else
-    return simOdometryPose.getRotation();
+      return simOdometryPose.getRotation();
   }
 
   public float getPitch() {
@@ -395,7 +407,6 @@ public class SwerveSubsystem extends SubsystemBase {
   public float getRoll() {
     return gyro.getRoll();
   }
-
 
   public ChassisSpeeds getSpeeds() {
     return Constants.SwerveConstants.swerveKinematics.toChassisSpeeds(getStates());
@@ -444,14 +455,14 @@ public class SwerveSubsystem extends SubsystemBase {
     SmartDashboard.putNumberArray("Odometry",
         new double[] { getPose().getX(), getPose().getY(), getPose().getRotation().getDegrees() });
 
-     putStates();
+    putStates();
 
   }
 
   private void resetAll() {
     // gyro.reset();
     resetModuleEncoders();
-   swervePoseEstimator.resetPosition(getYaw(), getPositions(), new Pose2d());
+    swervePoseEstimator.resetPosition(getYaw(), getPositions(), new Pose2d());
     simOdometryPose = new Pose2d();
 
   }
@@ -473,10 +484,10 @@ public class SwerveSubsystem extends SubsystemBase {
         };
 
     ChassisSpeeds speeds = Constants.SwerveConstants.swerveKinematics.toChassisSpeeds(measuredStates);
-    SmartDashboard.putNumber("VX",speeds.vxMetersPerSecond);
-    SmartDashboard.putNumber("VTH",speeds.vyMetersPerSecond);
-    SmartDashboard.putNumber("VOM",speeds.omegaRadiansPerSecond);
- 
+    SmartDashboard.putNumber("VX", speeds.vxMetersPerSecond);
+    SmartDashboard.putNumber("VTH", speeds.vyMetersPerSecond);
+    SmartDashboard.putNumber("VOM", speeds.omegaRadiansPerSecond);
+
     simOdometryPose = simOdometryPose.exp(
         new Twist2d(
             speeds.vxMetersPerSecond * .02,

@@ -9,6 +9,8 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.GeometryUtil;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.DoNothing;
@@ -32,11 +34,14 @@ public class SetStartByAlliance extends SequentialCommandGroup {
     addRequirements(m_swerve);
 
     PathPlannerPath m_path = PathPlannerPath.fromPathFile(m_pathname);
+    Pose2d bluestart = m_path.getPreviewStartingHolonomicPose();
+    startPosebyAlliance = GeometryUtil.flipFieldPose(bluestart);
 
-    startPosebyAlliance = GeometryUtil.flipFieldPose(m_path.getPreviewStartingHolonomicPose());
     addCommands(
-        m_swerve.setPose(startPosebyAlliance),
-        new DoNothing());
+        new ConditionalCommand(
+            m_swerve.setPose(startPosebyAlliance),
+            m_swerve.setPose(bluestart),
+            () -> (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red)));
 
   }
 }

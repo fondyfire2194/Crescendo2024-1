@@ -33,10 +33,10 @@ public class ElevatorSubsystem extends SubsystemBase {
   /** Creates a new Elevator. */
   public ElevatorSubsystem() {
 
-    elevatorMotor = new CANSparkMax(Constants.CANIDConstants.elevatorID, MotorType.kBrushless);
-    elevatorController = elevatorMotor.getPIDController();
-    elevatorEncoder = elevatorMotor.getEncoder();
-    configMotor(elevatorMotor, elevatorEncoder, elevatorController, true);
+    // elevatorMotor = new CANSparkMax(Constants.CANIDConstants.elevatorID, MotorType.kBrushless);
+    // elevatorController = elevatorMotor.getPIDController();
+    // elevatorEncoder = elevatorMotor.getEncoder();
+    // configMotor(elevatorMotor, elevatorEncoder, elevatorController, true);
 
     // Shuffleboard.getTab("IntakeSubsystem").add(this)
     //     .withSize(2, 1)

@@ -35,6 +35,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    SmartDashboard.putNumber("APL", m_robotContainer.m_pf.activePaths.size());
   }
 
   @Override
@@ -72,7 +73,7 @@ public class Robot extends TimedRobot {
 
     m_robotContainer.m_swerve.setIdleMode(false);
 
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_autonomousCommand = m_robotContainer.getTestPathCommand();
 
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();

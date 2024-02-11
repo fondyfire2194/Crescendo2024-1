@@ -172,15 +172,10 @@ public class SwerveModule extends SubsystemBase {
 
   private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop) {
 
-    SmartDashboard.putNumber(Constants.SwerveConstants.modNames[moduleNumber] +
-        "Set Speed",
-        desiredState.speedMetersPerSecond);
     if (isOpenLoop) {
       double percentOutput = desiredState.speedMetersPerSecond / Constants.SwerveConstants.kmaxSpeed;
       driveMotor.setVoltage(percentOutput * 12);
     } else {
-      // driveController.setReference(desiredState.speedMetersPerSecond,
-      // CANSparkMax.ControlType.kVelocity, 0, 0.25);
       driveController.setReference(desiredState.speedMetersPerSecond, CANSparkMax.ControlType.kVelocity);
     }
     if (RobotBase.isSimulation())
@@ -236,21 +231,21 @@ public class SwerveModule extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber(String.valueOf(moduleNumber) + " DRIVEVEL", getDriveVelocity());
-    SmartDashboard.putNumber(String.valueOf(moduleNumber) + " SETVEL",
-        currentDesiredState.speedMetersPerSecond);
-    SmartDashboard.putNumber(String.valueOf(moduleNumber) + " ACTPOS",
-        getDrivePosition());
-    SmartDashboard.putNumber(String.valueOf(moduleNumber) + " CC",
-        m_turnCancoder.getAbsolutePosition().getValueAsDouble() * 360);
+    // SmartDashboard.putNumber(String.valueOf(moduleNumber) + " DRIVEVEL", getDriveVelocity());
+    // SmartDashboard.putNumber(String.valueOf(moduleNumber) + " SETVEL",
+    //     currentDesiredState.speedMetersPerSecond);
+    // SmartDashboard.putNumber(String.valueOf(moduleNumber) + " ACTPOS",
+    //     getDrivePosition());
+    // SmartDashboard.putNumber(String.valueOf(moduleNumber) + " CC",
+    //     m_turnCancoder.getAbsolutePosition().getValueAsDouble() * 360);
 
     // SmartDashboard.putNumber(String.valueOf(moduleNumber) + " ABS POS",
     // m_turnCancoder.getAbsolutePosition().getValueAsDouble());
 
-    SmartDashboard.putNumber(String.valueOf(moduleNumber) + " setptangdeg",
-        angleDegrees);
-    SmartDashboard.putNumber(String.valueOf(moduleNumber) + " actualangdeg",
-        getAngle().getDegrees());
+    // SmartDashboard.putNumber(String.valueOf(moduleNumber) + " setptangdeg",
+    //     angleDegrees);
+    // SmartDashboard.putNumber(String.valueOf(moduleNumber) + " actualangdeg",
+    //     getAngle().getDegrees());
   }
 
   public boolean isStopped() {

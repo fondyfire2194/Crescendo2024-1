@@ -202,21 +202,6 @@ public final class Constants {
                 public static final double ROBOT_LOOP_PERIOD = 1.0 / ROBOT_LOOP_HZ;
         }
 
-        public static final class AutoConstants {
-                public static final double kMaxSpeedMetersPerSecond = 3;
-                public static final double kMaxAccelerationMetersPerSecondSquared = 3;
-                public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
-                public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
-
-                public static final double kPXController = 1;
-                public static final double kPYController = 1;
-                public static final double kPThetaController = 0.05;
-
-                // Constraint for the motion profilied robot angle controller
-                public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
-                                kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
-        }
-
         public static final class CameraConstants {
                 public static final String leftCamName = "ELP_1_MP";
                 public static final String rightCamName = "ELP_2_MP";

@@ -9,20 +9,19 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.AutoFactory;
+import frc.robot.PathFactory;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.Pathplanner.RunPPath;
-import frc.robot.subsystems.LeftShooterSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.HoldNoteSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LeftShooterSubsystem;
+import frc.robot.subsystems.RightShooterSubsystem;
 import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.RightShooterSubsystem;
 
 /** Add your docs here. */
 public class CenterStartCommand1 extends SequentialCommandGroup {
@@ -40,7 +39,7 @@ public class CenterStartCommand1 extends SequentialCommandGroup {
                 return AutoBuilder.pathfindToPose(pose, constraints, 0, 2);
         }
 
-        public CenterStartCommand1(AutoFactory af, CommandFactory cf, SwerveSubsystem swerve,
+        public CenterStartCommand1( CommandFactory cf,PathFactory af, SwerveSubsystem swerve,
                         ElevatorSubsystem elevator,
                         IntakeSubsystem intake, HoldNoteSubsystem holdNote, RightShooterSubsystem rightshooter,
                         LeftShooterSubsystem leftshooter, ShooterAngleSubsystem shooterAngle) {

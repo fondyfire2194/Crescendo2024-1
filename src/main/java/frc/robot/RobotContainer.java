@@ -8,10 +8,6 @@ import java.util.function.BooleanSupplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.path.PathPlannerPath;
-
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.shuffleboard.EventImportance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -20,7 +16,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.DoNothing;
 import frc.robot.commands.Drive.TeleopSwerve;
 import frc.robot.commands.Pathplanner.SetStartByAlliance;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -52,15 +47,15 @@ public class RobotContainer {
         // final LimelightSubsystem m_llv2 = new LimelightSubsystem("limelight_1");
 
         // final LimelightSubsystem m_llv3 = new LimelightSubsystem("limelight_2");
+        public final PathFactory m_pf = new PathFactory(m_swerve);
 
-        // public final AutoFactory m_af = new AutoFactory(m_cf, m_swerve, m_elevator,
-        // m_intake, m_holdNote,
-        // m_rightShooter,
-        // m_leftShooter, m_shooterAngle);
+        public final AutoFactory m_af = new AutoFactory(m_pf);
 
         private final CommandXboxController driver = new CommandXboxController(0);
 
         private final CommandXboxController codriver = new CommandXboxController(1);
+
+        private final CommandXboxController setupCommandXboxController = new CommandXboxController(2);
 
         private final SendableChooser<Command> autoChooser;
 
@@ -127,7 +122,7 @@ public class RobotContainer {
         private void registerNamedCommands() {
                 // Register Named Commands
                 NamedCommands.registerCommand("LimelightSetStartPose1",
-                                new SetStartByAlliance(m_swerve,"CentOneP1"));
+                                new SetStartByAlliance(m_swerve, "CentOneP1"));
                 NamedCommands.registerCommand("SetAngleSpeed1",
                                 Commands.runOnce(() -> SmartDashboard.putString("AngleSpeed1", "")));
                 NamedCommands.registerCommand("SetAngleSpeed2",
@@ -174,9 +169,13 @@ public class RobotContainer {
                 // codriver.a()
                 // codriver.x()
                 // codriver.b()
+
+                                               
         }
 
-        public Command getAutonomousCommand() {
+        public Command getTestPathCommand() {
                 return autoChooser.getSelected();
         }
+
+        
 }

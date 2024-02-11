@@ -13,16 +13,14 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.AutoFactory;
+import frc.robot.PathFactory;
 import frc.robot.commands.Pathplanner.RunPPath;
 import frc.robot.subsystems.SwerveSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class CenterStartCommand2 extends SequentialCommandGroup {
-
- 
+public class CenterStartCommand1Paths extends SequentialCommandGroup {
 
   public PathPlannerPath getPath(String pathname) {
     return PathPlannerPath.fromPathFile(pathname);
@@ -33,15 +31,11 @@ public class CenterStartCommand2 extends SequentialCommandGroup {
       Units.degreesToRadians(360),
       Units.degreesToRadians(540));
 
-
-
   public Command getPathToPose(Pose2d pose, PathConstraints constraints) {
     return AutoBuilder.pathfindToPose(pose, constraints, 0, 2);
   }
 
-  public CenterStartCommand2(AutoFactory af,SwerveSubsystem swerve) {
-
-  
+  public CenterStartCommand1Paths(PathFactory pf, SwerveSubsystem swerve) {
 
     addCommands(
 
@@ -49,29 +43,30 @@ public class CenterStartCommand2 extends SequentialCommandGroup {
             // shoot loaded note to speaker
 
             // pick up note directly behinE
-                                               
 
-             new RunPPath(swerve, af.activePaths.get(0), true),
+            pf.setStartPosebyAlliance(pf.activePaths.get(0)),
+
+            new RunPPath(swerve, pf.activePaths.get(0), true),
 
             new WaitCommand(.5),
 
-             new RunPPath(swerve,af. activePaths.get(1), false),
+            new RunPPath(swerve, pf.activePaths.get(1), false),
 
             new WaitCommand(1),
 
-            new RunPPath(swerve, af.activePaths.get(2), false),
+            new RunPPath(swerve, pf.activePaths.get(2), false),
 
             new WaitCommand(.5),
 
-            new RunPPath(swerve, af.activePaths.get(3), false),
+            new RunPPath(swerve, pf.activePaths.get(3), false),
 
             new WaitCommand(1),
 
-            new RunPPath(swerve, af.activePaths.get(4), false),
+            new RunPPath(swerve, pf.activePaths.get(4), false),
 
             new WaitCommand(.5),
 
-            new RunPPath(swerve, af.activePaths.get(5), false),
+            new RunPPath(swerve, pf.activePaths.get(5), false),
 
             new WaitCommand(1)
 

@@ -17,6 +17,8 @@
       "/Shuffleboard/Drivetrain/On-the-fly path": "Command",
       "/Shuffleboard/Drivetrain/Pathfind to Pickup Pos": "Command",
       "/Shuffleboard/Drivetrain/Pathfind to Scoring Pos": "Command",
+      "/Shuffleboard/Drivetrain/PathfindPickup": "Command",
+      "/Shuffleboard/Drivetrain/PathfindScore": "Command",
       "/Shuffleboard/Drivetrain/ResetPose": "Command",
       "/Shuffleboard/Drivetrain/SetAngleKp": "Command",
       "/Shuffleboard/Drivetrain/SetDriveFF": "Command",
