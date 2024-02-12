@@ -46,10 +46,7 @@ public class LimelightSetStartPose extends Command {
     redAlliance = alliance.isPresent() && alliance.get() == Alliance.Red;
     blueAlliance = alliance.isPresent() && alliance.get() == Alliance.Blue;
 
-    if (redAlliance)
-      LimelightHelpers.setPipelineIndex(m_llName, LLPipelines.pipelines.APRILTAGSTARTRED.ordinal());
-    if (blueAlliance)
-      LimelightHelpers.setPipelineIndex(m_llName, LLPipelines.pipelines.APRILTAGSTARTBLUE.ordinal());
+    LimelightHelpers.setPipelineIndex(m_llName, LLPipelines.pipelines.APRILTAGSTART.ordinal());
 
     useAsStartPose = m_pathStartPose;
 

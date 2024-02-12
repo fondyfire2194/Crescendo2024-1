@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.CameraConstants;
 import frc.robot.commands.Drive.TeleopSwerve;
 import frc.robot.commands.Drive.TrackNote;
 import frc.robot.commands.Pathplanner.SetStartByAlliance;
@@ -29,8 +30,7 @@ public class RobotContainer {
 
         // final IntakeSubsystem m_intake = new IntakeSubsystem();
 
-         final ShooterSubsystem m_rightShooter = new ShooterSubsystem();
-
+        final ShooterSubsystem m_rightShooter = new ShooterSubsystem();
 
         // final FeedShooterSubsystem m_shooterFeeder = new FeedShooterSubsystem();
 
@@ -145,11 +145,17 @@ public class RobotContainer {
 
                 driver.y().onTrue(m_swerve.setPoseToX0Y0());
 
-                 driver.a().onTrue(new TrackNote("limelight", m_swerve));
+                driver.x().onTrue(new TrackNote(CameraConstants.rearCamName, m_swerve));
 
-                // driver.x().
+                driver.povUp().onTrue(Commands.runOnce(
+                                () -> LimelightHelpers.setStreamMode_PiPMain(CameraConstants.frontLeftCamName)));
 
-                // driver.b()
+                 driver.povDown().onTrue(Commands.runOnce(
+                        () -> LimelightHelpers.setStreamMode_PiPSecondary(CameraConstants.frontLeftCamName)));
+
+                        driver.povLeft().onTrue(Commands.runOnce(
+                        () -> LimelightHelpers.setStreamMode_Standard(CameraConstants.frontLeftCamName)));
+
 
                 // driver.back()
 

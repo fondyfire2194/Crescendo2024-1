@@ -208,8 +208,10 @@ public final class Constants {
         }
 
         public static final class CameraConstants {
-                public static final String leftCamName = "ELP_1_MP";
-                public static final String rightCamName = "ELP_2_MP";
+                public static final String frontLeftCamName = "limelight-frleft";
+                public static final String frontRightCamName = "limelight-frright";
+
+                public static final String rearCamName = "limelight-rear";
 
                 public static final double POSE_AMBIGUITY_CUTOFF = 0.05;
                 public static final double DISTANCE_CUTOFF = 4.0;
@@ -222,6 +224,12 @@ public final class Constants {
                                 new Rotation3d(0, 0, 0)); // Cam mounted facing forward, half a meter forward of center,
                                                           // half a meter up
                                                           // from center.
+
+                public static Transform3d robotToRearCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5),
+                                new Rotation3d(0, 0, 0)); // Cam mounted facing forward, half a meter forward of center,
+                                                          // half a meter up
+                                                          // from center.
+
         }
 
         public static final class ShooterConstants {

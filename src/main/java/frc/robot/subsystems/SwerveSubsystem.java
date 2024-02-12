@@ -13,6 +13,7 @@ import com.playingwithfusion.TimeOfFlight.RangingMode;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.estimator.PoseEstimator;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -36,6 +37,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.CANIDConstants;
+import frc.robot.Constants.CameraConstants;
+import frc.robot.utils.RectanglePoseArea;
+import frc.robot.LimelightHelpers;
 import frc.robot.Pref;
 import frc.robot.Robot;
 
@@ -483,18 +487,52 @@ public class SwerveSubsystem extends SubsystemBase {
     return lookForNote;
   }
 
+  /**
+   * Gets distance to nearest apriltag
+   * 
+   * @return distance to nearest apriltag in meters
+   */
+
+  public double getDistance(String limelight) {
+    // return PoseEstimator.getEstimatedPosition().getTranslation().getDistance(new
+    // Pose2d(LimelightHelpers.getTargetPose3d_RobotSpace(limelight).getX(),
+    // LimelightHelpers.getTargetPose3d_RobotSpace(limelight).getY()).getTranslation());
+    // getting x distance to target
+    return LimelightHelpers.getTargetPose_RobotSpace(limelight)[0];
+
+  }
+
   @Override
   public void periodic() {
-    // SmartDashboard.putNumber("LeftInches",
-    // round2dp(Units.metersToInches(getRearLeftSensorMM() / 1000), 1));
-    // SmartDashboard.putNumber("RightInches",
-    // round2dp(Units.metersToInches(getRearRightSensorMM() / 1000), 1));
-    // SmartDashboard.putBoolean("Note Seen", getRearRightSensorMM() < 50);
+
     swervePoseEstimator.update(getYaw(), getPositions());
-    // swervePoseEstimator.addVisionMeasurement(previousposeleft,
-    // timestampsecondsl);
-    // swervePoseEstimator.addVisionMeasurement(previousposeright,
-    // timestampsecondsr);
+
+    if (LimelightHelpers.getTV(CameraConstants.frontLeftCamName)) {
+      // standard deviations are (distance to nearest apriltag)/2 for x and y and 10
+      // degrees for theta
+
+      Pose2d frleftPose = (LimelightHelpers.getBotPose2d_wpiBlue(CameraConstants.frontLeftCamName));
+      ;
+      Translation2d robotEstimatedtranslation = swervePoseEstimator.getEstimatedPosition().getTranslation();
+
+      Translation2d band = new Translation2d(.5, .5);
+
+      RectanglePoseArea visionCheck = new RectanglePoseArea(robotEstimatedtranslation.plus(band),
+          robotEstimatedtranslation.minus(band));
+
+      boolean inArea = visionCheck.isPoseWithinArea(frleftPose);
+
+      if (inArea)
+
+        swervePoseEstimator.addVisionMeasurement(
+            frleftPose,
+            (Timer.getFPGATimestamp()
+                - (LimelightHelpers.getLatency_Pipeline(CameraConstants.frontLeftCamName) / 1000.0)
+                - (LimelightHelpers.getLatency_Capture(CameraConstants.frontLeftCamName) / 1000.0)),
+            VecBuilder.fill(getDistance(CameraConstants.frontLeftCamName) / 2,
+                getDistance(CameraConstants.frontLeftCamName) / 2, Units.degreesToRadians(10)));
+                
+    }
 
     field.setRobotPose(getPose());
     SmartDashboard.putNumber("X Meters", round2dp(getX(), 2));
