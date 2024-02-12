@@ -213,7 +213,6 @@ public class SwerveSubsystem extends SubsystemBase {
     }))
         .withSize(1, 1).withPosition(2, 1);
 
-
     setModuleDriveFF();
     setModuleDriveKp();
     setModuleAngleKp();
@@ -232,10 +231,11 @@ public class SwerveSubsystem extends SubsystemBase {
 
   public void drive(double translation, double strafe, double rotation, boolean fieldRelative, boolean isOpenLoop) {
     SwerveModuleState[] swerveModuleStates = Constants.SwerveConstants.swerveKinematics.toSwerveModuleStates(
-
-        fieldRelative
-            ? fieldRelativeByAlliance(translation, strafe, rotation)
-            : new ChassisSpeeds(translation, strafe, rotation));
+        ChassisSpeeds.discretize(
+            fieldRelative
+                ? fieldRelativeByAlliance(translation, strafe, rotation)
+                : new ChassisSpeeds(translation, strafe, rotation),
+            .02));
 
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.SwerveConstants.kmaxSpeed);
 
@@ -276,7 +276,6 @@ public class SwerveSubsystem extends SubsystemBase {
 
   }
 
- 
   public double getHeadingDegrees() {
     return Math.IEEEremainder((gyro.getAngle()), 360);
   }
@@ -345,7 +344,7 @@ public class SwerveSubsystem extends SubsystemBase {
     return mSwerveMods[0].driveIsBraked();
   }
 
-  public boolean getIsRotating(){
+  public boolean getIsRotating() {
     return gyro.isRotating();
   }
 
@@ -435,20 +434,17 @@ public class SwerveSubsystem extends SubsystemBase {
     return m_rearRightSensor.getRangeSigma();
   }
 
-  public void setLookForNote(){
-    lookForNote=true;
+  public void setLookForNote() {
+    lookForNote = true;
   }
 
-
-  public void resetLookForNote(){
-    lookForNote=false;
+  public void resetLookForNote() {
+    lookForNote = false;
   }
 
-  public boolean getLookForNote(){
+  public boolean getLookForNote() {
     return lookForNote;
   }
-
-  
 
   @Override
   public void periodic() {

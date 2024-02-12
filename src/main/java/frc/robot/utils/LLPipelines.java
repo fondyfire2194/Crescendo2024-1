@@ -13,10 +13,10 @@ public class LLPipelines {
         APRILTAG(0, pipelinetype.fiducialmarkers),
         APRILTAGSTARTRED(1, pipelinetype.fiducialmarkers), // tags 3 and 4 only
         APRILTAGSTARTBLUE(2, pipelinetype.fiducialmarkers), // tags 7 and 8 only
-        SPART_3(3, pipelinetype.fiducialmarkers),
-        SPARE_4(4, pipelinetype.fiducialmarkers),
-        SPARE_5(5, pipelinetype.fiducialmarkers),
-        GRIP_6(6, pipelinetype.grip),
+        APRILTAG_3(3, pipelinetype.fiducialmarkers),
+        APRILTAG_4(4, pipelinetype.fiducialmarkers),
+        APRILTAG_5(5, pipelinetype.fiducialmarkers),
+        COLORRET_6(6, pipelinetype.color_retroreflective),
         PYTHON_7(7, pipelinetype.python),
         NOTE_DETECT(8, pipelinetype.detector),
         SPARE_DETECT(9, pipelinetype.detector);
@@ -37,7 +37,7 @@ public class LLPipelines {
     }
 
     public enum pipelinetype {
-        retroreflective,
+        color_retroreflective,
         grip,
         python,
         fiducialmarkers,

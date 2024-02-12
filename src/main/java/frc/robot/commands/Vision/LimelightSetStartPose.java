@@ -54,7 +54,10 @@ public class LimelightSetStartPose extends Command {
     useAsStartPose = m_pathStartPose;
 
     if (redAlliance)
+
       useAsStartPose = GeometryUtil.flipFieldPose(m_pathStartPose);
+
+    m_swerve.setPose(useAsStartPose);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -69,11 +72,13 @@ public class LimelightSetStartPose extends Command {
       useAsStartPose = botPose2d;
     }
 
-    else
+    else {
       loopctr = 0;
 
+    }
+
     if (loopctr > validResults && Timer.getFPGATimestamp() > startTime + allowedTime) {
-      m_swerve.setPose(useAsStartPose);
+      // m_swerve.setPose(useAsStartPose);
       endIt = true;
     }
 

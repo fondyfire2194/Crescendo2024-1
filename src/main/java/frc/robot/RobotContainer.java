@@ -8,6 +8,9 @@ import java.util.function.BooleanSupplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.shuffleboard.EventImportance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -17,7 +20,9 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.Drive.TeleopSwerve;
+import frc.robot.commands.Drive.TrackNote;
 import frc.robot.commands.Pathplanner.SetStartByAlliance;
+import frc.robot.commands.Vision.LimelightSetStartPose;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class RobotContainer {
@@ -143,7 +148,7 @@ public class RobotContainer {
 
                 driver.y().onTrue(m_swerve.setPoseToX0Y0());
 
-                // driver.a()
+                 driver.a().onTrue(new TrackNote("limelight", m_swerve));
 
                 // driver.x().
 
