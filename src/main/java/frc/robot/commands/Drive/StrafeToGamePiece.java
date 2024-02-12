@@ -47,12 +47,13 @@ public class StrafeToGamePiece extends Command {
     }
 
     drivetrain.drive(-xOutput * SwerveConstants.kmaxSpeed, yOutput * SwerveConstants.kmaxAngularVelocity,
-        thetaOutput * SwerveConstants.kmaxAngularVelocity, false, false);
+        thetaOutput * SwerveConstants.kmaxAngularVelocity, false, false,false
+        );
   }
 
   @Override
   public void end(boolean interrupted) {
-    drivetrain.drive(0, 0, 0, false, false);
+    drivetrain.drive(0, 0, 0, false, false,false);
   }
 
   // Returns true when the command should end.

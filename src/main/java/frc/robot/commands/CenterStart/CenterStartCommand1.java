@@ -19,9 +19,9 @@ import frc.robot.commands.Vision.LimelightSetStartPose;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.HoldNoteSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.LeftShooterSubsystem;
-import frc.robot.subsystems.RightShooterSubsystem;
+
 import frc.robot.subsystems.ShooterAngleSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 /** Add your docs here. */
@@ -43,8 +43,8 @@ public class CenterStartCommand1 extends SequentialCommandGroup {
         public CenterStartCommand1(CommandFactory cf, PathFactory af, String llName,
                         SwerveSubsystem swerve,
                         ElevatorSubsystem elevator,
-                        IntakeSubsystem intake, HoldNoteSubsystem holdNote, RightShooterSubsystem rightshooter,
-                        LeftShooterSubsystem leftshooter, ShooterAngleSubsystem shooterAngle) {
+                        IntakeSubsystem intake, HoldNoteSubsystem holdNote, ShooterSubsystem shooter,
+                        ShooterAngleSubsystem shooterAngle) {
 
                 addCommands(
 
@@ -52,7 +52,7 @@ public class CenterStartCommand1 extends SequentialCommandGroup {
 
                                                 cf.setStartPoseWithLimeLight(),
 
-                                              //  cf.setStartPosebyAlliance(af.activePaths.get(0)),
+                                                // cf.setStartPosebyAlliance(af.activePaths.get(0)),
 
                                                 cf.runShooters(2.2, 50),
 
@@ -76,8 +76,7 @@ public class CenterStartCommand1 extends SequentialCommandGroup {
 
                                                 cf.shootNote(),
 
-                                                rightshooter.stopShooterCommand(),
-                                                leftshooter.stopShooterCommand()
+                                                shooter.stopShooterCommand()
 
                                 ));
 

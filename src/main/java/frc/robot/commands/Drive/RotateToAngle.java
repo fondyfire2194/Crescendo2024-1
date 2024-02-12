@@ -28,7 +28,7 @@ public class RotateToAngle extends PIDCommand {
         () -> angle,
         // This uses the output
         output -> {
-          drive.drive(0, 0, output * 3, false, false);
+          drive.drive(0, 0, output * 3, false, false,false);
         }, drive);
     m_drive = drive;
 

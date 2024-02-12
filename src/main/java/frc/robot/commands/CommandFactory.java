@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.subsystems.LeftShooterSubsystem;
 import frc.robot.AutoFactory;
 import frc.robot.PathFactory;
 import frc.robot.commands.CenterStart.CenterStartCommand1;
@@ -28,10 +27,10 @@ import frc.robot.subsystems.FeedShooterSubsystem;
 import frc.robot.subsystems.HoldNoteSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterAngleSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.utils.InterpolatingTable;
 import frc.robot.utils.ShotParameter;
-import frc.robot.subsystems.RightShooterSubsystem;
 
 /** Add your docs here. */
 public class CommandFactory {
@@ -41,9 +40,7 @@ public class CommandFactory {
 
     private final IntakeSubsystem m_intake;
 
-    private final RightShooterSubsystem m_rightshooter;
-
-    private final LeftShooterSubsystem m_leftshooter;
+    private final ShooterSubsystem m_shooter;
 
     private final FeedShooterSubsystem m_shooterFeed;
 
@@ -63,15 +60,15 @@ public class CommandFactory {
             IntakeSubsystem intake,
             ElevatorSubsystem elevator,
             HoldNoteSubsystem holdNote,
-            ShooterAngleSubsystem shooterAngle, RightShooterSubsystem rightShooter,
-            LeftShooterSubsystem leftShooter, FeedShooterSubsystem shooterFeed) {
+            ShooterAngleSubsystem shooterAngle, ShooterSubsystem shooter,
+            FeedShooterSubsystem shooterFeed) {
         m_swerve = swerve;
         m_pf = pf;
         m_elevator = elevator;
         m_intake = intake;
         m_holdnote = holdNote;
-        m_rightshooter = rightShooter;
-        m_leftshooter = leftShooter;
+        m_shooter = shooter;
+
         m_shooterangle = shooterAngle;
         m_shooterFeed = shooterFeed;
         m_llName = llName;
@@ -97,8 +94,8 @@ public class CommandFactory {
                 return new DoNothing();
             case 11:
                 return new CenterStartCommand1(this, m_pf, m_llName, m_swerve, m_elevator, m_intake, m_holdnote,
-                        m_rightshooter,
-                        m_leftshooter, m_shooterangle).withName("CC1");
+                        m_shooter,
+                        m_shooterangle).withName("CC1");
             case 12:
                 return new CenterStartCommand1Paths(m_pf, m_swerve).withName("CC2");
             case 13:
@@ -118,7 +115,7 @@ public class CommandFactory {
     public Command setStartPoseWithLimeLight() {
 
         return new LimelightSetStartPose(
-            m_llName, m_swerve, m_af.activePaths.get(0).getPreviewStartingHolonomicPose());
+                m_llName, m_swerve, m_af.activePaths.get(0).getPreviewStartingHolonomicPose());
 
     }
 
@@ -183,10 +180,9 @@ public class CommandFactory {
 
     private Command distanceShot(double distance) {
         ShotParameter shot = InterpolatingTable.get(distance);
-        return m_leftshooter.runLeftRollerCommand(shot.leftrpm)
-                .alongWith(m_rightshooter.runRightRollerCommand(shot.rightrpm),
-                        m_shooterangle.runOnce(
-                                () -> m_shooterangle.positionShooterAngle(shot.angle)));
+        return m_shooter.runBothRollersCommand(shot.leftrpm, shot.rightrpm)
+                .alongWith(m_shooterangle.runOnce(
+                        () -> m_shooterangle.positionShooterAngle(shot.angle)));
 
     }
 

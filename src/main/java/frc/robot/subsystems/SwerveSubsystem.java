@@ -10,10 +10,9 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.playingwithfusion.TimeOfFlight;
 import com.playingwithfusion.TimeOfFlight.RangingMode;
-import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -25,10 +24,10 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.ADXL345_I2C.AllAxes;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -37,7 +36,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.CANIDConstants;
-import frc.robot.commands.CenterStart.CenterStartCommand1Paths;
 import frc.robot.Pref;
 import frc.robot.Robot;
 
@@ -62,7 +60,26 @@ public class SwerveSubsystem extends SubsystemBase {
 
   private boolean lookForNote;
 
+  private double keepAngle = 0.0;
+  private double timeSinceRot = 0.0;
+  private double lastRotTime = 0.0;
+  private double timeSinceDrive = 0.0;
+  private double lastDriveTime = 0.0;
+
+  private final PIDController m_keepAnglePID =
+
+      new PIDController(Constants.KeepAngle.kp, Constants.KeepAngle.ki, Constants.KeepAngle.kd);
+
+  private final Timer m_keepAngleTimer = new Timer();
+
+  SwerveModuleState[] lockStates = new SwerveModuleState[4];
+
   public SwerveSubsystem() {
+
+    lockStates[0] = new SwerveModuleState(0, Rotation2d.fromDegrees(45));
+    lockStates[1] = new SwerveModuleState(0, Rotation2d.fromDegrees(-45));
+    lockStates[2] = new SwerveModuleState(0, Rotation2d.fromDegrees(-45));
+    lockStates[3] = new SwerveModuleState(0, Rotation2d.fromDegrees(45));
 
     if (RobotBase.isSimulation()) {
 
@@ -73,6 +90,10 @@ public class SwerveSubsystem extends SubsystemBase {
       // yPID.setP(0);
 
     }
+
+    m_keepAngleTimer.reset();
+    m_keepAngleTimer.start();
+    m_keepAnglePID.enableContinuousInput(-Math.PI, Math.PI);
 
     gyro = new AHRS(SPI.Port.kMXP, (byte) 100);
 
@@ -229,11 +250,21 @@ public class SwerveSubsystem extends SubsystemBase {
     setStates(targetStates);
   }
 
-  public void drive(double translation, double strafe, double rotation, boolean fieldRelative, boolean isOpenLoop) {
+  public void drive(double translation, double strafe, double rotation, boolean fieldRelative, boolean isOpenLoop,
+      boolean keepAngle) {
+    if (keepAngle) {
+      rotation = performKeepAngle(translation, strafe, rotation); // Calls the keep angle function to update the keep
+                                                                  // angle or rotate
+    }
+
+    if (Math.abs(rotation) < 0.02) {
+      rotation = 0.0;
+    }
+
     SwerveModuleState[] swerveModuleStates = Constants.SwerveConstants.swerveKinematics.toSwerveModuleStates(
         ChassisSpeeds.discretize(
             fieldRelative
-                ? fieldRelativeByAlliance(translation, strafe, rotation)
+                ? ChassisSpeeds.fromFieldRelativeSpeeds(translation, strafe, rotation, getHeading())
                 : new ChassisSpeeds(translation, strafe, rotation),
             .02));
 
@@ -242,15 +273,6 @@ public class SwerveSubsystem extends SubsystemBase {
     for (SwerveModule mod : mSwerveMods) {
       mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop);
     }
-
-  }
-
-  ChassisSpeeds fieldRelativeByAlliance(double translation, double strafe, double rotation) {
-    Rotation2d temp = getYaw();
-    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red)
-      temp = getYaw().plus(new Rotation2d(Math.PI));
-    return ChassisSpeeds.fromFieldRelativeSpeeds(
-        translation, strafe, rotation, temp);
   }
 
   /* Used by SwerveControllerCommand in Auto */
@@ -259,6 +281,17 @@ public class SwerveSubsystem extends SubsystemBase {
     for (SwerveModule mod : mSwerveMods) {
       mod.setDesiredState(desiredStates[mod.moduleNumber], false);
     }
+  }
+
+  /**
+   * Sets the wheels into an X formation to prevent movement.
+   */
+  public void lock() {
+    setStates(lockStates);
+  }
+
+  public Command lockCommand() {
+    return Commands.runOnce(() -> lock());
   }
 
   public void resetModuleEncoders() {
@@ -355,14 +388,18 @@ public class SwerveSubsystem extends SubsystemBase {
     mSwerveMods[3].setIdleMode(brake);
   }
 
-  public double getPoseHeading() {
-    return getPose().getRotation().getDegrees();
+  public Rotation2d getHeading() {
+    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red)
+      return getPose().getRotation().plus(new Rotation2d(Math.PI));
+    else
+      return getPose().getRotation();
   }
 
   public void resetPoseEstimator(Pose2d pose) {
     zeroGyro();
     swervePoseEstimator.resetPosition(getYaw(), getPositions(), pose);
     simOdometryPose = pose;
+
   }
 
   public Command setPose(Pose2d pose) {
@@ -391,7 +428,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
   public void zeroGyro() {
     gyro.reset();
-
+    updateKeepAngle();
   }
 
   public Rotation2d getYaw() {
@@ -462,7 +499,7 @@ public class SwerveSubsystem extends SubsystemBase {
     field.setRobotPose(getPose());
     SmartDashboard.putNumber("X Meters", round2dp(getX(), 2));
     SmartDashboard.putNumber("Y Meters", round2dp(getY(), 2));
-    SmartDashboard.putNumber("Est Pose Heaading", round2dp(getPoseHeading(), 2));
+    SmartDashboard.putNumber("Est Pose Heaading", round2dp(getHeading().getDegrees(), 2));
 
     SmartDashboard.putNumber("GyroYaw", round2dp(getYaw().getDegrees(), 2));
     SmartDashboard.putNumberArray("Odometry",
@@ -472,11 +509,56 @@ public class SwerveSubsystem extends SubsystemBase {
 
   }
 
+  /**
+   * Keep angle function is performed to combat drivetrain drift without the need
+   * of constant "micro-adjustments" from the driver.
+   * A PIDController is used to attempt to maintain the robot heading to the
+   * keepAngle value. This value is updated when the robot
+   * is rotated manually by the driver input
+   * 
+   * @return rotation command in radians/s
+   * @param xSpeed is the input drive X speed command
+   * @param ySpeed is the input drive Y speed command
+   * @param rot    is the input drive rotation speed command
+   */
+  private double performKeepAngle(double xSpeed, double ySpeed, double rot) {
+    double output = rot; // Output shouold be set to the input rot command unless the Keep Angle PID is
+                         // called
+    if (Math.abs(rot) >= 0.01) { // If the driver commands the robot to rotate set the
+                                 // last rotate time to the current time
+      lastRotTime = m_keepAngleTimer.get();
+    }
+    if (Math.abs(xSpeed) >= 0.01
+        || Math.abs(ySpeed) >= 0.01) { // if driver commands robot to translate set the
+                                       // last drive time to the current time
+      lastDriveTime = m_keepAngleTimer.get();
+    }
+    timeSinceRot = m_keepAngleTimer.get() - lastRotTime; // update variable to the current time - the last rotate time
+    timeSinceDrive = m_keepAngleTimer.get() - lastDriveTime; // update variable to the current time - the last drive
+                                                             // time
+    if (timeSinceRot < 0.25) { // Update keepAngle up until 0.5s after rotate command stops to allow rotation
+                               // move to finish
+      keepAngle = getYaw().getRadians();
+    } else if (Math.abs(rot) <= 0.01 && timeSinceDrive < 0.25) { // Run Keep angle pid
+                                                                 // until 0.75s after drive
+                                                                 // command stops to combat
+                                                                 // decel drift
+      output = m_keepAnglePID.calculate(getYaw().getRadians(), keepAngle); // Set output command to the result of the
+                                                                           // Keep Angle PID
+    }
+    return output;
+  }
+
+  public void updateKeepAngle() {
+    keepAngle = getYaw().getRadians();
+  }
+
   private void resetAll() {
     // gyro.reset();
     resetModuleEncoders();
     swervePoseEstimator.resetPosition(getYaw(), getPositions(), new Pose2d());
     simOdometryPose = new Pose2d();
+    updateKeepAngle();
 
   }
 

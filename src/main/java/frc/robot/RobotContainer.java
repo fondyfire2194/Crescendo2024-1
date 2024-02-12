@@ -9,8 +9,6 @@ import java.util.function.BooleanSupplier;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.shuffleboard.EventImportance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -22,7 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.Drive.TeleopSwerve;
 import frc.robot.commands.Drive.TrackNote;
 import frc.robot.commands.Pathplanner.SetStartByAlliance;
-import frc.robot.commands.Vision.LimelightSetStartPose;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class RobotContainer {
@@ -31,9 +29,8 @@ public class RobotContainer {
 
         // final IntakeSubsystem m_intake = new IntakeSubsystem();
 
-        // final RightShooterSubsystem m_rightShooter = new RightShooterSubsystem();
+         final ShooterSubsystem m_rightShooter = new ShooterSubsystem();
 
-        // final LeftRollerSubsystem m_leftShooter = new LeftShooterSubsystem();
 
         // final FeedShooterSubsystem m_shooterFeeder = new FeedShooterSubsystem();
 

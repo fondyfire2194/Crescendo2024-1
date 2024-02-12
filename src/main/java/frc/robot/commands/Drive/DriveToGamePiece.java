@@ -49,13 +49,13 @@ public class DriveToGamePiece extends Command {
     }
 
     drivetrain.drive(-xOutput * SwerveConstants.kmaxSpeed, yOutput * SwerveConstants.kmaxSpeed,
-        thetaOutput * SwerveConstants.kmaxAngularVelocity, false, false);
+        thetaOutput * SwerveConstants.kmaxAngularVelocity, false, false,false);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    drivetrain.drive(0, 0, 0, false, false);
+    drivetrain.drive(0, 0, 0, false, false,false);
   }
 
   // Returns true when the command should end.

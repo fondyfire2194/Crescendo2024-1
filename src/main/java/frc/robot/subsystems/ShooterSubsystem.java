@@ -22,52 +22,86 @@ import frc.robot.Constants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Pref;
 
-public class RightShooterSubsystem extends SubsystemBase {
+public class ShooterSubsystem extends SubsystemBase {
 
   CANSparkMax rightRoller;
 
   SparkPIDController rightController;
   RelativeEncoder rightEncoder;
 
+  CANSparkMax leftRoller;
+
+  SparkPIDController leftController;
+
+  RelativeEncoder leftEncoder;
+
+  double leftRollerCommandRPM = 500;
+
   double rightRollerCommandRPM = 500;
 
   double commandRPM = 500;
 
   /** Creates a new Shooter. */
-  public RightShooterSubsystem() {
+  public ShooterSubsystem() {
     rightRoller = new CANSparkMax(Constants.CANIDConstants.rightShooterID, MotorType.kBrushless);
     rightController = rightRoller.getPIDController();
     rightEncoder = rightRoller.getEncoder();
-
     configMotor(rightRoller, rightEncoder, rightController, false);
+
+    leftRoller = new CANSparkMax(Constants.CANIDConstants.leftShooterID, MotorType.kBrushless);
+    leftController = leftRoller.getPIDController();
+    leftEncoder = leftRoller.getEncoder();
+    configMotor(leftRoller, leftEncoder, leftController, true);
 
     if (RobotBase.isSimulation())
       REVPhysicsSim.getInstance().addSparkMax(rightRoller, 3, 5600);
 
-    // Shuffleboard.getTab("ShooterSubsystem").add(this)
-    //     .withPosition(2, 0).withSize(2, 1);
+    Shuffleboard.getTab("ShooterSubsystem").add(this)
+        .withPosition(2, 0).withSize(2, 1);
 
-    // Shuffleboard.getTab("ShooterSubsystem").addNumber("RightRPMSet",
-    //     () -> Pref.getPref("RightRPM"))
-    //     .withPosition(3, 1).withSize(1, 1);
+    Shuffleboard.getTab("ShooterSubsystem").addNumber("RightRPMSet",
+        () -> Pref.getPref("RightRPM"))
+        .withPosition(3, 1).withSize(1, 1);
 
-    // Shuffleboard.getTab("ShooterSubsystem").add("StartRight",
-    //     this.runRightRollerCommand(Pref.getPref("LeftRPM")))
-    //     .withPosition(2, 1).withSize(1, 1);
+    Shuffleboard.getTab("ShooterSubsystem").add("StartRight",
+        this.runRightRollerCommand(Pref.getPref("LeftRPM")))
+        .withPosition(2, 1).withSize(1, 1);
 
-    // Shuffleboard.getTab("ShooterSubsystem").add("SetRightKp", setRightKpCommand())
-    //     .withPosition(2, 2).withSize(1, 1);
+    Shuffleboard.getTab("ShooterSubsystem").add("SetRightKp", setRightKpCommand())
+        .withPosition(2, 2).withSize(1, 1);
 
-    // Shuffleboard.getTab("ShooterSubsystem").addNumber("RightKpSet",
-    //     () -> Pref.getPref("RightShooterKp"))
-    //     .withPosition(3, 2).withSize(1, 1);
+    Shuffleboard.getTab("ShooterSubsystem").addNumber("RightKpSet",
+        () -> Pref.getPref("RightShooterKp"))
+        .withPosition(3, 2).withSize(1, 1);
 
-    // Shuffleboard.getTab("ShooterSubsystem").addNumber("RightRPM",
-    //     () -> round2dp(getRPMRight(), 0))
-    //     .withPosition(2, 3).withSize(1, 1);
+    Shuffleboard.getTab("ShooterSubsystem").addNumber("RightRPM",
+        () -> round2dp(getRPMRight(), 0))
+        .withPosition(2, 3).withSize(1, 1);
 
-    // Shuffleboard.getTab("ShooterSubsystem").addNumber("RightKp", () -> getRightShooterKp())
-    //     .withPosition(3, 3).withSize(1, 1);
+    Shuffleboard.getTab("ShooterSubsystem").addNumber("RightKp", () -> getRightShooterKp())
+        .withPosition(3, 3).withSize(1, 1);
+
+    Shuffleboard.getTab("ShooterSubsystem").add("StartLeft",
+        this.runLeftRollerCommand(Pref.getPref("LeftRPM")))
+        .withPosition(0, 1).withSize(1, 1);
+
+    Shuffleboard.getTab("ShooterSubsystem").addNumber("LeftRPMSet",
+        () -> Pref.getPref("LeftRPM"))
+        .withPosition(1, 1).withSize(1, 1);
+
+    Shuffleboard.getTab("ShooterSubsystem").add("SetLeftKp", setLeftKp())
+        .withPosition(0, 2).withSize(1, 1);
+
+    Shuffleboard.getTab("ShooterSubsystem").addNumber("LeftKpSet",
+        () -> Pref.getPref("LeftShooterKp"))
+        .withPosition(1, 2).withSize(1, 1);
+
+    Shuffleboard.getTab("ShooterSubsystem").addNumber("LeftRPM",
+        () -> round2dp(getRPMLeft(), 0))
+        .withPosition(0, 3).withSize(1, 1);
+
+    Shuffleboard.getTab("ShooterSubsystem").addNumber("LeftKp", () -> getLeftShooterKp())
+        .withPosition(1, 3).withSize(1, 1);
 
   }
 
@@ -88,7 +122,7 @@ public class RightShooterSubsystem extends SubsystemBase {
     encoder.setPosition(0.0);
   }
 
-  public void runRoller(double rpm) {
+  public void runRightRoller(double rpm) {
     commandRPM = rpm;
     if (RobotBase.isReal())
       rightController.setReference(commandRPM, ControlType.kVelocity);
@@ -98,9 +132,14 @@ public class RightShooterSubsystem extends SubsystemBase {
   }
 
   public void stopMotor() {
-    if (RobotBase.isReal())
+    if (RobotBase.isReal()) {
+
       rightController.setReference(0, ControlType.kVelocity);
+      leftController.setReference(0, ControlType.kVelocity);
+    }
+    leftRoller.stopMotor();
     rightRoller.stopMotor();
+
   }
 
   public Command stopShooterCommand() {
@@ -110,13 +149,46 @@ public class RightShooterSubsystem extends SubsystemBase {
   public Command runRightRollerCommand(double rpm) {
     commandRPM = rpm;
     if (RobotBase.isReal())
-      return this.runOnce(() -> runRoller(commandRPM));
+      return this.runOnce(() -> runRightRoller(commandRPM));
     else
       return Commands.runOnce(() -> rightRoller.setVoltage(.5));
   }
 
   public double getRPMRight() {
     return rightEncoder.getVelocity();
+  }
+
+  public void runLeftRoller() {
+    if (RobotBase.isReal())
+      leftController.setReference(commandRPM, ControlType.kVelocity);
+    else
+      leftRoller.setVoltage(commandRPM * 12 / ShooterConstants.maxShooterMotorRPM);
+
+  }
+
+  public Command runLeftRollerCommand(double rpm) {
+    commandRPM = rpm;
+    return this.runOnce(() -> runLeftRoller());
+  }
+
+  public Command runBothRollersCommand(double leftRPM, double rightRPM) {
+    return runLeftRollerCommand(leftRPM).alongWith(runRightRollerCommand(rightRPM));
+  }
+
+  public double getRPMLeft() {
+    return leftEncoder.getVelocity();
+  }
+
+  public Command setLeftKp() {
+    return Commands.runOnce(() -> setLeftKp());
+  }
+
+  public void setLeftShooterKp() {
+    leftController.setP(Pref.getPref("ShooterKp"));
+  }
+
+  public double getLeftShooterKp() {
+    return leftController.getP();
   }
 
   public Command setRightKpCommand() {

@@ -55,6 +55,7 @@ public class TeleopSwerve extends Command {
         // strafeVal).times(Constants.SwerveConstants.maxSpeed),
         rotationVal *= Constants.SwerveConstants.kmaxAngularVelocity ,
         fieldCentric.getAsBoolean(),
+        true,
         true);
 
     SmartDashboard.putBoolean("FieldCentric", fieldCentric.getAsBoolean());

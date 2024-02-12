@@ -12,7 +12,6 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.Distance;
 import edu.wpi.first.units.Measure;
 import frc.lib.config.SwerveModuleConstants;
@@ -178,6 +177,12 @@ public final class Constants {
                                 flModuleOffset.getNorm(), // Drive base radius (distance from center to furthest module)
                                 new ReplanningConfig());
 
+        }
+
+        public static final class KeepAngle {
+                public static final double kp = 0.30;
+                public static final double ki = 0.0;
+                public static final double kd = 0.0;
         }
 
         public static final class FieldConstants {
