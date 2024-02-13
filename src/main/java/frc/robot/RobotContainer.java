@@ -30,7 +30,7 @@ public class RobotContainer {
 
         // final IntakeSubsystem m_intake = new IntakeSubsystem();
 
-        final ShooterSubsystem m_rightShooter = new ShooterSubsystem();
+        final ShooterSubsystem m_shooter = new ShooterSubsystem();
 
         // final FeedShooterSubsystem m_shooterFeeder = new FeedShooterSubsystem();
 
@@ -93,6 +93,7 @@ public class RobotContainer {
         }
 
         BooleanSupplier fieldCentric = driver.leftBumper();
+        BooleanSupplier keepAngle = driver.rightBumper();
 
         private void setDefaultCommands() {
 
@@ -101,19 +102,14 @@ public class RobotContainer {
                                                 m_swerve,
                                                 () -> -driver.getLeftY(),
                                                 () -> -driver.getLeftX(),
-                                                () -> -driver.getRawAxis(2),
-                                                fieldCentric));
+                                                () -> -driver.getRawAxis(4),
+                                                fieldCentric,
+                                                keepAngle));
 
                 // m_elevator.setDefaultCommand(m_elevator.positionHold());
 
                 // m_shooterAngle.setDefaultCommand(m_shooterAngle.positionHold());
 
-                // m_intake.setDefaultCommand(Commands.runOnce(() -> m_intake.stopMotor(),
-                // m_intake));
-                // m_shooter.setDefaultCommand(Commands.runOnce(() -> m_shooter.stopMotors(),
-                // m_shooter));
-                // m_llv1.setDefaultCommand(new TrackAprilTags3D(m_llv1, m_swerve));
-                // m_llv2.setDefaultCommand(new TrackAprilTags3D(m_llv2, m_swerve));
         }
 
         private void registerNamedCommands() {
@@ -150,12 +146,11 @@ public class RobotContainer {
                 driver.povUp().onTrue(Commands.runOnce(
                                 () -> LimelightHelpers.setStreamMode_PiPMain(CameraConstants.frontLeftCamName)));
 
-                 driver.povDown().onTrue(Commands.runOnce(
-                        () -> LimelightHelpers.setStreamMode_PiPSecondary(CameraConstants.frontLeftCamName)));
+                driver.povDown().onTrue(Commands.runOnce(
+                                () -> LimelightHelpers.setStreamMode_PiPSecondary(CameraConstants.frontLeftCamName)));
 
-                        driver.povLeft().onTrue(Commands.runOnce(
-                        () -> LimelightHelpers.setStreamMode_Standard(CameraConstants.frontLeftCamName)));
-
+                driver.povLeft().onTrue(Commands.runOnce(
+                                () -> LimelightHelpers.setStreamMode_Standard(CameraConstants.frontLeftCamName)));
 
                 // driver.back()
 

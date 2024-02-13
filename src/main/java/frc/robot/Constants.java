@@ -210,8 +210,11 @@ public final class Constants {
         public static final class CameraConstants {
                 public static final String frontLeftCamName = "limelight-frleft";
                 public static final String frontRightCamName = "limelight-frright";
-
                 public static final String rearCamName = "limelight-rear";
+
+                public static final String frontLeftIPaddress = "10.21.94.5";
+                public static final String frontRightIPaddress = "10.21.94.6";
+                public static final String rearCamIPaddress = "10.21.94.10";
 
                 public static final double POSE_AMBIGUITY_CUTOFF = 0.05;
                 public static final double DISTANCE_CUTOFF = 4.0;

@@ -19,7 +19,7 @@ public class ShotParameter {
     public boolean equals(ShotParameter other) {
         return Math.abs(this.angle - other.angle) < 0.1 &&
                 Math.abs(this.leftrpm - other.leftrpm) < 0.1 &&
-                Math.abs(this.rightrpm - other.leftrpm) < 0.1;
+                Math.abs(this.rightrpm - other.rightrpm) < 0.1;
     }
 
     // Method to interpolate

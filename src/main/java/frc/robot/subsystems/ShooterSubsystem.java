@@ -131,9 +131,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
   }
 
-  public void stopMotor() {
+  public void stopMotors() {
     if (RobotBase.isReal()) {
-
       rightController.setReference(0, ControlType.kVelocity);
       leftController.setReference(0, ControlType.kVelocity);
     }
@@ -143,7 +142,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public Command stopShooterCommand() {
-    return this.runOnce(() -> stopMotor());
+    return this.runOnce(() -> stopMotors());
   }
 
   public Command runRightRollerCommand(double rpm) {

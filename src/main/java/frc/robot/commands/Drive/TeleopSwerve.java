@@ -15,7 +15,7 @@ public class TeleopSwerve extends Command {
   private DoubleSupplier strafeSup;
   private DoubleSupplier rotationSup;
   private BooleanSupplier fieldCentric;
-
+  private BooleanSupplier keepAngle;
   private SlewRateLimiter translationLimiter = new SlewRateLimiter(3.0);
   private SlewRateLimiter strafeLimiter = new SlewRateLimiter(3.0);
   private SlewRateLimiter rotationLimiter = new SlewRateLimiter(3.0);
@@ -25,7 +25,8 @@ public class TeleopSwerve extends Command {
       DoubleSupplier translationSup,
       DoubleSupplier strafeSup,
       DoubleSupplier rotationSup,
-      BooleanSupplier fieldCentric) {
+      BooleanSupplier fieldCentric,
+      BooleanSupplier keepAngle) {
     this.s_Swerve = s_Swerve;
     addRequirements(s_Swerve);
 
@@ -33,6 +34,7 @@ public class TeleopSwerve extends Command {
     this.strafeSup = strafeSup;
     this.rotationSup = rotationSup;
     this.fieldCentric = fieldCentric;
+    this.keepAngle = keepAngle;
   }
 
   @Override
@@ -53,10 +55,10 @@ public class TeleopSwerve extends Command {
 
         // new Translation2d(translationVal,
         // strafeVal).times(Constants.SwerveConstants.maxSpeed),
-        rotationVal *= Constants.SwerveConstants.kmaxAngularVelocity ,
+        rotationVal *= Constants.SwerveConstants.kmaxAngularVelocity,
         fieldCentric.getAsBoolean(),
         true,
-        true);
+        keepAngle.getAsBoolean());
 
     SmartDashboard.putBoolean("FieldCentric", fieldCentric.getAsBoolean());
     SmartDashboard.putNumber("TransVal", translationVal);

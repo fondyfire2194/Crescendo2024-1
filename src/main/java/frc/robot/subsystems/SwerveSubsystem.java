@@ -13,7 +13,6 @@ import com.playingwithfusion.TimeOfFlight.RangingMode;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.estimator.PoseEstimator;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -403,8 +402,7 @@ public class SwerveSubsystem extends SubsystemBase {
     zeroGyro();
     swervePoseEstimator.resetPosition(getYaw(), getPositions(), pose);
     simOdometryPose = pose;
-
-  }
+      }
 
   public Command setPose(Pose2d pose) {
     return Commands.runOnce(() -> resetPoseEstimator(pose));
@@ -512,7 +510,7 @@ public class SwerveSubsystem extends SubsystemBase {
       // degrees for theta
 
       Pose2d frleftPose = (LimelightHelpers.getBotPose2d_wpiBlue(CameraConstants.frontLeftCamName));
-      ;
+
       Translation2d robotEstimatedtranslation = swervePoseEstimator.getEstimatedPosition().getTranslation();
 
       Translation2d band = new Translation2d(.5, .5);
@@ -520,18 +518,45 @@ public class SwerveSubsystem extends SubsystemBase {
       RectanglePoseArea visionCheck = new RectanglePoseArea(robotEstimatedtranslation.plus(band),
           robotEstimatedtranslation.minus(band));
 
-      boolean inArea = visionCheck.isPoseWithinArea(frleftPose);
+      boolean inArealeft = visionCheck.isPoseWithinArea(frleftPose);
 
-      if (inArea)
+      // if (inArealeft)
 
-        swervePoseEstimator.addVisionMeasurement(
-            frleftPose,
-            (Timer.getFPGATimestamp()
-                - (LimelightHelpers.getLatency_Pipeline(CameraConstants.frontLeftCamName) / 1000.0)
-                - (LimelightHelpers.getLatency_Capture(CameraConstants.frontLeftCamName) / 1000.0)),
-            VecBuilder.fill(getDistance(CameraConstants.frontLeftCamName) / 2,
-                getDistance(CameraConstants.frontLeftCamName) / 2, Units.degreesToRadians(10)));
-                
+      swervePoseEstimator.addVisionMeasurement(
+          frleftPose,
+          (Timer.getFPGATimestamp()
+              - (LimelightHelpers.getLatency_Pipeline(CameraConstants.frontLeftCamName) / 1000.0)
+              - (LimelightHelpers.getLatency_Capture(CameraConstants.frontLeftCamName) / 1000.0)),
+          VecBuilder.fill(getDistance(CameraConstants.frontLeftCamName) / 2,
+              getDistance(CameraConstants.frontLeftCamName) / 2, Units.degreesToRadians(10)));
+
+    }
+
+    if (LimelightHelpers.getTV(CameraConstants.frontRightCamName)) {
+      // standard deviations are (distance to nearest apriltag)/2 for x and y and 10
+      // degrees for theta
+      Pose2d frrightPose = (LimelightHelpers.getBotPose2d_wpiBlue(CameraConstants.frontRightCamName));
+
+      Translation2d robotEstimatedtranslation = swervePoseEstimator.getEstimatedPosition().getTranslation();
+
+      Translation2d band = new Translation2d(.5, .5);
+
+      RectanglePoseArea visionCheck = new RectanglePoseArea(robotEstimatedtranslation.plus(band),
+          robotEstimatedtranslation.minus(band));
+
+
+      boolean inAreaRight = visionCheck.isPoseWithinArea(frrightPose);
+
+      // if (inAreaRight)
+
+      swervePoseEstimator.addVisionMeasurement(
+          frrightPose,
+          (Timer.getFPGATimestamp()
+              - (LimelightHelpers.getLatency_Pipeline(CameraConstants.frontRightCamName) / 1000.0)
+              - (LimelightHelpers.getLatency_Capture(CameraConstants.frontRightCamName) / 1000.0)),
+          VecBuilder.fill(getDistance(CameraConstants.frontRightCamName) / 2,
+              getDistance(CameraConstants.frontRightCamName) / 2, Units.degreesToRadians(10)));
+
     }
 
     field.setRobotPose(getPose());
@@ -572,11 +597,14 @@ public class SwerveSubsystem extends SubsystemBase {
       lastDriveTime = m_keepAngleTimer.get();
     }
     timeSinceRot = m_keepAngleTimer.get() - lastRotTime; // update variable to the current time - the last rotate time
+
     timeSinceDrive = m_keepAngleTimer.get() - lastDriveTime; // update variable to the current time - the last drive
                                                              // time
-    if (timeSinceRot < 0.25) { // Update keepAngle up until 0.5s after rotate command stops to allow rotation
+    if (timeSinceRot < 0.25) { // Update keepAngle until 0.5s after rotate command stops to allow rotation
                                // move to finish
+
       keepAngle = getYaw().getRadians();
+
     } else if (Math.abs(rot) <= 0.01 && timeSinceDrive < 0.25) { // Run Keep angle pid
                                                                  // until 0.75s after drive
                                                                  // command stops to combat
@@ -655,6 +683,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumberArray("Theoretical States", theoreticalStates);
     SmartDashboard.putNumberArray("Real States", realStates);
+
+    SmartDashboard.putNumber("KeepAngle", keepAngle);
   }
 
   public static double round2dp(double number, int dp) {
