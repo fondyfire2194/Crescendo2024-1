@@ -6,19 +6,12 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-
-import javax.lang.model.util.ElementScanner14;
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVPhysicsSim;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
-
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -27,7 +20,6 @@ import frc.lib.util.CANSparkMaxUtil;
 import frc.lib.util.CANSparkMaxUtil.Usage;
 import frc.robot.Constants;
 import frc.robot.Constants.IntakeConstants;
-import frc.robot.Constants.ShooterConstants;
 import frc.robot.Pref;
 
 public class IntakeSubsystem extends SubsystemBase {
@@ -60,26 +52,26 @@ public class IntakeSubsystem extends SubsystemBase {
     controller.setP(Constants.IntakeConstants.intakeKP);
     controller.setI(Constants.IntakeConstants.intakeKI);
     controller.setD(Constants.IntakeConstants.intakeKD);
-    controller.setFF(Constants.IntakeConstants.intakeKFF/IntakeConstants.maxIntakeMotorRPM);
+    controller.setFF(Constants.IntakeConstants.intakeKFF);
     motor.enableVoltageCompensation(Constants.IntakeConstants.voltageComp);
     motor.burnFlash();
     encoder.setPosition(0.0);
 
-    // Shuffleboard.getTab("IntakeSubsystem").add(this)
-    //     .withSize(2, 1)
-    //     .withPosition(0, 0);
+    Shuffleboard.getTab("IntakeSubsystem").add(this)
+        .withSize(2, 1)
+        .withPosition(0, 0);
 
-    // Shuffleboard.getTab("IntakeSubsystem").addNumber("IntakeRPM", () -> round2dp(getRPM(), 0))
-    //     .withSize(2, 1)
-    //     .withPosition(0, 1);
+    Shuffleboard.getTab("IntakeSubsystem").addNumber("IntakeRPM", () -> round2dp(getRPM(), 0))
+        .withSize(2, 1)
+        .withPosition(0, 1);
 
-    // Shuffleboard.getTab("IntakeSubsystem").add("StartIntake", runIntakeCommand())
-    //     .withSize(2, 1)
-    //     .withPosition(0, 2);
+    Shuffleboard.getTab("IntakeSubsystem").add("StartIntake", runIntakeCommand())
+        .withSize(2, 1)
+        .withPosition(0, 2);
 
-    // Shuffleboard.getTab("IntakeSubsystem").add("StopIntake", stopIntakeCommand())
-    //     .withSize(2, 1)
-    //     .withPosition(0, 3);
+    Shuffleboard.getTab("IntakeSubsystem").add("StopIntake", stopIntakeCommand())
+        .withSize(2, 1)
+        .withPosition(0, 3);
 
   }
 
@@ -102,11 +94,11 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public Command runIntakeCommand() {
 
-    return this.runOnce(() -> runIntake(intakeRPM));
+    return Commands.run(() -> runIntake(intakeRPM), this);
   }
 
   public Command feedShooterCommand() {
-    return this.runOnce(() -> runIntake(intakeRPM));
+    return Commands.runOnce(() -> runIntake(intakeRPM), this);
   }
 
   public Command stopIntakeCommand() {
@@ -119,8 +111,17 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public double getIntakeKp() {
     return intakeController.getP();
-   }
+  }
 
+  public void incrementIntakeRPM() {
+    if (intakeRPM < IntakeConstants.maxIntakeMotorRPM)
+      intakeRPM += 100;
+  }
+
+  public void decrementIntakeRPM() {
+    if (intakeRPM > 500)
+      intakeRPM -= 100;
+  }
 
   @Override
   public void periodic() {

@@ -5,6 +5,8 @@ import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkBase.IdleMode;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -12,6 +14,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.units.Distance;
 import edu.wpi.first.units.Measure;
 import frc.lib.config.SwerveModuleConstants;
@@ -201,6 +204,18 @@ public final class Constants {
 
         }
 
+        public static final class AprilTagConstants {
+                public static AprilTagFieldLayout layout;
+                static {
+                        try {
+                                layout = AprilTagFieldLayout
+                                                .loadFromResource(AprilTagFields.k2024Crescendo.m_resourceFile);
+                        } catch (Exception e) {
+                                e.printStackTrace();
+                        }
+                }
+        }
+
         public static final class GlobalConstants {
                 public static final int ROBOT_LOOP_HZ = 50;
                 /** Robot loop period */
@@ -224,9 +239,10 @@ public final class Constants {
                                                           // half a meter up
                                                           // from center.
                 public static Transform3d robotToRightCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5),
-                                new Rotation3d(0, 0, 0)); // Cam mounted facing forward, half a meter forward of center,
-                                                          // half a meter up
-                                                          // from center.
+                                new Rotation3d(0, .1, .2)); // Cam mounted facing forward, half a meter forward of
+                                                            // center,
+                                                            // half a meter up
+                                                            // from center.
 
                 public static Transform3d robotToRearCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5),
                                 new Rotation3d(0, 0, 0)); // Cam mounted facing forward, half a meter forward of center,
@@ -240,10 +256,10 @@ public final class Constants {
                 public static final double maxShooterMotorRPM = 5700;
                 public static final double shooterConversionVelocityFactor = 1; // TODO change value
                 public static final double shooterConversionPositionFactor = 1; // TODO change value
-                public static final double shooterKP = .001;
+                public static final double shooterKP = .0;
                 public static final double shooterKI = 0;
                 public static final double shooterKD = 0;
-                public static final double shooterKFF = .9;
+                public static final double shooterKFF = .5/maxShooterMotorRPM;
                 public static final double voltageComp = 12;
                 public static final IdleMode shooterIdleMode = IdleMode.kCoast;
                 public static final int shooterContinuousCurrentLimit = 30;
@@ -283,7 +299,7 @@ public final class Constants {
                 public static final double intakeKP = .000001;
                 public static final double intakeKI = 0;
                 public static final double intakeKD = 0;
-                public static final double intakeKFF = .9;
+                public static final double intakeKFF = .5/maxIntakeMotorRPM;
                 public static final double voltageComp = 12;
                 public static final IdleMode intakeIdleMode = IdleMode.kCoast;
                 public static final int intakeContinuousCurrentLimit = 30;
@@ -332,16 +348,25 @@ public final class Constants {
                 public static final double maxShooterAngleMotorRPM = 5700;
                 public static final double shooterangleConversionVelocityFactor = 1; // TODO change value
                 public static final double shooterangleConversionPositionFactor = 1; // TODO change value
-                public static final double shooterangleKP = .000001;
+                public static final double shooterangleKP = 5e-5;
                 public static final double shooterangleKI = 0;
                 public static final double shooterangleKD = 0;
-                public static final double shooterangleKFF = 1 / maxShooterAngleMotorRPM;
+                public static final double shooterangleKFF = .000156;
+                public static final double shooterangleKIz = .05;
+                public static final double shooteranglekMaxOutput = .5;
+                public static final double shooteranglekMinOutput = -.5;
+
+                public static double maxVelocity = 500;
+                public static final double minVelocity = 0;
+                public static final double maxAcceleration = 500;
+                public static final double allowedError = 0;
+
                 public static final double voltageComp = 12;
                 public static final IdleMode shooterangleIdleMode = IdleMode.kCoast;
                 public static final int shooterangleContinuousCurrentLimit = 30;
                 public static double shooterangleMinDegrees = 1;
-                public static double shooterangleMaxDegrees = 30;
-                public static double shooteranglePositionToIntake;
+                public static double shooterangleMaxDegrees = 60;
+                public static double shooterangleMidDegrees = 15;
 
         }
 

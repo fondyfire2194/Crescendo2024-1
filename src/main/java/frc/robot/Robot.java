@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants.CameraConstants;
 
 public class Robot extends TimedRobot {
 
@@ -29,13 +30,14 @@ public class Robot extends TimedRobot {
 
     m_robotContainer = new RobotContainer();
 
-   // CameraServer.startAutomaticCapture();
+    // CameraServer.startAutomaticCapture();
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
     SmartDashboard.putNumber("APL", m_robotContainer.m_pf.activePaths.size());
+    m_robotContainer.m_shooter.testjs = (-m_robotContainer.tstjs.getThrottle() + 1) / 2;
   }
 
   @Override
@@ -62,6 +64,12 @@ public class Robot extends TimedRobot {
         m_robotContainer.m_swerve.setIdleMode(false);
       }
     }
+
+    SmartDashboard.putString("CCPRS",
+        LimelightHelpers.getCameraPose3d_RobotSpace(CameraConstants.frontRightCamName).toPose2d().toString());
+
+    SmartDashboard.putNumberArray("CTGT",
+        LimelightHelpers.getCameraPose_TargetSpace(CameraConstants.frontRightCamName));
   }
 
   @Override
@@ -86,7 +94,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousExit() {
-m_robotContainer.m_shooter.stopMotors();
+    m_robotContainer.m_shooter.stopMotors();
   }
 
   @Override

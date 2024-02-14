@@ -16,11 +16,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Constants.CameraConstants;
+import frc.robot.Constants.ShooterAngleConstants;
 import frc.robot.commands.Drive.TeleopSwerve;
-import frc.robot.commands.Drive.TrackNote;
 import frc.robot.commands.Pathplanner.SetStartByAlliance;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
@@ -28,7 +30,7 @@ public class RobotContainer {
         /* Subsystems */
         final SwerveSubsystem m_swerve = new SwerveSubsystem();
 
-        // final IntakeSubsystem m_intake = new IntakeSubsystem();
+        final IntakeSubsystem m_intake = new IntakeSubsystem();
 
         final ShooterSubsystem m_shooter = new ShooterSubsystem();
 
@@ -38,11 +40,13 @@ public class RobotContainer {
 
         // final HoldNoteSubsystem m_holdNote = new HoldNoteSubsystem();
 
-        // final ShooterAngleSubsystem m_shooterAngle = new ShooterAngleSubsystem();
+        final ShooterAngleSubsystem m_shooterAngle = new ShooterAngleSubsystem();
 
         // final CommandFactory m_cf = new CommandFactory(m_swerve, m_intake,
         // m_elevator,
         // m_holdNote, m_shooterAngle, m_rightShooter, m_leftShooter,m_shooterFeeder);
+
+        // public final LimelightVision m_llv = new LimelightVision();
 
         public final PathFactory m_pf = new PathFactory(m_swerve);
 
@@ -52,7 +56,7 @@ public class RobotContainer {
 
         private final CommandXboxController codriver = new CommandXboxController(1);
 
-        private final CommandXboxController setupCommandXboxController = new CommandXboxController(2);
+        final CommandJoystick tstjs = new CommandJoystick(2);
 
         private final SendableChooser<Command> autoChooser;
 
@@ -61,6 +65,9 @@ public class RobotContainer {
                 Pref.deleteUnused();
 
                 Pref.addMissing();
+
+                // m_llv.setCamToRobotOffset(Constants.CameraConstants.frontRightCamName,
+                // Constants.CameraConstants.robotToRightCam);
 
                 setDefaultCommands();
 
@@ -93,6 +100,7 @@ public class RobotContainer {
         }
 
         BooleanSupplier fieldCentric = driver.leftBumper();
+
         BooleanSupplier keepAngle = driver.rightBumper();
 
         private void setDefaultCommands() {
@@ -139,20 +147,45 @@ public class RobotContainer {
 
                 // SmartDashboard.putData("CommSchd", CommandScheduler.getInstance());
 
-                driver.y().onTrue(m_swerve.setPoseToX0Y0());
+                tstjs.button(5).onTrue(m_shooter.testRunRollerCommand());
 
-                driver.x().onTrue(new TrackNote(CameraConstants.rearCamName, m_swerve));
+                tstjs.button(3).onTrue(Commands.runOnce(() -> m_shooter.stopMotors(), m_shooter));
 
-                driver.povUp().onTrue(Commands.runOnce(
-                                () -> LimelightHelpers.setStreamMode_PiPMain(CameraConstants.frontLeftCamName)));
+                tstjs.povUp().onTrue(m_shooterAngle.jogCommand(.1))
+                                .onFalse(Commands.runOnce(() -> m_shooterAngle.stopMotor()));
 
-                driver.povDown().onTrue(Commands.runOnce(
-                                () -> LimelightHelpers.setStreamMode_PiPSecondary(CameraConstants.frontLeftCamName)));
+                tstjs.povDown().onTrue(m_shooterAngle.jogCommand(.1))
+                                .onFalse(Commands.runOnce(() -> m_shooterAngle.stopMotor()));
 
-                driver.povLeft().onTrue(Commands.runOnce(
-                                () -> LimelightHelpers.setStreamMode_Standard(CameraConstants.frontLeftCamName)));
+                tstjs.button(6).onTrue(m_shooterAngle
+                                .smartPositionShooterAngleCommandToAngle(ShooterAngleConstants.shooterangleMaxDegrees));
 
-                // driver.back()
+                tstjs.button(4).onTrue(m_shooterAngle
+                                .smartPositionShooterAngleCommandToAngle(ShooterAngleConstants.shooterangleMinDegrees));
+
+                tstjs.button(8).onTrue(Commands.runOnce(() -> m_shooterAngle.incrementShooterAngle())
+                                .andThen(m_shooterAngle.smartPositionShooterAngleCommand()));
+
+                tstjs.button(7).onTrue(Commands.runOnce(() -> m_shooterAngle.decrementShooterAngle())
+                                .andThen(m_shooterAngle.smartPositionShooterAngleCommand()));
+
+                tstjs.button(10).onTrue(m_intake.runIntakeCommand());
+
+                tstjs.button(9).onTrue(Commands.runOnce(() -> m_intake.stopMotor(), m_intake));
+
+                tstjs.button(12).onTrue(Commands.runOnce(() -> m_intake.incrementIntakeRPM()));
+
+                tstjs.button(11).onTrue(Commands.runOnce(() -> m_intake.decrementIntakeRPM()));
+
+                // driver.a().
+
+                // driver.x().onTrue(
+
+                // driver.povUp().
+
+                // driver.povLeft().onTrue(
+
+                // driver.povRight().onTrue(
 
                 // driver.start()
 

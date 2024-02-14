@@ -7,12 +7,12 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.REVPhysicsSim;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -41,6 +41,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
   double commandRPM = 500;
 
+  public double testjs;
+
   /** Creates a new Shooter. */
   public ShooterSubsystem() {
     rightRoller = new CANSparkMax(Constants.CANIDConstants.rightShooterID, MotorType.kBrushless);
@@ -53,10 +55,10 @@ public class ShooterSubsystem extends SubsystemBase {
     leftEncoder = leftRoller.getEncoder();
     configMotor(leftRoller, leftEncoder, leftController, true);
 
-    if (RobotBase.isSimulation())
-      REVPhysicsSim.getInstance().addSparkMax(rightRoller, 3, 5600);
-
     Shuffleboard.getTab("ShooterSubsystem").add(this)
+        .withPosition(0, 0).withSize(2, 1);
+
+    Shuffleboard.getTab("ShooterSubsystem").addNumber("TestRPMSet", () -> testjs * ShooterConstants.maxShooterMotorRPM)
         .withPosition(2, 0).withSize(2, 1);
 
     Shuffleboard.getTab("ShooterSubsystem").addNumber("RightRPMSet",
@@ -116,7 +118,8 @@ public class ShooterSubsystem extends SubsystemBase {
     controller.setP(Constants.ShooterConstants.shooterKP);
     controller.setI(Constants.ShooterConstants.shooterKI);
     controller.setD(Constants.ShooterConstants.shooterKD);
-    controller.setFF(Constants.ShooterConstants.shooterKFF / ShooterConstants.maxShooterMotorRPM);
+    controller.setFF(Constants.ShooterConstants.shooterKFF);
+
     motor.enableVoltageCompensation(Constants.ShooterConstants.voltageComp);
     motor.burnFlash();
     encoder.setPosition(0.0);
@@ -135,14 +138,14 @@ public class ShooterSubsystem extends SubsystemBase {
     if (RobotBase.isReal()) {
       rightController.setReference(0, ControlType.kVelocity);
       leftController.setReference(0, ControlType.kVelocity);
-    }
-    leftRoller.stopMotor();
-    rightRoller.stopMotor();
 
+      leftRoller.stopMotor();
+      rightRoller.stopMotor();
+    }
   }
 
   public Command stopShooterCommand() {
-    return this.runOnce(() -> stopMotors());
+    return Commands.runOnce(() -> stopMotors(), this);
   }
 
   public Command runRightRollerCommand(double rpm) {
@@ -163,6 +166,15 @@ public class ShooterSubsystem extends SubsystemBase {
     else
       leftRoller.setVoltage(commandRPM * 12 / ShooterConstants.maxShooterMotorRPM);
 
+  }
+
+  private void testRunRollers() {
+    leftController.setReference(testjs * ShooterConstants.maxShooterMotorRPM, ControlType.kVelocity);
+    rightController.setReference(testjs * ShooterConstants.maxShooterMotorRPM, ControlType.kVelocity);
+  }
+
+  public Command testRunRollerCommand() {
+    return Commands.run(() -> testRunRollers(), this);
   }
 
   public Command runLeftRollerCommand(double rpm) {
@@ -204,12 +216,13 @@ public class ShooterSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    SmartDashboard.putNumber("TESTJS", testjs * ShooterConstants.maxShooterMotorRPM);
 
   }
 
   @Override
   public void simulationPeriodic() {
-    REVPhysicsSim.getInstance().run();
+
   }
 
   public static double round2dp(double number, int dp) {

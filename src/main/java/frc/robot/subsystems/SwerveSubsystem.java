@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -15,8 +16,11 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -41,6 +45,7 @@ import frc.robot.utils.RectanglePoseArea;
 import frc.robot.LimelightHelpers;
 import frc.robot.Pref;
 import frc.robot.Robot;
+import frc.robot.commands.Vision.TrackNote;
 
 public class SwerveSubsystem extends SubsystemBase {
   // The gyro sensor
@@ -402,7 +407,7 @@ public class SwerveSubsystem extends SubsystemBase {
     zeroGyro();
     swervePoseEstimator.resetPosition(getYaw(), getPositions(), pose);
     simOdometryPose = pose;
-      }
+  }
 
   public Command setPose(Pose2d pose) {
     return Commands.runOnce(() -> resetPoseEstimator(pose));
@@ -492,12 +497,17 @@ public class SwerveSubsystem extends SubsystemBase {
    */
 
   public double getDistance(String limelight) {
+    
+    // getting x distance to target
+    return LimelightHelpers.getTargetPose_RobotSpace(limelight)[0];
+  }
+
+  public double getArray1(String limelight) {
     // return PoseEstimator.getEstimatedPosition().getTranslation().getDistance(new
     // Pose2d(LimelightHelpers.getTargetPose3d_RobotSpace(limelight).getX(),
     // LimelightHelpers.getTargetPose3d_RobotSpace(limelight).getY()).getTranslation());
     // getting x distance to target
-    return LimelightHelpers.getTargetPose_RobotSpace(limelight)[0];
-
+    return LimelightHelpers.getTargetPose_RobotSpace(limelight)[1];
   }
 
   @Override
@@ -535,7 +545,7 @@ public class SwerveSubsystem extends SubsystemBase {
     if (LimelightHelpers.getTV(CameraConstants.frontRightCamName)) {
       // standard deviations are (distance to nearest apriltag)/2 for x and y and 10
       // degrees for theta
-      Pose2d frrightPose = (LimelightHelpers.getBotPose2d_wpiBlue(CameraConstants.frontRightCamName));
+      Pose2d frrightPose = (LimelightHelpers.getBotPose2d(CameraConstants.frontRightCamName));
 
       Translation2d robotEstimatedtranslation = swervePoseEstimator.getEstimatedPosition().getTranslation();
 
@@ -543,7 +553,6 @@ public class SwerveSubsystem extends SubsystemBase {
 
       RectanglePoseArea visionCheck = new RectanglePoseArea(robotEstimatedtranslation.plus(band),
           robotEstimatedtranslation.minus(band));
-
 
       boolean inAreaRight = visionCheck.isPoseWithinArea(frrightPose);
 
