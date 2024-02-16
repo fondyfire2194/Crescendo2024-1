@@ -11,160 +11,173 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.util.function.BooleanConsumer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.LimelightHelpers;
 import frc.robot.Constants.CameraConstants;
+import frc.robot.LimelightHelpers;
 
 public class LimelightVision extends SubsystemBase {
   /** Creates a new LimelightVision. */
-boolean showFrontLeft=true;
-boolean showFrontRight=true;
-boolean showRearCamera=true;
+  boolean showFrontLeft = true;
+  boolean showFrontRight = true;
+  boolean showRearCamera = true;
   int columnIndex = 0;
 
   public LimelightVision() {
 
-    if(showFrontLeft){
+    if (showFrontLeft) {
 
-    Shuffleboard.getTab("VisionSubsystem")
-        .addString("LLName FL", () -> CameraConstants.frontLeftCamera.camname)
-        .withPosition(columnIndex, 0)
-        .withSize(1, 1);
+      Shuffleboard.getTab("VisionSubsystem")
+          .addString("LLName FL", () -> CameraConstants.frontLeftCamera.camname)
+          .withPosition(columnIndex, 0)
+          .withSize(1, 1);
 
-    Shuffleboard.getTab("VisionSubsystem")
-        .addNumber("Pipeline # FL",
-            () -> LimelightHelpers.getCurrentPipelineIndex(CameraConstants.frontLeftCamera.camname))
-        .withPosition(columnIndex + 1, 0)
-        .withSize(1, 1);
+      Shuffleboard.getTab("VisionSubsystem")
+          .addNumber("Pipeline # FL",
+              () -> LimelightHelpers.getCurrentPipelineIndex(CameraConstants.frontLeftCamera.camname))
+          .withPosition(columnIndex + 1, 0)
+          .withSize(1, 1);
 
-    Shuffleboard.getTab("VisionSubsystem")
-        .addBoolean("HasTarget FL", () -> getTV(CameraConstants.frontLeftCamera))
-        .withPosition(columnIndex + 2, 0)
-        .withSize(1, 1);
+      Shuffleboard.getTab("VisionSubsystem")
+          .addBoolean("HasTarget FL", () -> getTV(CameraConstants.frontLeftCamera))
+          .withPosition(columnIndex + 2, 0)
+          .withSize(1, 1);
 
-    Shuffleboard.getTab("VisionSubsystem")
-        .addNumber("# Tags FL", () -> getNumberTagsSeen(CameraConstants.frontLeftCamera))
-        .withPosition(columnIndex + 3, 0)
-        .withSize(1, 1);
+      Shuffleboard.getTab("VisionSubsystem")
+          .addNumber("# Tags FL", () -> getNumberTagsSeen(CameraConstants.frontLeftCamera))
+          .withPosition(columnIndex + 3, 0)
+          .withSize(1, 1);
 
-    Shuffleboard.getTab("VisionSubsystem")
-        .addString("Tags Seen FL", () -> getTagsSeen(CameraConstants.frontLeftCamera))
-        .withPosition(columnIndex, 1)
-        .withSize(1, 1);
+      Shuffleboard.getTab("VisionSubsystem")
+          .addString("Tags Seen FL", () -> getTagsSeen(CameraConstants.frontLeftCamera))
+          .withPosition(columnIndex, 1)
+          .withSize(1, 1);
 
-    Shuffleboard.getTab("VisionSubsystem")
-        .addNumber("TagID FL", () -> getTagId(CameraConstants.frontLeftCamera))
-        .withPosition(columnIndex + 1, 1)
-        .withSize(1, 1);
+      Shuffleboard.getTab("VisionSubsystem")
+          .addNumber("TagID FL", () -> getTagId(CameraConstants.frontLeftCamera))
+          .withPosition(columnIndex + 1, 1)
+          .withSize(1, 1);
 
-    Shuffleboard.getTab("VisionSubsystem")
-        .addNumber("Dist To Tag FL", () -> round2dp(getDistanceFromTag(CameraConstants.frontLeftCamera), 2))
-        .withPosition(columnIndex + 2, 1)
-        .withSize(1, 1);
+      Shuffleboard.getTab("VisionSubsystem")
+          .addNumber("Dist To Tag FL", () -> round2dp(getDistanceFromTag(CameraConstants.frontLeftCamera), 2))
+          .withPosition(columnIndex + 2, 1)
+          .withSize(1, 1);
 
-    Shuffleboard.getTab("VisionSubsystem")
-        .addString("BluePose FL",
-            () -> LimelightHelpers.getBotPose3d_wpiBlue(CameraConstants.frontLeftCamera.camname).toPose2d().toString())
-        .withPosition(columnIndex, 2)
-        .withSize(4, 1);
+          Shuffleboard.getTab("VisionSubsystem")
+          .addNumber("Dist To Speaker FL", () -> round2dp(getSpeakerDistance(CameraConstants.frontLeftCamera), 2))
+          .withPosition(columnIndex + 3, 1)
+          .withSize(1, 1);
 
-    Shuffleboard.getTab("VisionSubsystem")
-        .addString("TagPose FL", () -> getTagPose(CameraConstants.frontLeftCamera).toPose2d().toString())
-        .withPosition(columnIndex, 3)
-        .withSize(4, 1);
+
+      Shuffleboard.getTab("VisionSubsystem")
+          .addString("BluePose FL",
+              () -> LimelightHelpers.getBotPose3d_wpiBlue(CameraConstants.frontLeftCamera.camname).toPose2d()
+                  .toString())
+          .withPosition(columnIndex, 2)
+          .withSize(4, 1);
+
+      Shuffleboard.getTab("VisionSubsystem")
+          .addString("TagPose FL", () -> getTagPose(CameraConstants.frontLeftCamera).toPose2d().toString())
+          .withPosition(columnIndex, 3)
+          .withSize(4, 1);
     }
 
-    if(showFrontRight){
-    // front right camera
-    columnIndex = 4;
-    Shuffleboard.getTab("VisionSubsystem")
-        .addString("LLName FR", () -> CameraConstants.frontRightCamera.camname)
-        .withPosition(columnIndex, 0)
-        .withSize(1, 1);
+    if (showFrontRight) {
+      // front right camera
+      columnIndex = 4;
+      Shuffleboard.getTab("VisionSubsystem")
+          .addString("LLName FR", () -> CameraConstants.frontRightCamera.camname)
+          .withPosition(columnIndex, 0)
+          .withSize(1, 1);
 
-    Shuffleboard.getTab("VisionSubsystem")
-        .addNumber("Pipeline # FR",
-            () -> LimelightHelpers.getCurrentPipelineIndex(CameraConstants.frontRightCamera.camname))
-        .withPosition(columnIndex + 1, 0)
-        .withSize(1, 1);
+      Shuffleboard.getTab("VisionSubsystem")
+          .addNumber("Pipeline # FR",
+              () -> LimelightHelpers.getCurrentPipelineIndex(CameraConstants.frontRightCamera.camname))
+          .withPosition(columnIndex + 1, 0)
+          .withSize(1, 1);
 
-    Shuffleboard.getTab("VisionSubsystem")
-        .addBoolean("HasTarget FR  ", () -> getTV(CameraConstants.frontRightCamera))
-        .withPosition(columnIndex + 2, 0)
-        .withSize(1, 1);
+      Shuffleboard.getTab("VisionSubsystem")
+          .addBoolean("HasTarget FR  ", () -> getTV(CameraConstants.frontRightCamera))
+          .withPosition(columnIndex + 2, 0)
+          .withSize(1, 1);
 
-    Shuffleboard.getTab("VisionSubsystem")
-        .addNumber("# Tags FR", () -> getNumberTagsSeen(CameraConstants.frontRightCamera))
-        .withPosition(columnIndex + 3, 0)
-        .withSize(1, 1);
+      Shuffleboard.getTab("VisionSubsystem")
+          .addNumber("# Tags FR", () -> getNumberTagsSeen(CameraConstants.frontRightCamera))
+          .withPosition(columnIndex + 3, 0)
+          .withSize(1, 1);
 
-    Shuffleboard.getTab("VisionSubsystem")
-        .addString("Tags Seen FR", () -> getTagsSeen(CameraConstants.frontRightCamera))
-        .withPosition(columnIndex, 1)
-        .withSize(1, 1);
+      Shuffleboard.getTab("VisionSubsystem")
+          .addString("Tags Seen FR", () -> getTagsSeen(CameraConstants.frontRightCamera))
+          .withPosition(columnIndex, 1)
+          .withSize(1, 1);
 
-    Shuffleboard.getTab("VisionSubsystem")
-        .addNumber("TagID FR", () -> getTagId(CameraConstants.frontRightCamera))
-        .withPosition(columnIndex + 1, 1)
-        .withSize(1, 1);
+      Shuffleboard.getTab("VisionSubsystem")
+          .addNumber("TagID FR", () -> getTagId(CameraConstants.frontRightCamera))
+          .withPosition(columnIndex + 1, 1)
+          .withSize(1, 1);
 
-    Shuffleboard.getTab("VisionSubsystem")
-        .addNumber("Dist To Tag FR", () -> round2dp(getDistanceFromTag(CameraConstants.frontRightCamera), 2))
-        .withPosition(columnIndex + 2, 1)
-        .withSize(1, 1);
+      Shuffleboard.getTab("VisionSubsystem")
+          .addNumber("Dist To Tag FR", () -> round2dp(getDistanceFromTag(CameraConstants.frontRightCamera), 2))
+          .withPosition(columnIndex + 2, 1)
+          .withSize(1, 1);
 
-    Shuffleboard.getTab("VisionSubsystem")
-        .addString("BluePose FR",
-            () -> LimelightHelpers.getBotPose3d_wpiBlue(CameraConstants.frontRightCamera.camname).toPose2d().toString())
-        .withPosition(columnIndex, 2)
-        .withSize(4, 1);
+          
+          Shuffleboard.getTab("VisionSubsystem")
+          .addNumber("Dist To Speaker FR", () -> round2dp(getSpeakerDistance(CameraConstants.frontRightCamera), 2))
+          .withPosition(columnIndex + 3, 1)
+          .withSize(1, 1);
 
-    Shuffleboard.getTab("VisionSubsystem")
-        .addString("TagPose FR", () -> getTagPose(CameraConstants.frontRightCamera).toPose2d().toString())
-        .withPosition(columnIndex, 3)
-        .withSize(4, 1);
+
+      Shuffleboard.getTab("VisionSubsystem")
+          .addString("BluePose FR",
+              () -> LimelightHelpers.getBotPose3d_wpiBlue(CameraConstants.frontRightCamera.camname).toPose2d()
+                  .toString())
+          .withPosition(columnIndex, 2)
+          .withSize(4, 1);
+
+      Shuffleboard.getTab("VisionSubsystem")
+          .addString("TagPose FR", () -> getTagPose(CameraConstants.frontRightCamera).toPose2d().toString())
+          .withPosition(columnIndex, 3)
+          .withSize(4, 1);
     }
     // rear camera
 
-    if(showRearCamera){
-    columnIndex = 8;
-    Shuffleboard.getTab("VisionSubsystem")
-        .addString("LLName R", () -> CameraConstants.rearCamera.camname)
-        .withPosition(columnIndex, 0)
-        .withSize(1, 1);
+    if (showRearCamera) {
+      columnIndex = 8;
+      Shuffleboard.getTab("VisionSubsystem")
+          .addString("LLName R", () -> CameraConstants.rearCamera.camname)
+          .withPosition(columnIndex, 0)
+          .withSize(1, 1);
 
-    Shuffleboard.getTab("VisionSubsystem")
-        .addNumber("Pipeline # R",
-            () -> LimelightHelpers.getCurrentPipelineIndex(CameraConstants.rearCamera.camname))
-        .withPosition(columnIndex + 1, 0)
-        .withSize(1, 1);
+      Shuffleboard.getTab("VisionSubsystem")
+          .addNumber("Pipeline # R",
+              () -> LimelightHelpers.getCurrentPipelineIndex(CameraConstants.rearCamera.camname))
+          .withPosition(columnIndex + 1, 0)
+          .withSize(1, 1);
 
-    Shuffleboard.getTab("VisionSubsystem")
-        .addBoolean("HasTarget R  ", () -> getTV(CameraConstants.rearCamera))
-        .withPosition(columnIndex, 1)
-        .withSize(1, 1);
+      Shuffleboard.getTab("VisionSubsystem")
+          .addBoolean("HasTarget R  ", () -> getTV(CameraConstants.rearCamera))
+          .withPosition(columnIndex, 1)
+          .withSize(1, 1);
 
-    Shuffleboard.getTab("VisionSubsystem")
-        .addNumber("Ta R",
-            () -> round2dp(LimelightHelpers.getTA(CameraConstants.rearCamera.camname), 2))
-        .withPosition(columnIndex + 1, 1)
-        .withSize(1, 1);
+      Shuffleboard.getTab("VisionSubsystem")
+          .addNumber("Ta R",
+              () -> round2dp(LimelightHelpers.getTA(CameraConstants.rearCamera.camname), 2))
+          .withPosition(columnIndex + 1, 1)
+          .withSize(1, 1);
 
-    Shuffleboard.getTab("VisionSubsystem")
-        .addNumber("Tx R",
-            () -> round2dp(LimelightHelpers.getTX(CameraConstants.rearCamera.camname), 2))
+      Shuffleboard.getTab("VisionSubsystem")
+          .addNumber("Tx R",
+              () -> round2dp(LimelightHelpers.getTX(CameraConstants.rearCamera.camname), 2))
 
-        .withPosition(columnIndex, 2)
-        .withSize(1, 1);
-    Shuffleboard.getTab("VisionSubsystem")
-        .addNumber("Ty R",
-            () -> round2dp(LimelightHelpers.getTY(CameraConstants.rearCamera.camname), 2))
-        .withPosition(columnIndex + 1, 2)
-        .withSize(1, 1);
+          .withPosition(columnIndex, 2)
+          .withSize(1, 1);
+      Shuffleboard.getTab("VisionSubsystem")
+          .addNumber("Ty R",
+              () -> round2dp(LimelightHelpers.getTY(CameraConstants.rearCamera.camname), 2))
+          .withPosition(columnIndex + 1, 2)
+          .withSize(1, 1);
     }
   }
 
@@ -222,8 +235,7 @@ boolean showRearCamera=true;
     if (LimelightHelpers.getTV(cam.camname)) {
       double targetOffsetAngle_Vertical = LimelightHelpers.getTY(cam.camname);
       // how many degrees back is your limelight rotated from perfectly vertical?
-      double limelightMountAngleDegrees = Units
-          .radiansToDegrees(cam.transform.getRotation().getAngle());
+      double limelightMountAngleDegrees = Units.radiansToDegrees(cam.transform.getRotation().getAngle());
       // distance from the center of the Limelight lens to the floor
       double limelightLensHeightInches = 20.0;
       // distance from the target to the floor
@@ -310,13 +322,13 @@ boolean showRearCamera=true;
 
       Pose2d tagPose2d = aprilTagPose.get().toPose2d();
 
-      // get botpose from limelight networktables
+      // // get botpose from limelight networktables
 
       Pose2d botPose2d = LimelightHelpers.getBotPose2d_wpiBlue(cam.camname);
 
-      Translation2d botToTagTranslatione2d = botPose2d.getTranslation().minus(tagPose2d.getTranslation());
+      Translation2d botToTagTranslation2d = botPose2d.getTranslation().minus(tagPose2d.getTranslation());
 
-      return botToTagTranslatione2d;
+      return botToTagTranslation2d;
 
     } else
 

@@ -232,25 +232,30 @@ public final class Constants {
                         public String camname = "name";
                         public String ipaddress = "ip";
                         public Transform3d transform = new Transform3d();
+                        public boolean isUsed = false;
 
-                        public CameraValues(String camname, String ipaddress, Transform3d transform) {
-                                this.camname=camname;
-                                this.ipaddress=ipaddress;
-                                this.transform=transform;
+                        public CameraValues(String camname, String ipaddress, Transform3d transform, boolean isUsed) {
+                                this.camname = camname;
+                                this.ipaddress = ipaddress;
+                                this.transform = transform;
+                                this.isUsed = isUsed;
                         }
                 }
 
                 public static CameraValues frontLeftCamera = new CameraValues("limelight-frleft", "10.21.94.5",
                                 new Transform3d(new Translation3d(-0.5, 0.0, 0.5),
-                                                new Rotation3d(0, .1, .2)));
+                                                new Rotation3d(0, .1, .2)),
+                                true);
 
                 public static CameraValues frontRightCamera = new CameraValues("limelight-frright", "10.21.94.6",
                                 new Transform3d(new Translation3d(0.5, 0.0, 0.5),
-                                                new Rotation3d(0, .1, .2)));
+                                                new Rotation3d(0, .1, .2)),
+                                false);
 
                 public static CameraValues rearCamera = new CameraValues("limelight-rear", "10.21.94.10",
                                 new Transform3d(new Translation3d(0.5, 0.0, 0.5),
-                                                new Rotation3d(0, .1, .2)));
+                                                new Rotation3d(0, .1, .2)),
+                                true);
 
                 public static final double POSE_AMBIGUITY_CUTOFF = 0.05;
                 public static final double DISTANCE_CUTOFF = 4.0;

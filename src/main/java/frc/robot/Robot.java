@@ -70,6 +70,9 @@ public class Robot extends TimedRobot {
 
     SmartDashboard.putNumberArray("CTGT",
         LimelightHelpers.getCameraPose_TargetSpace(CameraConstants.frontRightCamera.camname));
+
+        double hb = LimelightHelpers.getLimelightNTDouble(CameraConstants.rearCamera.camname, "hb");
+        SmartDashboard.putNumber("HB", hb);
   }
 
   @Override

@@ -85,6 +85,10 @@ public class SwerveSubsystem extends SubsystemBase {
   private boolean frontLeftCamisUsed;
   private boolean frontRightCamisUsed;
 
+  private double flHeartbeatLast;
+
+  private double frHeartbeatLast;
+
   public SwerveSubsystem() {
 
     lockStates[0] = new SwerveModuleState(0, Rotation2d.fromDegrees(45));
@@ -499,10 +503,10 @@ public class SwerveSubsystem extends SubsystemBase {
    * @return distance to nearest apriltag in meters
    */
 
-  public double getDistance(String limelight) {
+  public double getDistance(String camname) {
 
     // getting x distance to target
-    return LimelightHelpers.getTargetPose_RobotSpace(limelight)[0];
+    return LimelightHelpers.getTargetPose_RobotSpace(camname)[0];
   }
 
   public double getArray1(String limelight) {
@@ -516,10 +520,17 @@ public class SwerveSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
+
     swervePoseEstimator.update(getYaw(), getPositions());
 
-    if (frontLeftCamisUsed && LimelightHelpers.getTV(CameraConstants.frontLeftCamera.camname)) {
+    double flHeartbeat = 0;
 
+    if (CameraConstants.frontLeftCamera.isUsed)
+
+     flHeartbeat = LimelightHelpers.getLimelightNTDouble(CameraConstants.frontLeftCamera.camname, "hb");
+
+    if (flHeartbeat != flHeartbeatLast && LimelightHelpers.getTV(CameraConstants.frontLeftCamera.camname)) {
+      flHeartbeatLast = flHeartbeat;
       // standard deviations are (distance to nearest apriltag)/2 for x and y and 10
       // degrees for theta
 
@@ -543,10 +554,17 @@ public class SwerveSubsystem extends SubsystemBase {
               - (LimelightHelpers.getLatency_Capture(CameraConstants.frontLeftCamera.camname) / 1000.0)),
           VecBuilder.fill(getDistance(CameraConstants.frontLeftCamera.camname) / 2,
               getDistance(CameraConstants.frontLeftCamera.camname) / 2, Units.degreesToRadians(10)));
-
     }
 
-    if (frontRightCamisUsed && LimelightHelpers.getTV(CameraConstants.frontRightCamera.camname)) {
+    double frHeartbeat = 0;
+
+    if (CameraConstants.frontRightCamera.isUsed)
+
+      frHeartbeat = LimelightHelpers.getLimelightNTDouble(CameraConstants.frontRightCamera.camname, "hb");
+
+    if (frHeartbeat != frHeartbeatLast && LimelightHelpers.getTV(CameraConstants.frontRightCamera.camname)) {
+      flHeartbeatLast = flHeartbeat;
+
       // standard deviations are (distance to nearest apriltag)/2 for x and y and 10
       // degrees for theta
       Pose2d frrightPose = (LimelightHelpers.getBotPose2d(CameraConstants.frontRightCamera.camname));
