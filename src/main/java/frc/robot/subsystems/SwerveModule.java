@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVPhysicsSim;
 import com.revrobotics.RelativeEncoder;
@@ -72,8 +73,11 @@ public class SwerveModule extends SubsystemBase {
     driveController = driveMotor.getPIDController();
     configDriveMotor();
 
-    lastAngle = getState().angle;
+    // try this for faster updates from CAN check can usage befor and after
+    driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 15);
+    angleMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 15);
 
+    lastAngle = getState().angle;
   }
 
   public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
@@ -231,21 +235,22 @@ public class SwerveModule extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // SmartDashboard.putNumber(String.valueOf(moduleNumber) + " DRIVEVEL", getDriveVelocity());
+    // SmartDashboard.putNumber(String.valueOf(moduleNumber) + " DRIVEVEL",
+    // getDriveVelocity());
     // SmartDashboard.putNumber(String.valueOf(moduleNumber) + " SETVEL",
-    //     currentDesiredState.speedMetersPerSecond);
+    // currentDesiredState.speedMetersPerSecond);
     // SmartDashboard.putNumber(String.valueOf(moduleNumber) + " ACTPOS",
-    //     getDrivePosition());
+    // getDrivePosition());
     // SmartDashboard.putNumber(String.valueOf(moduleNumber) + " CC",
-    //     m_turnCancoder.getAbsolutePosition().getValueAsDouble() * 360);
+    // m_turnCancoder.getAbsolutePosition().getValueAsDouble() * 360);
 
     // SmartDashboard.putNumber(String.valueOf(moduleNumber) + " ABS POS",
     // m_turnCancoder.getAbsolutePosition().getValueAsDouble());
 
     // SmartDashboard.putNumber(String.valueOf(moduleNumber) + " setptangdeg",
-    //     angleDegrees);
+    // angleDegrees);
     // SmartDashboard.putNumber(String.valueOf(moduleNumber) + " actualangdeg",
-    //     getAngle().getDegrees());
+    // getAngle().getDegrees());
   }
 
   public boolean isStopped() {

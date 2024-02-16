@@ -16,19 +16,22 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ShooterAngleConstants;
+import frc.robot.commands.DoNothing;
 import frc.robot.commands.Drive.TeleopSwerve;
 import frc.robot.commands.Pathplanner.SetStartByAlliance;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class RobotContainer {
         /* Subsystems */
-        final SwerveSubsystem m_swerve = new SwerveSubsystem();
+        // final SwerveSubsystem m_swerve = new SwerveSubsystem();
 
         final IntakeSubsystem m_intake = new IntakeSubsystem();
 
@@ -40,17 +43,17 @@ public class RobotContainer {
 
         // final HoldNoteSubsystem m_holdNote = new HoldNoteSubsystem();
 
-        final ShooterAngleSubsystem m_shooterAngle = new ShooterAngleSubsystem();
+        // final ShooterAngleSubsystem m_shooterAngle = new ShooterAngleSubsystem();
 
         // final CommandFactory m_cf = new CommandFactory(m_swerve, m_intake,
         // m_elevator,
         // m_holdNote, m_shooterAngle, m_rightShooter, m_leftShooter,m_shooterFeeder);
 
-        // public final LimelightVision m_llv = new LimelightVision();
+        public final LimelightVision m_llv = new LimelightVision();
 
-        public final PathFactory m_pf = new PathFactory(m_swerve);
+        // public final PathFactory m_pf = new PathFactory(m_swerve);
 
-        public final AutoFactory m_af = new AutoFactory(m_pf);
+        // public final AutoFactory m_af = new AutoFactory(m_pf);
 
         private final CommandXboxController driver = new CommandXboxController(0);
 
@@ -58,7 +61,7 @@ public class RobotContainer {
 
         final CommandJoystick tstjs = new CommandJoystick(2);
 
-        private final SendableChooser<Command> autoChooser;
+        // private final SendableChooser<Command> autoChooser;
 
         public RobotContainer() {
 
@@ -69,14 +72,17 @@ public class RobotContainer {
                 // m_llv.setCamToRobotOffset(Constants.CameraConstants.frontRightCamName,
                 // Constants.CameraConstants.robotToRightCam);
 
+                // m_swerve.frontLeftCamisUsed=false;
+                // m_swerve.frontRightCamisUsed=false;
+
                 setDefaultCommands();
 
                 registerNamedCommands();
 
                 // Build an auto chooser. This will use Commands.none() as the default option.
-                autoChooser = AutoBuilder.buildAutoChooser();
+                // autoChooser = AutoBuilder.buildAutoChooser();
 
-                SmartDashboard.putData("Auto Chooser", autoChooser);
+                // SmartDashboard.putData("Auto Chooser", autoChooser);
 
                 configureBindings();
                 // Set the scheduler to log Shuffleboard events for command initialize,
@@ -105,14 +111,14 @@ public class RobotContainer {
 
         private void setDefaultCommands() {
 
-                m_swerve.setDefaultCommand(
-                                new TeleopSwerve(
-                                                m_swerve,
-                                                () -> -driver.getLeftY(),
-                                                () -> -driver.getLeftX(),
-                                                () -> -driver.getRawAxis(4),
-                                                fieldCentric,
-                                                keepAngle));
+                // m_swerve.setDefaultCommand(
+                // new TeleopSwerve(
+                // m_swerve,
+                // () -> -driver.getLeftY(),
+                // () -> -driver.getLeftX(),
+                // () -> -driver.getRawAxis(4),
+                // fieldCentric,
+                // keepAngle));
 
                 // m_elevator.setDefaultCommand(m_elevator.positionHold());
 
@@ -122,10 +128,10 @@ public class RobotContainer {
 
         private void registerNamedCommands() {
                 // Register Named Commands
-                NamedCommands.registerCommand("LimelightSetStartPose1",
-                                new SetStartByAlliance(m_swerve, "CentOneP1"));
-                NamedCommands.registerCommand("LookForNote",
-                                Commands.runOnce(() -> m_swerve.setLookForNote()));
+                // NamedCommands.registerCommand("LimelightSetStartPose1",
+                // new SetStartByAlliance(m_swerve, "CentOneP1"));
+                // NamedCommands.registerCommand("LookForNote",
+                // Commands.runOnce(() -> m_swerve.setLookForNote()));
                 NamedCommands.registerCommand("SetAngleSpeed1",
                                 Commands.runOnce(() -> SmartDashboard.putString("AngleSpeed1", "")));
                 NamedCommands.registerCommand("SetAngleSpeed2",
@@ -151,23 +157,30 @@ public class RobotContainer {
 
                 tstjs.button(3).onTrue(Commands.runOnce(() -> m_shooter.stopMotors(), m_shooter));
 
-                tstjs.povUp().onTrue(m_shooterAngle.jogCommand(.1))
-                                .onFalse(Commands.runOnce(() -> m_shooterAngle.stopMotor()));
+                tstjs.button(2).onTrue(m_intake.intakeToSensorCommand());
 
-                tstjs.povDown().onTrue(m_shooterAngle.jogCommand(.1))
-                                .onFalse(Commands.runOnce(() -> m_shooterAngle.stopMotor()));
+                tstjs.button(1).onTrue(m_intake.feedShooterCommand()
+                                .onlyIf(() -> (m_shooter.atSpeed() && m_intake.noteAtIntake())));
 
-                tstjs.button(6).onTrue(m_shooterAngle
-                                .smartPositionShooterAngleCommandToAngle(ShooterAngleConstants.shooterangleMaxDegrees));
+                // tstjs.povUp().onTrue(m_shooterAngle.jogCommand(.1))
+                // .onFalse(Commands.runOnce(() -> m_shooterAngle.stopMotor()));
 
-                tstjs.button(4).onTrue(m_shooterAngle
-                                .smartPositionShooterAngleCommandToAngle(ShooterAngleConstants.shooterangleMinDegrees));
+                // tstjs.povDown().onTrue(m_shooterAngle.jogCommand(.1))
+                // .onFalse(Commands.runOnce(() -> m_shooterAngle.stopMotor()));
 
-                tstjs.button(8).onTrue(Commands.runOnce(() -> m_shooterAngle.incrementShooterAngle())
-                                .andThen(m_shooterAngle.smartPositionShooterAngleCommand()));
+                // tstjs.button(6).onTrue(m_shooterAngle
+                // .smartPositionShooterAngleCommandToAngle(ShooterAngleConstants.shooterangleMaxDegrees));
 
-                tstjs.button(7).onTrue(Commands.runOnce(() -> m_shooterAngle.decrementShooterAngle())
-                                .andThen(m_shooterAngle.smartPositionShooterAngleCommand()));
+                // tstjs.button(4).onTrue(m_shooterAngle
+                // .smartPositionShooterAngleCommandToAngle(ShooterAngleConstants.shooterangleMinDegrees));
+
+                // tstjs.button(8).onTrue(Commands.runOnce(() ->
+                // m_shooterAngle.incrementShooterAngle())
+                // .andThen(m_shooterAngle.smartPositionShooterAngleCommand()));
+
+                // tstjs.button(7).onTrue(Commands.runOnce(() ->
+                // m_shooterAngle.decrementShooterAngle())
+                // .andThen(m_shooterAngle.smartPositionShooterAngleCommand()));
 
                 tstjs.button(10).onTrue(m_intake.runIntakeCommand());
 
@@ -176,8 +189,6 @@ public class RobotContainer {
                 tstjs.button(12).onTrue(Commands.runOnce(() -> m_intake.incrementIntakeRPM()));
 
                 tstjs.button(11).onTrue(Commands.runOnce(() -> m_intake.decrementIntakeRPM()));
-
-                // driver.a().
 
                 // driver.x().onTrue(
 
@@ -206,7 +217,7 @@ public class RobotContainer {
         }
 
         public Command getTestPathCommand() {
-                return autoChooser.getSelected();
+                return new DoNothing();// autoChooser.getSelected();
         }
 
 }

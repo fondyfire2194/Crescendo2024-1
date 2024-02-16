@@ -48,7 +48,7 @@ public class ShooterSubsystem extends SubsystemBase {
     rightRoller = new CANSparkMax(Constants.CANIDConstants.rightShooterID, MotorType.kBrushless);
     rightController = rightRoller.getPIDController();
     rightEncoder = rightRoller.getEncoder();
-    configMotor(rightRoller, rightEncoder, rightController, false);
+    configMotor(rightRoller, rightEncoder, rightController, true);
 
     leftRoller = new CANSparkMax(Constants.CANIDConstants.leftShooterID, MotorType.kBrushless);
     leftController = leftRoller.getPIDController();
@@ -59,50 +59,26 @@ public class ShooterSubsystem extends SubsystemBase {
         .withPosition(0, 0).withSize(2, 1);
 
     Shuffleboard.getTab("ShooterSubsystem").addNumber("TestRPMSet", () -> testjs * ShooterConstants.maxShooterMotorRPM)
-        .withPosition(2, 0).withSize(2, 1);
+        .withPosition(0, 1).withSize(1, 1);
 
-    Shuffleboard.getTab("ShooterSubsystem").addNumber("RightRPMSet",
-        () -> Pref.getPref("RightRPM"))
-        .withPosition(3, 1).withSize(1, 1);
-
-    Shuffleboard.getTab("ShooterSubsystem").add("StartRight",
-        this.runRightRollerCommand(Pref.getPref("LeftRPM")))
-        .withPosition(2, 1).withSize(1, 1);
-
-    Shuffleboard.getTab("ShooterSubsystem").add("SetRightKp", setRightKpCommand())
-        .withPosition(2, 2).withSize(1, 1);
-
-    Shuffleboard.getTab("ShooterSubsystem").addNumber("RightKpSet",
-        () -> Pref.getPref("RightShooterKp"))
-        .withPosition(3, 2).withSize(1, 1);
+    Shuffleboard.getTab("ShooterSubsystem").addNumber("LeftRPM",
+        () -> round2dp(getRPMLeft(), 0))
+        .withPosition(1, 1).withSize(1, 1);
 
     Shuffleboard.getTab("ShooterSubsystem").addNumber("RightRPM",
         () -> round2dp(getRPMRight(), 0))
-        .withPosition(2, 3).withSize(1, 1);
-
-    Shuffleboard.getTab("ShooterSubsystem").addNumber("RightKp", () -> getRightShooterKp())
-        .withPosition(3, 3).withSize(1, 1);
-
-    Shuffleboard.getTab("ShooterSubsystem").add("StartLeft",
-        this.runLeftRollerCommand(Pref.getPref("LeftRPM")))
-        .withPosition(0, 1).withSize(1, 1);
-
-    Shuffleboard.getTab("ShooterSubsystem").addNumber("LeftRPMSet",
-        () -> Pref.getPref("LeftRPM"))
-        .withPosition(1, 1).withSize(1, 1);
+        .withPosition(2, 1).withSize(1, 1);
 
     Shuffleboard.getTab("ShooterSubsystem").add("SetLeftKp", setLeftKp())
         .withPosition(0, 2).withSize(1, 1);
 
-    Shuffleboard.getTab("ShooterSubsystem").addNumber("LeftKpSet",
-        () -> Pref.getPref("LeftShooterKp"))
+    Shuffleboard.getTab("ShooterSubsystem").addNumber("LeftKp", () -> getLeftShooterKp())
         .withPosition(1, 2).withSize(1, 1);
 
-    Shuffleboard.getTab("ShooterSubsystem").addNumber("LeftRPM",
-        () -> round2dp(getRPMLeft(), 0))
+    Shuffleboard.getTab("ShooterSubsystem").add("SetRightKp", setRightKpCommand())
         .withPosition(0, 3).withSize(1, 1);
 
-    Shuffleboard.getTab("ShooterSubsystem").addNumber("LeftKp", () -> getLeftShooterKp())
+    Shuffleboard.getTab("ShooterSubsystem").addNumber("RightKp", () -> getRightShooterKp())
         .withPosition(1, 3).withSize(1, 1);
 
   }
@@ -212,6 +188,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public double getRightShooterKp() {
     return rightController.getP();
+  }
+
+  public boolean atSpeed() {
+    return Math.abs(commandRPM - getRPMLeft()) < commandRPM / 50 &&
+        Math.abs(commandRPM - getRPMLeft()) < commandRPM / 50;
   }
 
   @Override

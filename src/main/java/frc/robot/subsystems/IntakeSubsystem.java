@@ -4,21 +4,29 @@
 
 package frc.robot.subsystems;
 
+import java.util.Map;
+
+import com.playingwithfusion.TimeOfFlight;
+import com.playingwithfusion.TimeOfFlight.RangingMode;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVPhysicsSim;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.CANSparkMaxUtil;
 import frc.lib.util.CANSparkMaxUtil.Usage;
 import frc.robot.Constants;
+import frc.robot.Constants.CANIDConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Pref;
 
@@ -28,16 +36,19 @@ public class IntakeSubsystem extends SubsystemBase {
   SparkPIDController intakeController;
   RelativeEncoder intakeEncoder;
   double intakeRPM = 1000;
+  double feedShooterRPM = 1500;
+
+  private final TimeOfFlight m_detectNoteSensor = new TimeOfFlight(CANIDConstants.intakeDistanceSensorID);
 
   /** Creates a new Intake. */
   public IntakeSubsystem() {
+    m_detectNoteSensor.setRangingMode(RangingMode.Short, 40);
     intakeMotor = new CANSparkMax(Constants.CANIDConstants.intakeID, MotorType.kBrushless);
     intakeController = intakeMotor.getPIDController();
     intakeEncoder = intakeMotor.getEncoder();
     configMotor(intakeMotor, intakeEncoder, intakeController, true);
     if (RobotBase.isSimulation())
       REVPhysicsSim.getInstance().addSparkMax(intakeMotor, 3, 5600);
-
   }
 
   private void configMotor(CANSparkMax motor, RelativeEncoder encoder, SparkPIDController controller,
@@ -61,18 +72,30 @@ public class IntakeSubsystem extends SubsystemBase {
         .withSize(2, 1)
         .withPosition(0, 0);
 
-    Shuffleboard.getTab("IntakeSubsystem").addNumber("IntakeRPM", () -> round2dp(getRPM(), 0))
-        .withSize(2, 1)
+    Shuffleboard.getTab("IntakeSubsystem").addNumber("ActualRPM",
+        () -> round2dp(getRPM(), 0))
+        .withSize(1, 1)
+        .withPosition(1, 1);
+
+    Shuffleboard.getTab("IntakeSubsystem").addNumber("CommandRPM",
+        () -> intakeRPM)
+        .withSize(1, 1)
         .withPosition(0, 1);
 
-    Shuffleboard.getTab("IntakeSubsystem").add("StartIntake", runIntakeCommand())
-        .withSize(2, 1)
+    Shuffleboard.getTab("IntakeSubsystem").addNumber("NoteSensorInches",
+        () -> round2dp(getSensorDistanceInches(), 1))
+        .withSize(1, 1)
         .withPosition(0, 2);
 
-    Shuffleboard.getTab("IntakeSubsystem").add("StopIntake", stopIntakeCommand())
-        .withSize(2, 1)
-        .withPosition(0, 3);
+    Shuffleboard.getTab("IntakeSubsystem").addBoolean("NoteSensed", () -> noteAtIntake())
+        .withSize(1, 1)
+        .withPosition(1, 2)
+        .withProperties(Map.of("colorWhenTrue", "green", "colorWhenFalse", "red"));
 
+  }
+
+  public double getSensorDistanceInches() {
+    return Units.metersToInches(m_detectNoteSensor.getRange());
   }
 
   public void stopMotor() {
@@ -92,14 +115,24 @@ public class IntakeSubsystem extends SubsystemBase {
       intakeMotor.setVoltage(intakeRPM * 12 / IntakeConstants.maxIntakeMotorRPM);
   }
 
-  public Command runIntakeCommand() {
+  public boolean noteAtIntake() {
+    return getSensorDistanceInches() < IntakeConstants.noteSensedInches;
+  }
 
-    return Commands.run(() -> runIntake(intakeRPM), this);
+  public Command intakeToSensorCommand() {
+    return Commands.run(() -> runIntake(intakeRPM), this)
+        .until(() -> noteAtIntake()).withTimeout(5);
   }
 
   public Command feedShooterCommand() {
+    return Commands.runOnce(() -> runIntake(feedShooterRPM), this);
+  }
+
+  public Command runIntakeCommand() {
     return Commands.runOnce(() -> runIntake(intakeRPM), this);
   }
+
+  
 
   public Command stopIntakeCommand() {
     return this.runOnce(() -> stopMotor());
@@ -126,7 +159,6 @@ public class IntakeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("IntakeRPM", getRPM());
 
   }
 

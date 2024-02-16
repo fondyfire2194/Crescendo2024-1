@@ -21,6 +21,8 @@ import frc.lib.config.SwerveModuleConstants;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.Set;
+
 public final class Constants {
 
         public static final class CANIDConstants {
@@ -36,11 +38,13 @@ public final class Constants {
 
                 public static final int noteSensor = 23;
 
-                public static int holdNoteID = 22;
+                public static final int holdNoteID = 22;
 
-                public static int shooterangleID = 24;
+                public static final int shooterangleID = 24;
 
-                public static int feedShooterID = 25;
+                public static final int feedShooterID = 25;
+
+                public static final int intakeDistanceSensorID = 26;
 
         }
 
@@ -223,31 +227,33 @@ public final class Constants {
         }
 
         public static final class CameraConstants {
-                public static final String frontLeftCamName = "limelight-frleft";
-                public static final String frontRightCamName = "limelight-frright";
-                public static final String rearCamName = "limelight-rear";
 
-                public static final String frontLeftIPaddress = "10.21.94.5";
-                public static final String frontRightIPaddress = "10.21.94.6";
-                public static final String rearCamIPaddress = "10.21.94.10";
+                public static class CameraValues {
+                        public String camname = "name";
+                        public String ipaddress = "ip";
+                        public Transform3d transform = new Transform3d();
+
+                        public CameraValues(String camname, String ipaddress, Transform3d transform) {
+                                this.camname=camname;
+                                this.ipaddress=ipaddress;
+                                this.transform=transform;
+                        }
+                }
+
+                public static CameraValues frontLeftCamera = new CameraValues("limelight-frleft", "10.21.94.5",
+                                new Transform3d(new Translation3d(-0.5, 0.0, 0.5),
+                                                new Rotation3d(0, .1, .2)));
+
+                public static CameraValues frontRightCamera = new CameraValues("limelight-frright", "10.21.94.6",
+                                new Transform3d(new Translation3d(0.5, 0.0, 0.5),
+                                                new Rotation3d(0, .1, .2)));
+
+                public static CameraValues rearCamera = new CameraValues("limelight-rear", "10.21.94.10",
+                                new Transform3d(new Translation3d(0.5, 0.0, 0.5),
+                                                new Rotation3d(0, .1, .2)));
 
                 public static final double POSE_AMBIGUITY_CUTOFF = 0.05;
                 public static final double DISTANCE_CUTOFF = 4.0;
-
-                public static Transform3d robotToLeftCam = new Transform3d(new Translation3d(0.1, 0.0, 0.5),
-                                new Rotation3d(0, 0, 0)); // Cam mounted facing forward, half a meter forward of center,
-                                                          // half a meter up
-                                                          // from center.
-                public static Transform3d robotToRightCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5),
-                                new Rotation3d(0, .1, .2)); // Cam mounted facing forward, half a meter forward of
-                                                            // center,
-                                                            // half a meter up
-                                                            // from center.
-
-                public static Transform3d robotToRearCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5),
-                                new Rotation3d(0, 0, 0)); // Cam mounted facing forward, half a meter forward of center,
-                                                          // half a meter up
-                                                          // from center.
 
         }
 
@@ -259,7 +265,7 @@ public final class Constants {
                 public static final double shooterKP = .0;
                 public static final double shooterKI = 0;
                 public static final double shooterKD = 0;
-                public static final double shooterKFF = .5/maxShooterMotorRPM;
+                public static final double shooterKFF = .9 / maxShooterMotorRPM;
                 public static final double voltageComp = 12;
                 public static final IdleMode shooterIdleMode = IdleMode.kCoast;
                 public static final int shooterContinuousCurrentLimit = 30;
@@ -299,10 +305,11 @@ public final class Constants {
                 public static final double intakeKP = .000001;
                 public static final double intakeKI = 0;
                 public static final double intakeKD = 0;
-                public static final double intakeKFF = .5/maxIntakeMotorRPM;
+                public static final double intakeKFF = .5 / maxIntakeMotorRPM;
                 public static final double voltageComp = 12;
                 public static final IdleMode intakeIdleMode = IdleMode.kCoast;
                 public static final int intakeContinuousCurrentLimit = 30;
+                public static final double noteSensedInches = 4;
 
         }
 

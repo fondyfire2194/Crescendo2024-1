@@ -82,6 +82,9 @@ public class SwerveSubsystem extends SubsystemBase {
 
   SwerveModuleState[] lockStates = new SwerveModuleState[4];
 
+  private boolean frontLeftCamisUsed;
+  private boolean frontRightCamisUsed;
+
   public SwerveSubsystem() {
 
     lockStates[0] = new SwerveModuleState(0, Rotation2d.fromDegrees(45));
@@ -497,7 +500,7 @@ public class SwerveSubsystem extends SubsystemBase {
    */
 
   public double getDistance(String limelight) {
-    
+
     // getting x distance to target
     return LimelightHelpers.getTargetPose_RobotSpace(limelight)[0];
   }
@@ -515,11 +518,12 @@ public class SwerveSubsystem extends SubsystemBase {
 
     swervePoseEstimator.update(getYaw(), getPositions());
 
-    if (LimelightHelpers.getTV(CameraConstants.frontLeftCamName)) {
+    if (frontLeftCamisUsed && LimelightHelpers.getTV(CameraConstants.frontLeftCamera.camname)) {
+
       // standard deviations are (distance to nearest apriltag)/2 for x and y and 10
       // degrees for theta
 
-      Pose2d frleftPose = (LimelightHelpers.getBotPose2d_wpiBlue(CameraConstants.frontLeftCamName));
+      Pose2d frleftPose = (LimelightHelpers.getBotPose2d_wpiBlue(CameraConstants.frontLeftCamera.camname));
 
       Translation2d robotEstimatedtranslation = swervePoseEstimator.getEstimatedPosition().getTranslation();
 
@@ -535,17 +539,17 @@ public class SwerveSubsystem extends SubsystemBase {
       swervePoseEstimator.addVisionMeasurement(
           frleftPose,
           (Timer.getFPGATimestamp()
-              - (LimelightHelpers.getLatency_Pipeline(CameraConstants.frontLeftCamName) / 1000.0)
-              - (LimelightHelpers.getLatency_Capture(CameraConstants.frontLeftCamName) / 1000.0)),
-          VecBuilder.fill(getDistance(CameraConstants.frontLeftCamName) / 2,
-              getDistance(CameraConstants.frontLeftCamName) / 2, Units.degreesToRadians(10)));
+              - (LimelightHelpers.getLatency_Pipeline(CameraConstants.frontLeftCamera.camname) / 1000.0)
+              - (LimelightHelpers.getLatency_Capture(CameraConstants.frontLeftCamera.camname) / 1000.0)),
+          VecBuilder.fill(getDistance(CameraConstants.frontLeftCamera.camname) / 2,
+              getDistance(CameraConstants.frontLeftCamera.camname) / 2, Units.degreesToRadians(10)));
 
     }
 
-    if (LimelightHelpers.getTV(CameraConstants.frontRightCamName)) {
+    if (frontRightCamisUsed && LimelightHelpers.getTV(CameraConstants.frontRightCamera.camname)) {
       // standard deviations are (distance to nearest apriltag)/2 for x and y and 10
       // degrees for theta
-      Pose2d frrightPose = (LimelightHelpers.getBotPose2d(CameraConstants.frontRightCamName));
+      Pose2d frrightPose = (LimelightHelpers.getBotPose2d(CameraConstants.frontRightCamera.camname));
 
       Translation2d robotEstimatedtranslation = swervePoseEstimator.getEstimatedPosition().getTranslation();
 
@@ -561,10 +565,10 @@ public class SwerveSubsystem extends SubsystemBase {
       swervePoseEstimator.addVisionMeasurement(
           frrightPose,
           (Timer.getFPGATimestamp()
-              - (LimelightHelpers.getLatency_Pipeline(CameraConstants.frontRightCamName) / 1000.0)
-              - (LimelightHelpers.getLatency_Capture(CameraConstants.frontRightCamName) / 1000.0)),
-          VecBuilder.fill(getDistance(CameraConstants.frontRightCamName) / 2,
-              getDistance(CameraConstants.frontRightCamName) / 2, Units.degreesToRadians(10)));
+              - (LimelightHelpers.getLatency_Pipeline(CameraConstants.frontRightCamera.camname) / 1000.0)
+              - (LimelightHelpers.getLatency_Capture(CameraConstants.frontRightCamera.camname) / 1000.0)),
+          VecBuilder.fill(getDistance(CameraConstants.frontRightCamera.camname) / 2,
+              getDistance(CameraConstants.frontLeftCamera.camname) / 2, Units.degreesToRadians(10)));
 
     }
 

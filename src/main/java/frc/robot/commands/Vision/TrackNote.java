@@ -12,21 +12,21 @@ import frc.robot.utils.LLPipelines;
 
 public class TrackNote extends Command {
   /** Creates a new TrackNote. */
- 
+
   private final SwerveSubsystem m_drive;
   private final String m_llName;
 
-  public TrackNote(String llName,SwerveSubsystem drive) {
+  public TrackNote(String llName, SwerveSubsystem drive) {
     // Use addRequirements() here to declare subsystem dependencies.
 
     m_drive = drive;
-    m_llName=llName;
+    m_llName = llName;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-   LimelightHelpers.setPipelineIndex(m_llName, LLPipelines.pipelines.NOTE_DETECT.ordinal());
+    LimelightHelpers.setPipelineIndex(m_llName, LLPipelines.pipelines.NOTE_DETECT.ordinal());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -39,7 +39,7 @@ public class TrackNote extends Command {
     double tarea = 0;
     double latencyms = 0;
 
-     hasTarget = LimelightHelpers.getTV(m_llName);
+    hasTarget = LimelightHelpers.getTV(m_llName);
 
     if (hasTarget) {
 

@@ -3,9 +3,6 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.utils;
-
-
-
 /** Add your docs here. */
 public class LLPipelines {
 
@@ -46,5 +43,6 @@ public class LLPipelines {
     
         public static final pipelinetype values[] = values();
       }
+
 
 }
