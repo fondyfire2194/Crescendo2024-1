@@ -6,6 +6,8 @@ package frc.robot.subsystems;
 
 import java.util.Optional;
 
+import javax.management.remote.TargetedNotification;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -239,11 +241,11 @@ public class LimelightVision extends SubsystemBase {
       // distance from the center of the Limelight lens to the floor
       double limelightLensHeightInches = 20.0;
       // distance from the target to the floor
-      double goalHeightInches = 56.0;
+      double tagHeightInches = 56.0;
       double angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
       double angleToGoalRadians = Math.toRadians(angleToGoalDegrees);
       // calculate distance
-      double distanceFromLimelightToGoalInches = (goalHeightInches - limelightLensHeightInches)
+      double distanceFromLimelightToGoalInches = (tagHeightInches - limelightLensHeightInches)
           / Math.tan(angleToGoalRadians);
       return distanceFromLimelightToGoalInches;
 

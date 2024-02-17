@@ -120,25 +120,23 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command intakeToSensorCommand() {
-    return Commands.run(() -> runIntake(intakeRPM), this)
+    return Commands.run(() -> runIntake(Pref.getPref("Intk2SensorRPM")), this)
         .until(() -> noteAtIntake()).withTimeout(5);
   }
 
   public Command feedShooterCommand() {
-    return Commands.runOnce(() -> runIntake(feedShooterRPM), this);
+    return Commands.runOnce(() -> runIntake(Pref.getPref("Intk2ShtrRPM")), this);
   }
 
   public Command runIntakeCommand() {
     return Commands.runOnce(() -> runIntake(intakeRPM), this);
   }
 
-  
-
   public Command stopIntakeCommand() {
     return this.runOnce(() -> stopMotor());
   }
 
-  public void setAngleKp() {
+  public void setIntakeKp() {
     intakeController.setP(Pref.getPref("IntakeKp"));
   }
 

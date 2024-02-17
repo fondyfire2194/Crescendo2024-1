@@ -145,7 +145,8 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   private void testRunRollers() {
-    leftController.setReference(testjs * ShooterConstants.maxShooterMotorRPM, ControlType.kVelocity);
+    leftController.setReference(testjs * ShooterConstants.maxShooterMotorRPM * Pref.getPref("LeftMult"),
+        ControlType.kVelocity);
     rightController.setReference(testjs * ShooterConstants.maxShooterMotorRPM, ControlType.kVelocity);
   }
 
