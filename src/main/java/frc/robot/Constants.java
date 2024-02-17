@@ -36,7 +36,7 @@ public final class Constants {
                 public static final int rearLeftSensor = 20;
                 public static final int rearRightSensor = 21;
 
-                public static final int noteSensor = 23;
+                public static final int noteSensor = 26;
 
                 public static final int holdNoteID = 22;
 
@@ -44,7 +44,7 @@ public final class Constants {
 
                 public static final int feedShooterID = 25;
 
-                public static final int intakeDistanceSensorID = 26;
+                public static final int intakeDistanceSensorID = 23;
 
         }
 
@@ -290,7 +290,7 @@ public final class Constants {
                 public static final double shooterfeederKP = .001;
                 public static final double shooterfeederKI = 0;
                 public static final double shooterfeederKD = 0;
-                public static final double shooterfeederKFF = .9;
+                public static final double shooterfeederKFF = .8;
                 public static final double voltageComp = 12;
                 public static final IdleMode shooterfeederIdleMode = IdleMode.kCoast;
                 public static final int shooterfeederContinuousCurrentLimit = 30;
@@ -307,14 +307,14 @@ public final class Constants {
                 public static final double maxIntakeMotorRPM = 5700;
                 public static final double intakeConversionVelocityFactor = 1; // TODO change value
                 public static final double intakeConversionPositionFactor = 1; // TODO change value
-                public static final double intakeKP = .000001;
+                public static final double intakeKP = .001;
                 public static final double intakeKI = 0;
                 public static final double intakeKD = 0;
-                public static final double intakeKFF = .5 / maxIntakeMotorRPM;
+                public static final double intakeKFF = .75 / maxIntakeMotorRPM;
                 public static final double voltageComp = 12;
                 public static final IdleMode intakeIdleMode = IdleMode.kCoast;
-                public static final int intakeContinuousCurrentLimit = 30;
-                public static final double noteSensedInches = 4;
+                public static final int intakeContinuousCurrentLimit = 60;
+                public static final double noteSensedInches = 8;
 
         }
 

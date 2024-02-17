@@ -22,7 +22,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.lib.util.CANSparkMaxUtil;
 import frc.lib.util.CANSparkMaxUtil.Usage;
 import frc.robot.Constants;
@@ -68,6 +70,8 @@ public class IntakeSubsystem extends SubsystemBase {
     motor.burnFlash();
     encoder.setPosition(0.0);
 
+    setIntakeKp();
+
     Shuffleboard.getTab("IntakeSubsystem").add(this)
         .withSize(2, 1)
         .withPosition(0, 0);
@@ -92,10 +96,20 @@ public class IntakeSubsystem extends SubsystemBase {
         .withPosition(1, 2)
         .withProperties(Map.of("colorWhenTrue", "green", "colorWhenFalse", "red"));
 
+    Shuffleboard.getTab("IntakeSubsystem").add("SetKP", setIntakeKpCommand())
+        .withSize(1, 1)
+        .withPosition(0, 3)
+        .withProperties(Map.of("colorWhenTrue", "green", "colorWhenFalse", "red"));
+
+    Shuffleboard.getTab("IntakeSubsystem").addNumber("IntakeAmps",
+        () -> round2dp(getAmps(), 1))
+        .withSize(1, 1)
+        .withPosition(1, 3);
+
   }
 
   public double getSensorDistanceInches() {
-    return Units.metersToInches(m_detectNoteSensor.getRange());
+    return Units.metersToInches(m_detectNoteSensor.getRange() / 1000);
   }
 
   public void stopMotor() {
@@ -109,10 +123,12 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public void runIntake(double rpm) {
-    if (RobotBase.isReal())
-      intakeController.setReference(intakeRPM, ControlType.kVelocity);
-    else
-      intakeMotor.setVoltage(intakeRPM * 12 / IntakeConstants.maxIntakeMotorRPM);
+    if (RobotBase.isReal()) {
+      intakeRPM = rpm;
+      // intakeController.setReference(intakeRPM, ControlType.kVelocity);
+      intakeController.setReference(rpm, ControlType.kVelocity);
+    } else
+      intakeMotor.setVoltage(rpm * 12 / IntakeConstants.maxIntakeMotorRPM);
   }
 
   public boolean noteAtIntake() {
@@ -120,8 +136,9 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command intakeToSensorCommand() {
+
     return Commands.run(() -> runIntake(Pref.getPref("Intk2SensorRPM")), this)
-        .until(() -> noteAtIntake()).withTimeout(5);
+        .until(() -> noteAtIntake()).andThen(new SequentialCommandGroup(new WaitCommand(.3), stopIntakeCommand()));
   }
 
   public Command feedShooterCommand() {
@@ -138,6 +155,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public void setIntakeKp() {
     intakeController.setP(Pref.getPref("IntakeKp"));
+  }
+
+  public Command setIntakeKpCommand() {
+    return Commands.runOnce(() -> setIntakeKp());
   }
 
   public double getIntakeKp() {
@@ -158,6 +179,10 @@ public class IntakeSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
+  }
+
+  public double getAmps() {
+    return intakeMotor.getOutputCurrent();
   }
 
   @Override

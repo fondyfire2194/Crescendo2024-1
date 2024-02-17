@@ -69,7 +69,7 @@ public class ShooterSubsystem extends SubsystemBase {
         () -> round2dp(getRPMRight(), 0))
         .withPosition(2, 1).withSize(1, 1);
 
-    Shuffleboard.getTab("ShooterSubsystem").add("SetLeftKp", setLeftKp())
+    Shuffleboard.getTab("ShooterSubsystem").add("SetLeftKp", setLeftKpCommand())
         .withPosition(0, 2).withSize(1, 1);
 
     Shuffleboard.getTab("ShooterSubsystem").addNumber("LeftKp", () -> getLeftShooterKp())
@@ -80,6 +80,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
     Shuffleboard.getTab("ShooterSubsystem").addNumber("RightKp", () -> getRightShooterKp())
         .withPosition(1, 3).withSize(1, 1);
+
+    setLeftShooterKp();
+    setRightShooterKp();
 
   }
 
@@ -151,7 +154,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public Command testRunRollerCommand() {
-    return Commands.run(() -> testRunRollers(), this);
+    return Commands.runOnce(() -> testRunRollers(), this);
   }
 
   public Command runLeftRollerCommand(double rpm) {
@@ -167,8 +170,8 @@ public class ShooterSubsystem extends SubsystemBase {
     return leftEncoder.getVelocity();
   }
 
-  public Command setLeftKp() {
-    return Commands.runOnce(() -> setLeftKp());
+  public Command setLeftKpCommand() {
+    return Commands.runOnce(() -> setLeftShooterKp());
   }
 
   public void setLeftShooterKp() {
@@ -192,8 +195,8 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public boolean atSpeed() {
-    return Math.abs(commandRPM - getRPMLeft()) < commandRPM / 50 &&
-        Math.abs(commandRPM - getRPMLeft()) < commandRPM / 50;
+    return Math.abs(commandRPM - getRPMLeft()) < commandRPM / 10 &&
+        Math.abs(commandRPM - getRPMLeft()) < commandRPM / 10;
   }
 
   @Override

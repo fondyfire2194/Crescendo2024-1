@@ -36,7 +36,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    // SmartDashboard.putNumber("APL", m_robotContainer.m_pf.activePaths.size());
+    SmartDashboard.putNumber("APL", m_robotContainer.m_pf.activePaths.size());
     m_robotContainer.m_shooter.testjs = (-m_robotContainer.tstjs.getThrottle() + 1) / 2;
   }
 
@@ -49,21 +49,21 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
 
-    // if (m_robotContainer.m_af.checkChoiceChange())
-    // m_robotContainer.m_af.validStartChoice =
-    // m_robotContainer.m_af.selectAndLoadPathFiles();
+    if (m_robotContainer.m_af.checkChoiceChange())
+    m_robotContainer.m_af.validStartChoice =
+    m_robotContainer.m_af.selectAndLoadPathFiles();
 
     // turn off drive brakes if they are on and robotis not moving
     // allows easier manual pushing of robot
 
-    // if (m_robotContainer.m_swerve.driveIsBraked() && m_robotContainer.m_swerve.isStopped()) {
-    //   if (m_disableStartTime == 0)
-    //     m_disableStartTime = Timer.getFPGATimestamp();
+    if (m_robotContainer.m_swerve.driveIsBraked() && m_robotContainer.m_swerve.isStopped()) {
+      if (m_disableStartTime == 0)
+        m_disableStartTime = Timer.getFPGATimestamp();
 
-    //   if (m_disableStartTime != 0 && Timer.getFPGATimestamp() > m_disableStartTime + brakeOffTime) {
-    //     m_robotContainer.m_swerve.setIdleMode(false);
-    //   }
-    // }
+      if (m_disableStartTime != 0 && Timer.getFPGATimestamp() > m_disableStartTime + brakeOffTime) {
+        m_robotContainer.m_swerve.setIdleMode(false);
+      }
+    }
 
     SmartDashboard.putString("CCPRS",
         LimelightHelpers.getCameraPose3d_RobotSpace(CameraConstants.frontRightCamera.camname).toPose2d().toString());
@@ -82,7 +82,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
-    // m_robotContainer.m_swerve.setIdleMode(false);
+    m_robotContainer.m_swerve.setIdleMode(false);
 
     m_autonomousCommand = m_robotContainer.getTestPathCommand();
 
@@ -106,7 +106,7 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
 
-    // m_robotContainer.m_swerve.setIdleMode(true);
+    m_robotContainer.m_swerve.setIdleMode(true);
   }
 
   @Override
