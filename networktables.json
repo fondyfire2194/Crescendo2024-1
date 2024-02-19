@@ -49,14 +49,6 @@
     }
   },
   {
-    "name": "/Preferences/ShooterKp",
-    "type": "double",
-    "value": 0.01,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
     "name": "/Preferences/LeftRPM",
     "type": "double",
     "value": 500.0,
@@ -82,14 +74,6 @@
   },
   {
     "name": "/Preferences/RightRPM",
-    "type": "double",
-    "value": 500.0,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
-    "name": "/Preferences/IntakeRPM",
     "type": "double",
     "value": 500.0,
     "properties": {
@@ -124,6 +108,94 @@
     "name": "/Preferences/HoldNoteShootRPM",
     "type": "double",
     "value": 500.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intk2SensorRPM",
+    "type": "double",
+    "value": 1000.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/LeftMult",
+    "type": "double",
+    "value": 1.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intk2ShtrRPM",
+    "type": "double",
+    "value": 1200.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/FeederKd",
+    "type": "double",
+    "value": 0.01,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/IntakeKd",
+    "type": "double",
+    "value": 0.01,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/ShooterRightKd",
+    "type": "double",
+    "value": 0.001,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/ShooterAngleKd",
+    "type": "double",
+    "value": 0.01,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/ShooterLeftKp",
+    "type": "double",
+    "value": 0.0007,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/ShooterLeftKd",
+    "type": "double",
+    "value": 0.001,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/ElevatorKd",
+    "type": "double",
+    "value": 0.01,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/ShooterRightKp",
+    "type": "double",
+    "value": 0.0007,
     "properties": {
       "persistent": true
     }

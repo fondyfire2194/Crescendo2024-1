@@ -16,16 +16,23 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.AutoFactory;
+import frc.robot.LimelightHelpers;
 import frc.robot.PathFactory;
+import frc.robot.Constants.CameraConstants;
+import frc.robot.Constants.CameraConstants.CameraValues;
 import frc.robot.commands.CenterStart.CenterStartCommand1;
 import frc.robot.commands.CenterStart.CenterStartCommand1Paths;
+import frc.robot.commands.Drive.AlignToTagSetShootSpeed;
+import frc.robot.commands.Drive.TeleopSwerve;
 import frc.robot.commands.Pathplanner.RunPPath;
 import frc.robot.commands.Vision.LimelightSetStartPose;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.FeedShooterSubsystem;
 import frc.robot.subsystems.HoldNoteSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -54,21 +61,25 @@ public class CommandFactory {
 
     private final PathFactory m_pf;
 
+    private final LimelightVision m_llv;
+
     private boolean runAll = false;
 
     public CommandFactory(PathFactory pf, AutoFactory af, String llName, SwerveSubsystem swerve,
             IntakeSubsystem intake,
             ElevatorSubsystem elevator,
             HoldNoteSubsystem holdNote,
-            ShooterAngleSubsystem shooterAngle, ShooterSubsystem shooter,
-            FeedShooterSubsystem shooterFeed) {
+            ShooterAngleSubsystem shooterAngle,
+            ShooterSubsystem shooter,
+            FeedShooterSubsystem shooterFeed,
+            LimelightVision llv) {
         m_swerve = swerve;
         m_pf = pf;
         m_elevator = elevator;
         m_intake = intake;
         m_holdnote = holdNote;
         m_shooter = shooter;
-
+        m_llv = llv;
         m_shooterangle = shooterAngle;
         m_shooterFeed = shooterFeed;
         m_llName = llName;
@@ -184,6 +195,33 @@ public class CommandFactory {
                 .alongWith(m_shooterangle.runOnce(
                         () -> m_shooterangle.smartPositionShooterAngle(shot.angle)));
 
+    }
+
+    public double[] getShooterSpeedsFromDistance(double distance) {
+        ShotParameter shot = InterpolatingTable.get(distance);
+        double[] temp = { 0, 0 };
+        temp[0] = shot.leftrpm;
+        temp[1] = shot.rightrpm;
+        return temp;
+    }
+
+    public double getShooterAngleByDistance(double distance) {
+        ShotParameter shot = InterpolatingTable.get(distance);
+        return shot.angle;
+    }
+
+    public Command teleopAlignSpeaker(CameraValues camval, CommandXboxController driver) {
+        return new ConditionalCommand(
+                new AlignToTagSetShootSpeed(m_swerve, m_llv, this, () -> -driver.getLeftY(), () -> driver.getLeftX(),
+                        camval),
+                new TeleopSwerve(
+                        m_swerve,
+                        () -> -driver.getLeftY(),
+                        () -> -driver.getLeftX(),
+                        () -> -driver.getRawAxis(4),
+                        () -> false,
+                        () -> false),
+                () -> LimelightHelpers.getTV(CameraConstants.frontLeftCamera.camname));
     }
 
     public Command getAutonomusCommand() {

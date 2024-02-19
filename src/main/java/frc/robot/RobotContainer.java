@@ -16,14 +16,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.CameraConstants;
 import frc.robot.Constants.ShooterAngleConstants;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.DoNothing;
+import frc.robot.commands.Drive.AlignToTagSetShootSpeed;
 import frc.robot.commands.Drive.TeleopSwerve;
 import frc.robot.commands.Pathplanner.SetStartByAlliance;
+
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.FeedShooterSubsystem;
 import frc.robot.subsystems.HoldNoteSubsystem;
@@ -35,7 +39,7 @@ import frc.robot.subsystems.SwerveSubsystem;
 
 public class RobotContainer {
         /* Subsystems */
-         final SwerveSubsystem m_swerve = new SwerveSubsystem();
+        final SwerveSubsystem m_swerve = new SwerveSubsystem();
 
         final IntakeSubsystem m_intake = new IntakeSubsystem();
 
@@ -49,11 +53,11 @@ public class RobotContainer {
 
         // final ShooterAngleSubsystem m_shooterAngle = new ShooterAngleSubsystem();
 
-        //  final CommandFactory m_cf = new CommandFactory(m_swerve, m_intake,
-        //  m_elevator,
-        //  m_holdNote, m_shooterAngle, m_rightShooter, m_leftShooter,m_shooterFeeder);
+        // final CommandFactory m_cf = new CommandFactory(m_swerve, m_intake,
+        // m_elevator,
+        // m_holdNote, m_shooterAngle, m_rightShooter, m_leftShooter,m_shooterFeeder);
 
-      //  public final LimelightVision m_llv = new LimelightVision();
+        public final LimelightVision m_llv = new LimelightVision();
 
         public final PathFactory m_pf = new PathFactory(m_swerve);
 
@@ -65,7 +69,7 @@ public class RobotContainer {
 
         final CommandJoystick tstjs = new CommandJoystick(2);
 
-         private final SendableChooser<Command> autoChooser;
+        private final SendableChooser<Command> autoChooser;
 
         public RobotContainer() {
 
@@ -73,15 +77,13 @@ public class RobotContainer {
 
                 Pref.addMissing();
 
-                // m_llv.setCamToRobotOffset(Constants.CameraConstants.frontRightCamName,
-                // Constants.CameraConstants.robotToRightCam);
-
                 // m_swerve.frontLeftCamisUsed=false;
                 // m_swerve.frontRightCamisUsed=false;
 
                 setDefaultCommands();
 
                 registerNamedCommands();
+
 
                 // Build an auto chooser. This will use Commands.none() as the default option.
                 autoChooser = AutoBuilder.buildAutoChooser();
@@ -116,13 +118,13 @@ public class RobotContainer {
         private void setDefaultCommands() {
 
                 m_swerve.setDefaultCommand(
-                new TeleopSwerve(
-                m_swerve,
-                () -> -driver.getLeftY(),
-                () -> -driver.getLeftX(),
-                () -> -driver.getRawAxis(4),
-                fieldCentric,
-                keepAngle));
+                                new TeleopSwerve(
+                                                m_swerve,
+                                                () -> -driver.getLeftY(),
+                                                () -> -driver.getLeftX(),
+                                                () -> -driver.getRawAxis(4),
+                                                fieldCentric,
+                                                keepAngle));
 
                 // m_elevator.setDefaultCommand(m_elevator.positionHold());
 
@@ -133,9 +135,9 @@ public class RobotContainer {
         private void registerNamedCommands() {
                 // Register Named Commands
                 NamedCommands.registerCommand("LimelightSetStartPose1",
-                new SetStartByAlliance(m_swerve, "CentOneP1"));
+                                new SetStartByAlliance(m_swerve, "CentOneP1"));
                 NamedCommands.registerCommand("LookForNote",
-                Commands.runOnce(() -> m_swerve.setLookForNote()));
+                                Commands.runOnce(() -> m_swerve.setLookForNote()));
                 NamedCommands.registerCommand("SetAngleSpeed1",
                                 Commands.runOnce(() -> SmartDashboard.putString("AngleSpeed1", "")));
                 NamedCommands.registerCommand("SetAngleSpeed2",
@@ -155,7 +157,11 @@ public class RobotContainer {
 
         private void configureBindings() {
 
-                SmartDashboard.putData("CommSchd", CommandScheduler.getInstance());
+                // driver.leftTrigger().whileTrue(
+                // m_cf.teleopAlignSpeaker(m_swerve,driver))
+                // .onFalse(m_llv.setAprilTag_ALL_Pipeline());
+
+                 SmartDashboard.putData("CommSchd", CommandScheduler.getInstance());
 
                 tstjs.button(5).onTrue(m_shooter.testRunRollerCommand());
 
@@ -163,8 +169,8 @@ public class RobotContainer {
 
                 tstjs.button(2).onTrue(m_intake.intakeToSensorCommand());
 
-                tstjs.button(1).onTrue(m_intake.feedShooterCommand());
-                               // .onlyIf(() -> (m_shooter.atSpeed() && m_intake.noteAtIntake())));
+                tstjs.button(1).onTrue(m_intake.feedShooterCommand()
+                                .onlyIf(() -> m_shooter.leftAtSpeed() && m_shooter.rightAtSpeed()));
 
                 // tstjs.povUp().onTrue(m_shooterAngle.jogCommand(.1))
                 // .onFalse(Commands.runOnce(() -> m_shooterAngle.stopMotor()));

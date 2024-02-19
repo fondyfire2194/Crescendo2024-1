@@ -69,20 +69,26 @@ public class ShooterSubsystem extends SubsystemBase {
         () -> round2dp(getRPMRight(), 0))
         .withPosition(2, 1).withSize(1, 1);
 
-    Shuffleboard.getTab("ShooterSubsystem").add("SetLeftKp", setLeftKpCommand())
+    Shuffleboard.getTab("ShooterSubsystem").add("SetLeftKpKd", setLeftKpKdCommand())
         .withPosition(0, 2).withSize(1, 1);
 
-    Shuffleboard.getTab("ShooterSubsystem").addNumber("LeftKp", () -> getLeftShooterKp())
-        .withPosition(1, 2).withSize(1, 1);
-
-    Shuffleboard.getTab("ShooterSubsystem").add("SetRightKp", setRightKpCommand())
+    Shuffleboard.getTab("ShooterSubsystem").add("SetRightKpKd", setRightKpKdCommand())
         .withPosition(0, 3).withSize(1, 1);
 
-    Shuffleboard.getTab("ShooterSubsystem").addNumber("RightKp", () -> getRightShooterKp())
+    Shuffleboard.getTab("ShooterSubsystem").addNumber("LeftAmps", () -> getLeftAmps())
+        .withPosition(2, 2).withSize(1, 1);
+
+    Shuffleboard.getTab("ShooterSubsystem").addNumber("RightAmps", () -> getRightAmps())
+        .withPosition(2, 3).withSize(1, 1);
+
+    Shuffleboard.getTab("ShooterSubsystem").addBoolean("LeftAtSpeed", () -> leftAtSpeed())
+        .withPosition(1, 2).withSize(1, 1);
+
+    Shuffleboard.getTab("ShooterSubsystem").addBoolean("RightAtSpeed", () -> rightAtSpeed())
         .withPosition(1, 3).withSize(1, 1);
 
-    setLeftShooterKp();
-    setRightShooterKp();
+    setLeftKpKd();
+    setRightKpKd();
 
   }
 
@@ -170,33 +176,46 @@ public class ShooterSubsystem extends SubsystemBase {
     return leftEncoder.getVelocity();
   }
 
-  public Command setLeftKpCommand() {
-    return Commands.runOnce(() -> setLeftShooterKp());
+  public Command setLeftKpKdCommand() {
+    return Commands.runOnce(() -> setLeftKpKd());
   }
 
-  public void setLeftShooterKp() {
-    leftController.setP(Pref.getPref("ShooterKp"));
+  public Command setRightKpKdCommand() {
+    return Commands.runOnce(() -> setRightKpKd());
   }
 
-  public double getLeftShooterKp() {
-    return leftController.getP();
+  public void setLeftKpKd() {
+    leftController.setP(Pref.getPref("ShooterLeftKp"));
+    leftController.setP(Pref.getPref("ShooterLeftKd"));
   }
 
-  public Command setRightKpCommand() {
-    return Commands.runOnce(() -> setRightShooterKp());
+  public void setRightKpKd() {
+    rightController.setP(Pref.getPref("ShooterRightKp"));
+    rightController.setD(Pref.getPref("ShooterRightKd"));
   }
 
-  public void setRightShooterKp() {
-    rightController.setP(Pref.getPref("ShooterKp"));
-  }
-
-  public double getRightShooterKp() {
+  public double getShooterKp() {
     return rightController.getP();
   }
 
-  public boolean atSpeed() {
-    return Math.abs(commandRPM - getRPMLeft()) < commandRPM / 10 &&
-        Math.abs(commandRPM - getRPMLeft()) < commandRPM / 10;
+  public double getShooterKd() {
+    return rightController.getD();
+  }
+
+  public boolean leftAtSpeed() {
+    return commandRPM != 0 && Math.abs(commandRPM - getRPMLeft()) < commandRPM / 20;
+  }
+
+  public boolean rightAtSpeed() {
+    return commandRPM != 0 && Math.abs(commandRPM - getRPMRight()) < commandRPM / 20;
+  }
+
+  public double getLeftAmps() {
+    return leftRoller.getOutputCurrent();
+  }
+
+  public double getRightAmps() {
+    return rightRoller.getOutputCurrent();
   }
 
   @Override

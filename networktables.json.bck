@@ -23,5 +23,125 @@
     "properties": {
       "persistent": true
     }
+  },
+  {
+    "name": "/Preferences/NoteHoldKp",
+    "type": "double",
+    "value": 0.01,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/FeederKp",
+    "type": "double",
+    "value": 0.01,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/ShooterAngleKp",
+    "type": "double",
+    "value": 0.01,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/ShooterKp",
+    "type": "double",
+    "value": 0.01,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/LeftRPM",
+    "type": "double",
+    "value": 500.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/ElevatorKp",
+    "type": "double",
+    "value": 0.01,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/IntakeKp",
+    "type": "double",
+    "value": 0.01,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/RightRPM",
+    "type": "double",
+    "value": 500.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/HoldNoteInRPM",
+    "type": "double",
+    "value": 500.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/FeedRPM",
+    "type": "double",
+    "value": 500.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/HoldNoteAmpRPM",
+    "type": "double",
+    "value": 500.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/HoldNoteShootRPM",
+    "type": "double",
+    "value": 500.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intk2SensorRPM",
+    "type": "double",
+    "value": 1000.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/LeftMult",
+    "type": "double",
+    "value": 1.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/Intk2ShtrRPM",
+    "type": "double",
+    "value": 1200.0,
+    "properties": {
+      "persistent": true
+    }
   }
 ]

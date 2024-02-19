@@ -184,6 +184,9 @@ public final class Constants {
                                 flModuleOffset.getNorm(), // Drive base radius (distance from center to furthest module)
                                 new ReplanningConfig());
 
+                public static double alignKp = .001;
+                public static double alighKd = 0;
+
         }
 
         public static final class KeepAngle {
@@ -231,30 +234,42 @@ public final class Constants {
                 public static class CameraValues {
                         public String camname = "name";
                         public String ipaddress = "ip";
-                        public Transform3d transform = new Transform3d();
+                        public double forward;
+                        public double side;
+                        public double up;
+                        public double roll;
+                        public double pitch;
+                        public double yaw;
                         public boolean isUsed = false;
 
-                        public CameraValues(String camname, String ipaddress, Transform3d transform, boolean isUsed) {
+                        public CameraValues(
+                                        String camname,
+                                        String ipaddress,
+                                        double forward, double side, double up, double roll, double pitch, double yaw,
+                                        boolean isUsed) {
                                 this.camname = camname;
                                 this.ipaddress = ipaddress;
-                                this.transform = transform;
+                                this.forward = forward;
+                                this.side = side;
+                                this.up = up;
+                                this.roll = roll;
+                                this.pitch = pitch;
+                                this.yaw = yaw;
                                 this.isUsed = isUsed;
                         }
+
                 }
 
                 public static CameraValues frontLeftCamera = new CameraValues("limelight-frleft", "10.21.94.5",
-                                new Transform3d(new Translation3d(-0.5, 0.0, 0.5),
-                                                new Rotation3d(0, .1, .2)),
+                                1, 2, 3, 4, 5, 6,
                                 true);
 
                 public static CameraValues frontRightCamera = new CameraValues("limelight-frright", "10.21.94.6",
-                                new Transform3d(new Translation3d(0.5, 0.0, 0.5),
-                                                new Rotation3d(0, .1, .2)),
+                                1, 2, 3, 4, 5, 6,
                                 false);
 
                 public static CameraValues rearCamera = new CameraValues("limelight-rear", "10.21.94.10",
-                                new Transform3d(new Translation3d(0.5, 0.0, 0.5),
-                                                new Rotation3d(0, .1, .2)),
+                                1, 2, 3, 4, 5, 6,
                                 true);
 
                 public static final double POSE_AMBIGUITY_CUTOFF = 0.05;

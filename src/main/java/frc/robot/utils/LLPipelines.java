@@ -12,8 +12,8 @@ public class LLPipelines {
         APRILTAGSAMP(2, pipelinetype.fiducialmarkers), // tags 5 and 6
         APRILTAGSOURCE(3, pipelinetype.fiducialmarkers),//tags 1,2 1nd 9,10
         APRILTAGSTAGE(4, pipelinetype.fiducialmarkers),//tags 11,12,13 and 14,15,16
-        APRILTAG_5(5, pipelinetype.fiducialmarkers),
-        COLORRET_6(6, pipelinetype.color_retroreflective),
+        APRILTAGALIGN(5, pipelinetype.fiducialmarkers),//3 or 7 only
+        APRILTAGSPARE(6, pipelinetype.fiducialmarkers),//
         PYTHON_7(7, pipelinetype.python),
         NOTE_DETECT(8, pipelinetype.detector),
         NOTE_DETECT1(9, pipelinetype.detector);

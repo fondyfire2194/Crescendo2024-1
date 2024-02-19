@@ -18,10 +18,8 @@ import com.revrobotics.SparkPIDController;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -96,7 +94,7 @@ public class IntakeSubsystem extends SubsystemBase {
         .withPosition(1, 2)
         .withProperties(Map.of("colorWhenTrue", "green", "colorWhenFalse", "red"));
 
-    Shuffleboard.getTab("IntakeSubsystem").add("SetKP", setIntakeKpCommand())
+    Shuffleboard.getTab("IntakeSubsystem").add("SetKpKd", setIntakeKpKdCommand())
         .withSize(1, 1)
         .withPosition(0, 3)
         .withProperties(Map.of("colorWhenTrue", "green", "colorWhenFalse", "red"));
@@ -138,11 +136,13 @@ public class IntakeSubsystem extends SubsystemBase {
   public Command intakeToSensorCommand() {
 
     return Commands.run(() -> runIntake(Pref.getPref("Intk2SensorRPM")), this)
-        .until(() -> noteAtIntake()).andThen(new SequentialCommandGroup(new WaitCommand(.3), stopIntakeCommand()));
+        .until(() -> noteAtIntake())
+        .andThen(new SequentialCommandGroup(new WaitCommand(.3), stopIntakeCommand()));
   }
 
   public Command feedShooterCommand() {
-    return Commands.runOnce(() -> runIntake(Pref.getPref("Intk2ShtrRPM")), this);
+    return Commands.runOnce(() -> runIntake(Pref.getPref("Intk2ShtrRPM")), this)
+        .andThen(new SequentialCommandGroup(new WaitCommand(1), stopIntakeCommand()));
   }
 
   public Command runIntakeCommand() {
@@ -157,12 +157,20 @@ public class IntakeSubsystem extends SubsystemBase {
     intakeController.setP(Pref.getPref("IntakeKp"));
   }
 
-  public Command setIntakeKpCommand() {
-    return Commands.runOnce(() -> setIntakeKp());
+  public void setIntakeKd() {
+    intakeController.setP(Pref.getPref("IntakeKd"));
+  }
+
+  public Command setIntakeKpKdCommand() {
+    return Commands.runOnce(() -> setIntakeKp()).alongWith(Commands.runOnce(() -> setIntakeKd()));
   }
 
   public double getIntakeKp() {
     return intakeController.getP();
+  }
+
+  public double getIntakeKd() {
+    return intakeController.getD();
   }
 
   public void incrementIntakeRPM() {

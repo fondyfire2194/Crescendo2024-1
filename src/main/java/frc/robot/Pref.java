@@ -40,6 +40,12 @@ public class Pref {
 
     prefDict.put("AngleKp", .01);
 
+    //align to tag
+
+    prefDict.put("AlignKp", .01);
+
+
+
     // shooter
 
     prefDict.put("LeftRPM", 2000.);
@@ -50,17 +56,29 @@ public class Pref {
 
 
 
-    prefDict.put("ShooterKp", .01);
+    prefDict.put("ShooterLeftKp", .0007);
+    prefDict.put("ShooterLeftKd", .001);
+    
+    prefDict.put("ShooterRightKp", .0007);
+    prefDict.put("ShooterRightKd", .001);
+    
+
     prefDict.put("FeederKp", .01);
+    prefDict.put("FeederKd", .01);
+    
     prefDict.put("ShooterAngleKp", .01);
+    prefDict.put("ShooterAngleKd", .01);
 
     prefDict.put("IntakeKp", .01);
+    prefDict.put("IntakeKd", .01);
+    
     prefDict.put("Intk2ShtrRPM", 1200.);
     prefDict.put("Intk2SensorRPM", 1000.);
 
     prefDict.put("NoteHoldKp", .01);
 
     prefDict.put("ElevatorKp", .01);
+    prefDict.put("ElevatorKd", .01);
 
     //holdnote
 

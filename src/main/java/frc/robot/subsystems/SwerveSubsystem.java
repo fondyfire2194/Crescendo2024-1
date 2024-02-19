@@ -41,6 +41,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.CANIDConstants;
 import frc.robot.Constants.CameraConstants;
+import frc.robot.Constants.SwerveConstants;
 import frc.robot.utils.RectanglePoseArea;
 import frc.robot.LimelightHelpers;
 import frc.robot.Pref;
@@ -77,6 +78,8 @@ public class SwerveSubsystem extends SubsystemBase {
   private final PIDController m_keepAnglePID =
 
       new PIDController(Constants.KeepAngle.kp, Constants.KeepAngle.ki, Constants.KeepAngle.kd);
+
+  private PIDController m_alignPID = new PIDController(SwerveConstants.alignKp, 0, SwerveConstants.alighKd);
 
   private final Timer m_keepAngleTimer = new Timer();
 
@@ -178,9 +181,6 @@ public class SwerveSubsystem extends SubsystemBase {
     Shuffleboard.getTab("Drivetrain").addNumber("DriveKp", () -> getDriveKp())
         .withSize(1, 1).withPosition(5, 1);
 
-    Shuffleboard.getTab("Drivetrain").addNumber("DriveKpSet1", () -> Pref.getPref("DriveKp"))
-        .withSize(1, 1).withPosition(5, 2);
-
     Shuffleboard.getTab("Drivetrain").add("SetDriveFF", setDriveFF())
         .withSize(1, 1).withPosition(6, 0);
 
@@ -188,18 +188,17 @@ public class SwerveSubsystem extends SubsystemBase {
         () -> getDriveFF() * Constants.SwerveConstants.kmaxTheoreticalSpeed)
         .withSize(1, 1).withPosition(6, 1);
 
-    Shuffleboard.getTab("Drivetrain").addNumber("DriveFFSet",
-        () -> Pref.getPref("DriveFF"))
-        .withSize(1, 1).withPosition(6, 2);
-
     Shuffleboard.getTab("Drivetrain").add("SetAngleKp", setAngleKp())
         .withSize(1, 1).withPosition(7, 0);
 
     Shuffleboard.getTab("Drivetrain").addNumber("AngleKp", () -> getAngleKp())
         .withSize(1, 1).withPosition(7, 1);
 
-    Shuffleboard.getTab("Drivetrain").addNumber("AngleKpSet", () -> Pref.getPref("AngleKp"))
-        .withSize(1, 1).withPosition(7, 2);
+    Shuffleboard.getTab("Drivetrain").add("SetAlignKp", setAlignKpCommand())
+        .withSize(1, 1).withPosition(8, 0);
+
+    Shuffleboard.getTab("Drivetrain").addNumber("AlignKp", () -> getAlignKp())
+        .withSize(1, 1).withPosition(8, 1);
 
     Shuffleboard.getTab("Drivetrain").add("ResetPose", this.setPoseToX0Y0())
         .withSize(1, 1).withPosition(2, 0);
@@ -520,14 +519,13 @@ public class SwerveSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
-
     swervePoseEstimator.update(getYaw(), getPositions());
 
     double flHeartbeat = 0;
 
     if (CameraConstants.frontLeftCamera.isUsed)
 
-     flHeartbeat = LimelightHelpers.getLimelightNTDouble(CameraConstants.frontLeftCamera.camname, "hb");
+      flHeartbeat = LimelightHelpers.getLimelightNTDouble(CameraConstants.frontLeftCamera.camname, "hb");
 
     if (flHeartbeat != flHeartbeatLast && LimelightHelpers.getTV(CameraConstants.frontLeftCamera.camname)) {
       flHeartbeatLast = flHeartbeat;
@@ -661,6 +659,22 @@ public class SwerveSubsystem extends SubsystemBase {
 
   public Command setPoseToX0Y0() {
     return Commands.runOnce(() -> resetAll());
+  }
+
+  public double getAlignKp() {
+    return m_alignPID.getP();
+  }
+
+  public void setAlignKp() {
+    m_alignPID.setP(Pref.getPref("lignP"));
+  }
+
+  public Command setAlignKpCommand() {
+    return Commands.runOnce(() -> setAlignKp());
+  }
+
+  public PIDController getAlignPID() {
+    return m_alignPID;
   }
 
   @Override
