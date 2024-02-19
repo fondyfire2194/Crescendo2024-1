@@ -468,12 +468,12 @@ public class SwerveSubsystem extends SubsystemBase {
       swervePoseEstimator.addVisionMeasurement(pose, timestamp);
   }
 
-  public double getRearLeftSensorMM() {
-    return m_rearLeftSensor.getRange();
+  public double getRearLeftSensorInches() {
+    return Units.metersToFeet(m_rearLeftSensor.getRange() / 1000);
   }
 
-  public double getRearRightSensorMM() {
-    return m_rearRightSensor.getRange();
+  public double getRearRightSensorInches() {
+    return Units.metersToFeet(m_rearRightSensor.getRange() / 1000);
   }
 
   public double getRearLeftSensorStdDevMM() {

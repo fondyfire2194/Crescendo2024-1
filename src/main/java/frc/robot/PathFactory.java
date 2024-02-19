@@ -7,8 +7,6 @@ package frc.robot;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.text.StyleContext.SmallAttributeSet;
-
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.GeometryUtil;
 
@@ -76,6 +74,12 @@ public class PathFactory {
 
         switch (index) {
 
+            // 1-9 amp side start
+            case 1:
+                usedPathFiles.add("BasicLeave");
+                return usedPathFiles;
+
+            // 11 -19 center start
             case 11:
 
                 usedPathFiles.add("CentOneP1");
@@ -84,15 +88,31 @@ public class PathFactory {
                 usedPathFiles.add("CentOneP2R");
                 usedPathFiles.add("CentOneP3");
                 usedPathFiles.add("CentOneP3R");
-
                 return usedPathFiles;
 
-            case 12:
+            // case 12:
+
+            // 21-29 source side start
+
+            case 21:
+                usedPathFiles.add("BasicLeave");
+                return usedPathFiles;
+
+            case 22:
+                usedPathFiles.add("SourceToOuterDecision");
+                usedPathFiles.add("SourceOuterPickup");
+                usedPathFiles.add("SourceOuterToShoot");
+                return usedPathFiles;
+
+                case 23:
+                usedPathFiles.add("SourceToInnerOneDecision");
+                usedPathFiles.add("SourceInner1Pickup");
+                usedPathFiles.add("SourceInner1ToShoot");
+                return usedPathFiles;
+
 
             default:
-
                 return usedPathFiles;
-
         }
 
     }

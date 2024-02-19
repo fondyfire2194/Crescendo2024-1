@@ -3,38 +3,32 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.7696101490857697,
-        "y": 4.380745622477792
+        "x": 7.543200019135465,
+        "y": 0.671837038741342
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.3188901688472403,
-        "y": 3.4293647206684894
+        "x": 7.570809760453603,
+        "y": 0.671837038741342
       },
       "isLocked": false,
-      "linkedName": "Center Side Subwoofer"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.0260375752539583,
-        "y": 0.5719889585474544
+        "x": 3.75,
+        "y": 2.25
       },
       "prevControl": {
-        "x": 2.7760375752539583,
-        "y": 2.071988958547454
+        "x": 4.376850733589026,
+        "y": 1.9576947024073585
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.0,
-      "rotationDegrees": -60.0,
-      "rotateFast": true
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -45,11 +39,14 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
+    "rotation": -29.875992691689294,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": null,
-  "previewStartingState": null,
+  "folder": "SourceSubwoofer",
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
   "useDefaultConstraints": true
 }

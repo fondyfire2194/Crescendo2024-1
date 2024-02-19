@@ -210,6 +210,10 @@ public class ShooterSubsystem extends SubsystemBase {
     return commandRPM != 0 && Math.abs(commandRPM - getRPMRight()) < commandRPM / 20;
   }
 
+  public boolean bothAtSpeed() {
+    return leftAtSpeed() && rightAtSpeed();
+  }
+
   public double getLeftAmps() {
     return leftRoller.getOutputCurrent();
   }

@@ -1,0 +1,52 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.015554507299491,
+        "y": 7.087976481717375
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.087565879392411,
+        "y": 7.026252448494873
+      },
+      "isLocked": false,
+      "linkedName": "After shoot preload"
+    },
+    {
+      "anchor": {
+        "x": 2.74,
+        "y": 6.73
+      },
+      "prevControl": {
+        "x": 2.1260334827695035,
+        "y": 6.699704967458573
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Pickup first note blue"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 4.3,
+    "maxAcceleration": 4.3,
+    "maxAngularVelocity": 1080.0,
+    "maxAngularAcceleration": 360.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 21.097784474548142,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Amp Start",
+  "previewStartingState": {
+    "rotation": 39.61068824002659,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

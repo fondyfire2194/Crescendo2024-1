@@ -59,7 +59,7 @@ public class AutoFactory {
         m_startDelayChooser.addOption("Five Seconds", 4.);
 
         m_ampStartChooser.setDefaultOption("Not Used", 0);
-        m_ampStartChooser.addOption("Not Assigned", 1);
+        m_ampStartChooser.addOption("Leave Zone", 1);
         m_ampStartChooser.addOption("Not Assigned", 2);
 
         m_centerStartChooser.setDefaultOption("Not Used", 10);
@@ -67,8 +67,9 @@ public class AutoFactory {
         m_centerStartChooser.addOption("Not Used", 12);
 
         m_sourceStartChooser.setDefaultOption("Not Used", 20);
-        m_sourceStartChooser.addOption("Not Assigned", 21);
-        m_sourceStartChooser.addOption("Not Assigned", 22);
+        m_sourceStartChooser.addOption("LeaveZone", 21);
+        m_sourceStartChooser.addOption("ShootThenCenter", 22);
+        m_sourceStartChooser.addOption("ShootThenInnerOne", 23);
 
         Shuffleboard.getTab("Autonomous").add("DelayChooser", m_startDelayChooser)
                 .withSize(2, 1).withPosition(0, 0);

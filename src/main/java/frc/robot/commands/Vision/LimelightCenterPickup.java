@@ -38,7 +38,7 @@ public class LimelightCenterPickup extends Command {
     m_llName = llName;
     m_swerve = swerve;
     m_path = path;
-    m_targetPose=targetPose;
+    m_targetPose = targetPose;
     startTime = Timer.getFPGATimestamp();
     endIt = false;
     loopctr = 0;
@@ -80,10 +80,6 @@ public class LimelightCenterPickup extends Command {
           double currentPoseY = currentPose.getY();
 
           double targetPoseY = m_targetPose.getY();
-
-
-
-
 
         }
       }

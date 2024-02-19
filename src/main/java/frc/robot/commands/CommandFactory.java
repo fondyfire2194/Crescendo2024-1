@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -22,8 +23,9 @@ import frc.robot.LimelightHelpers;
 import frc.robot.PathFactory;
 import frc.robot.Constants.CameraConstants;
 import frc.robot.Constants.CameraConstants.CameraValues;
+import frc.robot.commands.AmpStart.LeaveZone;
 import frc.robot.commands.CenterStart.CenterStartCommand1;
-import frc.robot.commands.CenterStart.CenterStartCommand1Paths;
+import frc.robot.commands.SourceStart.SourceShootThenCenter;
 import frc.robot.commands.Drive.AlignToTagSetShootSpeed;
 import frc.robot.commands.Drive.TeleopSwerve;
 import frc.robot.commands.Pathplanner.RunPPath;
@@ -97,26 +99,36 @@ public class CommandFactory {
     public Command finalCommand(int choice) {
 
         switch (choice) {
+
+            // amp side starts
             case 1:
-                return new DoNothing();
+                return new LeaveZone(this, m_af, m_swerve);
             case 2:
                 return new DoNothing();
             case 3:
                 return new DoNothing();
+
+            // center starts
             case 11:
                 return new CenterStartCommand1(this, m_pf, m_llName, m_swerve, m_elevator, m_intake, m_holdnote,
                         m_shooter,
                         m_shooterangle).withName("CC1");
             case 12:
-                return new CenterStartCommand1Paths(m_pf, m_swerve).withName("CC2");
+                return new DoNothing();
+
             case 13:
                 return new DoNothing();
+
+            // source side starts
+
             case 21:
-                return new DoNothing();
+                return new LeaveZone(this, m_af, m_swerve);
             case 22:
-                return new DoNothing();
+                return new SourceShootThenCenter(this, m_pf, m_swerve, m_elevator, m_intake, m_holdnote,
+                        m_shooter, m_shooterangle).withName("SourceCenter");
             case 23:
-                return new DoNothing();
+                return new SourceShootThenCenter(this, m_pf, m_swerve, m_elevator, m_intake, m_holdnote,
+                        m_shooter, m_shooterangle).withName("SourceCenter");
             default:
                 return new DoNothing();
 
@@ -222,6 +234,15 @@ public class CommandFactory {
                         () -> false,
                         () -> false),
                 () -> LimelightHelpers.getTV(CameraConstants.frontLeftCamera.camname));
+    }
+
+    public void decideNextPickup() {
+
+        LimelightHelpers.getTV(CameraConstants.rearCamera.camname);
+
+        if (m_swerve.getRearLeftSensorInches() < 20 || m_swerve.getRearRightSensorInches() < 20)
+            CommandScheduler.getInstance().cancel(getAutonomusCommand());
+
     }
 
     public Command getAutonomusCommand() {

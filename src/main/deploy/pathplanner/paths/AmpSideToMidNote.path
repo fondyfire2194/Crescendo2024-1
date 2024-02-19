@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.7804712298166318,
-        "y": 6.637756586771451
+        "x": 0.7319122330552369,
+        "y": 5.199878861296185
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.793714580806645,
-        "y": 6.774681363932264
+        "x": 1.7451555840452504,
+        "y": 5.336803638456997
       },
       "isLocked": false,
       "linkedName": "AmpSideSubwoofer"
@@ -49,7 +49,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "AmpSide",
+  "folder": "Amp Start",
   "previewStartingState": null,
   "useDefaultConstraints": false
 }

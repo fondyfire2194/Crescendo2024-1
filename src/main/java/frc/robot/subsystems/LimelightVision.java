@@ -181,6 +181,8 @@ public class LimelightVision extends SubsystemBase {
           .withPosition(columnIndex + 1, 2)
           .withSize(1, 1);
     }
+
+    setNoteDetectorPipeline();
   }
 
   @Override
@@ -233,6 +235,11 @@ public class LimelightVision extends SubsystemBase {
       return String.valueOf((int) temp1[0].fiducialID) + " , " + String.valueOf((int) temp1[1].fiducialID);
     else
       return "Problem";
+  }
+
+  public int getNumberNotesSeen(CameraConstants.CameraValues cam) {
+    return (int) LimelightHelpers
+        .getLatestResults(cam.camname).targetingResults.targets_Detector.length;
   }
 
   public int getTagId(CameraConstants.CameraValues cam) {

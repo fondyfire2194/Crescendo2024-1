@@ -4,6 +4,7 @@
   "holonomicMode": true,
   "pathFolders": [
     "CentOne",
+    "Amp Start",
     "SourceSubwoofer",
     "TestFolder"
   ],
