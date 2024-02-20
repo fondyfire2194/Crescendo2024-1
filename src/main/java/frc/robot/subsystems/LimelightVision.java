@@ -6,26 +6,20 @@ package frc.robot.subsystems;
 
 import java.util.Optional;
 
-import javax.management.remote.TargetedNotification;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.CameraConstants;
-import frc.robot.utils.LLPipelines;
 import frc.robot.LimelightHelpers;
+import frc.robot.utils.LLPipelines;
 
 public class LimelightVision extends SubsystemBase {
   /** Creates a new LimelightVision. */
   boolean showFrontLeft = true;
-  boolean showFrontRight = true;
+  boolean showFrontRight = false;
   boolean showRearCamera = true;
   int columnIndex = 0;
 

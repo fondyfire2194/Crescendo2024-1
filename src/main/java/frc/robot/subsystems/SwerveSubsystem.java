@@ -79,7 +79,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
       new PIDController(Constants.KeepAngle.kp, Constants.KeepAngle.ki, Constants.KeepAngle.kd);
 
-  private PIDController m_alignPID = new PIDController(SwerveConstants.alignKp, 0, SwerveConstants.alighKd);
+  public PIDController m_alignPID = new PIDController(SwerveConstants.alignKp, 0, SwerveConstants.alighKd);
 
   private final Timer m_keepAngleTimer = new Timer();
 
@@ -505,7 +505,7 @@ public class SwerveSubsystem extends SubsystemBase {
   public double getDistance(String camname) {
 
     // getting x distance to target
-    return LimelightHelpers.getTargetPose_RobotSpace(camname)[0];
+    return 0;// LimelightHelpers.getTargetPose_RobotSpace(camname)[0];
   }
 
   public double getArray1(String limelight) {
@@ -574,17 +574,17 @@ public class SwerveSubsystem extends SubsystemBase {
       RectanglePoseArea visionCheck = new RectanglePoseArea(robotEstimatedtranslation.plus(band),
           robotEstimatedtranslation.minus(band));
 
-      boolean inAreaRight = visionCheck.isPoseWithinArea(frrightPose);
+      // boolean inAreaRight = visionCheck.isPoseWithinArea(frrightPose);
 
-      // if (inAreaRight)
+      // // if (inAreaRight)
 
-      swervePoseEstimator.addVisionMeasurement(
-          frrightPose,
-          (Timer.getFPGATimestamp()
-              - (LimelightHelpers.getLatency_Pipeline(CameraConstants.frontRightCamera.camname) / 1000.0)
-              - (LimelightHelpers.getLatency_Capture(CameraConstants.frontRightCamera.camname) / 1000.0)),
-          VecBuilder.fill(getDistance(CameraConstants.frontRightCamera.camname) / 2,
-              getDistance(CameraConstants.frontLeftCamera.camname) / 2, Units.degreesToRadians(10)));
+      // swervePoseEstimator.addVisionMeasurement(
+      //     frrightPose,
+      //     (Timer.getFPGATimestamp()
+      //         - (LimelightHelpers.getLatency_Pipeline(CameraConstants.frontRightCamera.camname) / 1000.0)
+      //         - (LimelightHelpers.getLatency_Capture(CameraConstants.frontRightCamera.camname) / 1000.0)),
+      //     VecBuilder.fill(getDistance(CameraConstants.frontRightCamera.camname) / 2,
+      //         getDistance(CameraConstants.frontLeftCamera.camname) / 2, Units.degreesToRadians(10)));
 
     }
 

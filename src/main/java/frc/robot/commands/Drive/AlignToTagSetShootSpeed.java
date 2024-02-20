@@ -9,6 +9,7 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Constants.CameraConstants.CameraValues;
@@ -20,7 +21,6 @@ import frc.robot.subsystems.SwerveSubsystem;
 public class AlignToTagSetShootSpeed extends Command {
   /** Creates a new AlignToTagSetShootSpeed. */
 
-  private SwerveSubsystem s_Swerve;
   private DoubleSupplier translationSup;
   private DoubleSupplier strafeSup;
 
@@ -31,14 +31,14 @@ public class AlignToTagSetShootSpeed extends Command {
   private final SwerveSubsystem m_swerve;
   private final CameraValues m_camval;
   private final LimelightVision m_llv;
-  private final CommandFactory m_cf;
+  // private final CommandFactory m_cf;
 
   private double rotationVal;
 
   public AlignToTagSetShootSpeed(
       SwerveSubsystem swerve,
       LimelightVision llv,
-      CommandFactory cf,
+
       DoubleSupplier translationSup,
       DoubleSupplier strafeSup,
       CameraValues camval)
@@ -46,7 +46,7 @@ public class AlignToTagSetShootSpeed extends Command {
   {
     m_swerve = swerve;
     m_llv = llv;
-    m_cf = cf;
+    // m_cf = cf;
     m_camval = camval;
     this.translationSup = translationSup;
     this.strafeSup = strafeSup;
@@ -71,25 +71,27 @@ public class AlignToTagSetShootSpeed extends Command {
 
     // get horizontal angle
 
-    double angleError = -LimelightHelpers.getTX(m_camval.camname);
+    double angleError = LimelightHelpers.getTX(m_camval.camname);
+
+    SmartDashboard.putNumber("ANGERR", angleError);
 
     // get distance for shooter speed and angle
 
-    double distanceUsingTag = m_llv.getDistanceFromTag(m_camval);
+  //  double distanceUsingTag = m_llv.getDistanceFromTag(m_camval);
 
-    double distanceUsingTrig = m_llv.getSpeakerDistance(m_camval);
+    // double distanceUsingTrig = m_llv.getSpeakerDistance(m_camval);
 
-    double[] shooterSpeeds = m_cf.getShooterSpeedsFromDistance(distanceUsingTag);
+    // double[] shooterSpeeds = m_cf.getShooterSpeedsFromDistance(distanceUsingTag);
 
     /* Drive */
-    s_Swerve.drive(
+    m_swerve.drive(
         translationVal *= Constants.SwerveConstants.kmaxSpeed,
         strafeVal *= Constants.SwerveConstants.kmaxSpeed,
-        rotationVal = m_swerve.getAlignPID().calculate(angleError, 0),
+        rotationVal = m_swerve.m_alignPID.calculate(angleError, 0),
         false,
         true,
         false);
-
+SmartDashboard.putNumber("ANGROTV", rotationVal);
   }
 
   // Called once the command ends or is interrupted.

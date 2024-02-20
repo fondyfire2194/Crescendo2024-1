@@ -71,22 +71,22 @@ public class AutoFactory {
         m_sourceStartChooser.addOption("ShootThenCenter", 22);
         m_sourceStartChooser.addOption("ShootThenInnerOne", 23);
 
-        Shuffleboard.getTab("Autonomous").add("DelayChooser", m_startDelayChooser)
-                .withSize(2, 1).withPosition(0, 0);
-        Shuffleboard.getTab("Autonomous").add("AmpStart", m_ampStartChooser)
-                .withSize(2, 1).withPosition(2, 0);
-        Shuffleboard.getTab("Autonomous").add("CenterStart", m_centerStartChooser)
-                .withSize(2, 1).withPosition(4, 0);
-        Shuffleboard.getTab("Autonomous").add("SourceStart", m_sourceStartChooser)
-                .withSize(2, 1).withPosition(6, 0);
-        Shuffleboard.getTab("Autonomous").addNumber("Choice Must Not Be Zero", () -> validStartChoice)
-                .withSize(2, 1).withPosition(2, 1);
-        Shuffleboard.getTab("Autonomous").addBoolean("Valid Choice", () -> validStartChoice != 0)
-                .withSize(2, 1).withPosition(4, 1)
-                .withProperties(Map.of("colorWhenTrue", "green", "colorWhenFalse", "red"));
+        // Shuffleboard.getTab("Autonomous").add("DelayChooser", m_startDelayChooser)
+        //         .withSize(2, 1).withPosition(0, 0);
+        // Shuffleboard.getTab("Autonomous").add("AmpStart", m_ampStartChooser)
+        //         .withSize(2, 1).withPosition(2, 0);
+        // Shuffleboard.getTab("Autonomous").add("CenterStart", m_centerStartChooser)
+        //         .withSize(2, 1).withPosition(4, 0);
+        // Shuffleboard.getTab("Autonomous").add("SourceStart", m_sourceStartChooser)
+        //         .withSize(2, 1).withPosition(6, 0);
+        // Shuffleboard.getTab("Autonomous").addNumber("Choice Must Not Be Zero", () -> validStartChoice)
+        //         .withSize(2, 1).withPosition(2, 1);
+        // Shuffleboard.getTab("Autonomous").addBoolean("Valid Choice", () -> validStartChoice != 0)
+        //         .withSize(2, 1).withPosition(4, 1)
+        //         .withProperties(Map.of("colorWhenTrue", "green", "colorWhenFalse", "red"));
 
-        Shuffleboard.getTab("Autonomous").addNumber("Number Files", () -> usedPathFiles.size())
-                .withSize(2, 1).withPosition(6, 1);
+        // Shuffleboard.getTab("Autonomous").addNumber("Number Files", () -> usedPathFiles.size())
+        //         .withSize(2, 1).withPosition(6, 1);
 
     }
 

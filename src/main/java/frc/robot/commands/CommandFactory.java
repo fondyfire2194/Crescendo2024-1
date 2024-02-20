@@ -224,7 +224,7 @@ public class CommandFactory {
 
     public Command teleopAlignSpeaker(CameraValues camval, CommandXboxController driver) {
         return new ConditionalCommand(
-                new AlignToTagSetShootSpeed(m_swerve, m_llv, this, () -> -driver.getLeftY(), () -> driver.getLeftX(),
+                new AlignToTagSetShootSpeed(m_swerve, m_llv, () -> -driver.getLeftY(), () -> driver.getLeftX(),
                         camval),
                 new TeleopSwerve(
                         m_swerve,
@@ -248,4 +248,6 @@ public class CommandFactory {
     public Command getAutonomusCommand() {
         return finalCommand(m_af.finalChoice);
     }
+
+    
 }

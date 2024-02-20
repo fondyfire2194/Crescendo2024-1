@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.CameraConstants;
+import frc.robot.Constants.CameraConstants.CameraValues;
 import frc.robot.Constants.ShooterAngleConstants;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.DoNothing;
@@ -69,7 +70,7 @@ public class RobotContainer {
 
         final CommandJoystick tstjs = new CommandJoystick(2);
 
-     //   private final SendableChooser<Command> autoChooser;
+        // private final SendableChooser<Command> autoChooser;
 
         public RobotContainer() {
 
@@ -85,9 +86,9 @@ public class RobotContainer {
                 registerNamedCommands();
 
                 // Build an auto chooser. This will use Commands.none() as the default option.
-               // autoChooser = AutoBuilder.buildAutoChooser();
+                // autoChooser = AutoBuilder.buildAutoChooser();
 
-               // SmartDashboard.putData("Auto Chooser", autoChooser);
+                // SmartDashboard.putData("Auto Chooser", autoChooser);
 
                 configureBindings();
                 // Set the scheduler to log Shuffleboard events for command initialize,
@@ -156,9 +157,10 @@ public class RobotContainer {
 
         private void configureBindings() {
 
-                // driver.leftTrigger().whileTrue(
-                // m_cf.teleopAlignSpeaker(m_swerve,driver))
-                // .onFalse(m_llv.setAprilTag_ALL_Pipeline());
+                driver.leftTrigger().whileTrue(
+                                new AlignToTagSetShootSpeed(m_swerve, m_llv, () -> -driver.getLeftY(),
+                                                () -> driver.getLeftX(),
+                                                CameraConstants.frontLeftCamera));
 
                 SmartDashboard.putData("CommSchd", CommandScheduler.getInstance());
 
@@ -227,7 +229,7 @@ public class RobotContainer {
 
         public Command getTestPathCommand() {
                 return new DoNothing();
-             //   return autoChooser.getSelected();
+                // return autoChooser.getSelected();
         }
 
 }

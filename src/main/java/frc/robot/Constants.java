@@ -184,7 +184,7 @@ public final class Constants {
                                 flModuleOffset.getNorm(), // Drive base radius (distance from center to furthest module)
                                 new ReplanningConfig());
 
-                public static double alignKp = .001;
+                public static double alignKp = .04;
                 public static double alighKd = 0;
 
         }
