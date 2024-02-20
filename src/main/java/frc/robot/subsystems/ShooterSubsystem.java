@@ -47,6 +47,8 @@ public double leftDistanceSpeed;
 
 public double rightDistanceSpeed;
 
+public boolean showShooter = false;
+
   /** Creates a new Shooter. */
   public ShooterSubsystem() {
     rightRoller = new CANSparkMax(Constants.CANIDConstants.rightShooterID, MotorType.kBrushless);
@@ -59,7 +61,7 @@ public double rightDistanceSpeed;
     leftEncoder = leftRoller.getEncoder();
     configMotor(leftRoller, leftEncoder, leftController, true);
 
-    boolean showShooter = false;
+    
 
     if (showShooter) {
 

@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import java.util.List;
-import java.util.Optional;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -12,20 +11,20 @@ import com.pathplanner.lib.util.PathPlannerLogging;
 import com.playingwithfusion.TimeOfFlight;
 import com.playingwithfusion.TimeOfFlight.RangingMode;
 
+import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -42,10 +41,10 @@ import frc.robot.Constants;
 import frc.robot.Constants.CANIDConstants;
 import frc.robot.Constants.CameraConstants;
 import frc.robot.Constants.SwerveConstants;
-import frc.robot.utils.RectanglePoseArea;
 import frc.robot.LimelightHelpers;
 import frc.robot.Pref;
 import frc.robot.Robot;
+import frc.robot.utils.RectanglePoseArea;
 
 public class SwerveSubsystem extends SubsystemBase {
   // The gyro sensor
@@ -74,6 +73,9 @@ public class SwerveSubsystem extends SubsystemBase {
   private double timeSinceDrive = 0.0;
   private double lastDriveTime = 0.0;
 
+  private static final Matrix<N3, N1> ODOMETRY_STDDEV = VecBuilder.fill(0.03, 0.03, Math.toRadians(1));
+  private static final Matrix<N3, N1> VISION_STDDEV = VecBuilder.fill(0.5, 0.5, Math.toRadians(40));
+
   private final PIDController m_keepAnglePID =
 
       new PIDController(Constants.KeepAngle.kp, Constants.KeepAngle.ki, Constants.KeepAngle.kd);
@@ -83,6 +85,8 @@ public class SwerveSubsystem extends SubsystemBase {
   private final Timer m_keepAngleTimer = new Timer();
 
   SwerveModuleState[] lockStates = new SwerveModuleState[4];
+
+  public boolean showSwerve =false;
 
   public SwerveSubsystem() {
 
@@ -125,8 +129,11 @@ public class SwerveSubsystem extends SubsystemBase {
         getYaw(),
         getPositions(),
         new Pose2d(),
-        VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
-        VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
+        ODOMETRY_STDDEV,
+        VISION_STDDEV);
+
+    // VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
+    // VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
 
     simOdometryPose = swervePoseEstimator.getEstimatedPosition();
 
@@ -164,7 +171,7 @@ public class SwerveSubsystem extends SubsystemBase {
     zeroGyro();
     resetPoseEstimator(new Pose2d());
 
-    boolean showSwerve = false;
+    
 
     if (showSwerve) {
 
@@ -503,11 +510,23 @@ public class SwerveSubsystem extends SubsystemBase {
   public double getDistance(String camname) {
 
     // getting x distance to target
-    return LimelightHelpers.getTargetPose_RobotSpace(camname)[0];
+
+    if (LimelightHelpers.getTargetPose_RobotSpace(camname).length > 0)
+      return LimelightHelpers.getTargetPose_RobotSpace(camname)[0];
+    else
+      return 0;
   }
 
   @Override
   public void periodic() {
+
+    double temp = 0;
+
+    // if (LimelightHelpers.getTV(CameraConstants.frontRightCamera.camname))
+
+    // temp = getDistance(CameraConstants.frontRightCamera.camname);
+
+    // SmartDashboard.putNumber("DIST)))", temp);
 
     swervePoseEstimator.update(getYaw(), getPositions());
 
@@ -534,9 +553,10 @@ public class SwerveSubsystem extends SubsystemBase {
           frleftPose,
           (Timer.getFPGATimestamp()
               - (LimelightHelpers.getLatency_Pipeline(CameraConstants.frontLeftCamera.camname) / 1000.0)
-              - (LimelightHelpers.getLatency_Capture(CameraConstants.frontLeftCamera.camname) / 1000.0)),
-          VecBuilder.fill(getDistance(CameraConstants.frontLeftCamera.camname) / 2,
-              getDistance(CameraConstants.frontLeftCamera.camname) / 2, Units.degreesToRadians(10)));
+              - (LimelightHelpers.getLatency_Capture(CameraConstants.frontLeftCamera.camname) / 1000.0)));
+      // VecBuilder.fill(getDistance(CameraConstants.frontLeftCamera.camname) / 2,
+      // getDistance(CameraConstants.frontLeftCamera.camname) / 2,
+      // Units.degreesToRadians(10)));
 
     }
 
@@ -562,9 +582,10 @@ public class SwerveSubsystem extends SubsystemBase {
           frrightPose,
           (Timer.getFPGATimestamp()
               - (LimelightHelpers.getLatency_Pipeline(CameraConstants.frontRightCamera.camname) / 1000.0)
-              - (LimelightHelpers.getLatency_Capture(CameraConstants.frontRightCamera.camname) / 1000.0)),
-          VecBuilder.fill(getDistance(CameraConstants.frontRightCamera.camname) / 2,
-              getDistance(CameraConstants.frontLeftCamera.camname) / 2, Units.degreesToRadians(10)));
+              - (LimelightHelpers.getLatency_Capture(CameraConstants.frontRightCamera.camname) / 1000.0)));
+      // VecBuilder.fill(getDistance(CameraConstants.frontRightCamera.camname) / 2,
+      // getDistance(CameraConstants.frontLeftCamera.camname) / 2,
+      // Units.degreesToRadians(10)));
     }
 
     field.setRobotPose(getPose());

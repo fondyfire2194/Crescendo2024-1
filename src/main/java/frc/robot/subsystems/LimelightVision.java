@@ -19,9 +19,10 @@ import frc.robot.utils.LLPipelines;
 
 public class LimelightVision extends SubsystemBase {
   /** Creates a new LimelightVision. */
-  boolean showFrontLeft = true;
-  boolean showFrontRight = false;
-  boolean showRearCamera = true;
+  public boolean showFrontLeft = false;
+  public boolean showFrontRight = false;
+  public boolean showRearCamera = false;
+  
   int columnIndex = 0;
 
   private double llHeartbeatfl;

@@ -38,6 +38,8 @@ public class IntakeSubsystem extends SubsystemBase {
   double intakeRPM = 1000;
   double feedShooterRPM = 1500;
 
+  public boolean showIntake = false;
+
   private final TimeOfFlight m_detectNoteSensor = new TimeOfFlight(CANIDConstants.intakeDistanceSensorID);
 
   /** Creates a new Intake. */
@@ -69,8 +71,6 @@ public class IntakeSubsystem extends SubsystemBase {
     encoder.setPosition(0.0);
 
     setIntakeKp();
-
-    boolean showIntake = false;
 
     if (showIntake) {
 

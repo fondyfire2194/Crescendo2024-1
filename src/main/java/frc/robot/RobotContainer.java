@@ -57,6 +57,8 @@ public class RobotContainer {
 
                 registerNamedCommands();
 
+                showOnShuffleboard();
+
                 configureBindings();
                 // Set the scheduler to log Shuffleboard events for command initialize,
                 // interrupt, finish
@@ -96,6 +98,18 @@ public class RobotContainer {
                 // m_elevator.setDefaultCommand(m_elevator.positionHold());
 
                 // m_shooterAngle.setDefaultCommand(m_shooterAngle.positionHold());
+
+        }
+
+        private void showOnShuffleboard() {
+
+                m_swerve.showSwerve = false;
+                m_shooter.showShooter = false;
+                m_shooterAngle.showShooterAngle = false;
+                m_intake.showIntake = false;
+                m_llv.showFrontLeft = true;
+                m_llv.showFrontRight = false;
+                m_llv.showRearCamera = false;
 
         }
 
