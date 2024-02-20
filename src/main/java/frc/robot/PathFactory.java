@@ -13,7 +13,6 @@ import com.pathplanner.lib.util.GeometryUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -33,18 +32,14 @@ public class PathFactory {
     int sourceChoice;
     int sourceChoiceLast;
 
-    public final SendableChooser<Integer> m_pathOnlyChooser = new SendableChooser<Integer>();
-
+    
     List<String> usedPathFiles = new ArrayList<>();
 
     public ArrayList<PathPlannerPath> activePaths = new ArrayList<PathPlannerPath>(5);
 
     public PathFactory(SwerveSubsystem swerve) {
         m_swerve = swerve;
-        m_pathOnlyChooser.setDefaultOption("Not Used", 10);
-        m_pathOnlyChooser.addOption("Score 4", 11);
-        m_pathOnlyChooser.addOption("Not Used", 12);
-
+    
     }
 
     public int selectAndLoadPathFiles(int choice) {

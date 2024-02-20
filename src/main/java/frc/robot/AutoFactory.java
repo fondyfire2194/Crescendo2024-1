@@ -6,6 +6,7 @@ package frc.robot;
 
 import java.util.Map;
 
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
@@ -16,134 +17,133 @@ import frc.robot.subsystems.SwerveSubsystem;
 /** Add your docs here. */
 public class AutoFactory {
 
-    private final PathFactory m_pf;
+        private final PathFactory m_pf;
 
-    private final SwerveSubsystem m_swerve;
+        private final SwerveSubsystem m_swerve;
 
-    public final SendableChooser<Integer> m_ampStartChooser = new SendableChooser<Integer>();
+        public final SendableChooser<Integer> m_ampStartChooser = new SendableChooser<Integer>();
 
-    public final SendableChooser<Integer> m_centerStartChooser = new SendableChooser<Integer>();
+        public final SendableChooser<Integer> m_centerStartChooser = new SendableChooser<Integer>();
 
-    public final SendableChooser<Integer> m_sourceStartChooser = new SendableChooser<Integer>();
+        public final SendableChooser<Integer> m_sourceStartChooser = new SendableChooser<Integer>();
 
-    public final SendableChooser<Double> m_startDelayChooser = new SendableChooser<Double>();
+        public final SendableChooser<Double> m_startDelayChooser = new SendableChooser<Double>();
 
-    public int finalChoice = 0;
+        public int finalChoice = 0;
 
-    int ampChoice;
-    int ampChoiceLast;
+        int ampChoice;
+        int ampChoiceLast;
 
-    int centerChoice;
-    int centerChoiceLast;
+        int centerChoice;
+        int centerChoiceLast;
 
-    int sourceChoice;
-    int sourceChoiceLast;
+        int sourceChoice;
+        int sourceChoiceLast;
 
-    public int validStartChoice = 0;
+        public int validStartChoice = 0;
 
-    private int trst;
+        public AutoFactory(PathFactory pf, SwerveSubsystem swerve) {
 
-    public AutoFactory(PathFactory pf, SwerveSubsystem swerve) {
+                m_pf = pf;
+                m_swerve = swerve;
 
-        m_pf = pf;
-        m_swerve = swerve;
+                m_startDelayChooser.setDefaultOption("0 sec", 0.);
+                m_startDelayChooser.addOption("1 sec", 1.);
+                m_startDelayChooser.addOption("2 sec", 2.);
+                m_startDelayChooser.addOption("3 sec", 3.);
+                m_startDelayChooser.addOption("4 sec", 4.);
+                m_startDelayChooser.addOption("5 sec", 5.);
 
-        m_startDelayChooser.setDefaultOption("0 sec", 0.);
-        m_startDelayChooser.addOption("1 sec", 1.);
-        m_startDelayChooser.addOption("2 sec", 2.);
-        m_startDelayChooser.addOption("3 sec", 3.);
-        m_startDelayChooser.addOption("4 sec", 4.);
-        m_startDelayChooser.addOption("5 sec", 5.);
+                m_ampStartChooser.setDefaultOption("Not Used", 0);
+                m_ampStartChooser.addOption("Leave Zone", 1);
 
-        m_ampStartChooser.setDefaultOption("Not Used", 0);
-        m_ampStartChooser.addOption("Leave Zone", 1);
+                m_centerStartChooser.setDefaultOption("Not Used", 10);
+                m_centerStartChooser.addOption("Score 4", 11);
 
-        m_centerStartChooser.setDefaultOption("Not Used", 10);
+                m_sourceStartChooser.setDefaultOption("Not Used", 20);
+                m_sourceStartChooser.addOption("LeaveZone", 21);
+                m_sourceStartChooser.addOption("ShootThenCenter", 22);
+                m_sourceStartChooser.addOption("ShootThenInnerOne", 23);
 
-        m_centerStartChooser.addOption("Score 4", 11);
+                Shuffleboard.getTab("Autonomous").add("DelayChooser", m_startDelayChooser)
+                                .withSize(1, 1).withPosition(9, 0);
+                Shuffleboard.getTab("Autonomous").add("AmpStart", m_ampStartChooser)
+                                .withSize(2, 1).withPosition(7, 0);
+                Shuffleboard.getTab("Autonomous").add("CenterStart", m_centerStartChooser)
+                                .withSize(2, 1).withPosition(7, 1);
+                Shuffleboard.getTab("Autonomous").add("SourceStart", m_sourceStartChooser)
+                                .withSize(2, 1).withPosition(7, 2);
 
-        m_sourceStartChooser.setDefaultOption("Not Used", 20);
-        m_sourceStartChooser.addOption("LeaveZone", 21);
-        m_sourceStartChooser.addOption("ShootThenCenter", 22);
-        m_sourceStartChooser.addOption("ShootThenInnerOne", 23);
+                Shuffleboard.getTab("Autonomous").addBoolean("Valid Choice", () -> finalChoice != 0)
+                                .withSize(1, 1).withPosition(9, 1)
+                                .withProperties(Map.of("colorWhenTrue", "green", "colorWhenFalse", "red"));
 
-        Shuffleboard.getTab("Autonomous").add("DelayChooser", m_startDelayChooser)
-                .withSize(1, 1).withPosition(9, 0);
-        Shuffleboard.getTab("Autonomous").add("AmpStart", m_ampStartChooser)
-                .withSize(2, 1).withPosition(7, 0);
-        Shuffleboard.getTab("Autonomous").add("CenterStart", m_centerStartChooser)
-                .withSize(2, 1).withPosition(7, 1);
-        Shuffleboard.getTab("Autonomous").add("SourceStart", m_sourceStartChooser)
-                .withSize(2, 1).withPosition(7, 2);
+                ShuffleboardLayout camLayout = Shuffleboard.getTab("Autonomous")
+                                .getLayout("Cameras", BuiltInLayouts.kList).withPosition(9, 2)
+                                .withSize(1, 2).withProperties(Map.of("Label position", "TOP"));
 
-        Shuffleboard.getTab("Autonomous").addBoolean("Valid Choice", () -> finalChoice != 0)
-                .withSize(1, 1).withPosition(9, 1)
-                .withProperties(Map.of("colorWhenTrue", "green", "colorWhenFalse", "red"));
+                camLayout.addBoolean("FrontLeftCamera", () -> CameraConstants.frontLeftCamera.isActive)
+                                // .withSize(1, 1).withPosition(8, 0)
+                                .withProperties(Map.of("colorWhenTrue", "green", "colorWhenFalse", "red"));
 
-        ShuffleboardLayout camLayout = Shuffleboard.getTab("Autonomous")
-                .getLayout("Cameras", BuiltInLayouts.kList).withPosition(9, 2)
-                .withSize(1, 2).withProperties(Map.of("Label position", "TOP"));
+                camLayout.addBoolean("FrontRightCamera", () -> CameraConstants.frontRightCamera.isActive)
+                                // .withSize(1, 1).withPosition(8, 1)
+                                .withProperties(Map.of("colorWhenTrue", "green", "colorWhenFalse", "red"));
 
-        camLayout.addBoolean("FrontLeftCamera", () -> CameraConstants.frontLeftCamera.isActive)
-                // .withSize(1, 1).withPosition(8, 0)
-                .withProperties(Map.of("colorWhenTrue", "green", "colorWhenFalse", "red"));
+                camLayout.addBoolean("RearCamera", () -> CameraConstants.rearCamera.isActive)
+                                // .withSize(1, 1).withPosition(8, 2)
+                                .withProperties(Map.of("colorWhenTrue", "green", "colorWhenFalse", "red"));
 
-        camLayout.addBoolean("FrontRightCamera", () -> CameraConstants.frontRightCamera.isActive)
-                // .withSize(1, 1).withPosition(8, 1)
-                .withProperties(Map.of("colorWhenTrue", "green", "colorWhenFalse", "red"));
+                ShuffleboardLayout rearLayout = Shuffleboard.getTab("Autonomous")
+                                .getLayout("RearValues", BuiltInLayouts.kList).withPosition(0, 0)
+                                .withSize(1, 2).withProperties(Map.of("Label position", "TOP"));
 
-        camLayout.addBoolean("RearCamera", () -> CameraConstants.rearCamera.isActive)
-                // .withSize(1, 1).withPosition(8, 2)
-                .withProperties(Map.of("colorWhenTrue", "green", "colorWhenFalse", "red"));
+                rearLayout.addBoolean("NoteSeen", () -> LimelightHelpers.getTV(CameraConstants.rearCamera.camname));
+                rearLayout.addNumber("LeftSensor", () -> m_swerve.getRearLeftSensorInches());
+                rearLayout.addNumber("RightSensor", () -> m_swerve.getRearRightSensorInches());
 
-        ShuffleboardLayout rearLayout = Shuffleboard.getTab("Autonomous")
-                .getLayout("RearValues", BuiltInLayouts.kList).withPosition(0, 0)
-                .withSize(1, 2).withProperties(Map.of("Label position", "TOP"));
-
-        rearLayout.addBoolean("NoteSeen", () -> LimelightHelpers.getTV(CameraConstants.rearCamera.camname));
-        rearLayout.addNumber("LeftSensor", () -> m_swerve.getRearLeftSensorInches());
-        rearLayout.addNumber("RightSensor", () -> m_swerve.getRearRightSensorInches());
-
-    }
-
-    public boolean checkChoiceChange() {
-
-        ampChoice = m_ampStartChooser.getSelected();// 0 start
-        centerChoice = m_centerStartChooser.getSelected();// 10 start
-        sourceChoice = m_sourceStartChooser.getSelected();// 20 start
-
-        boolean temp = ampChoice != ampChoiceLast || centerChoice != centerChoiceLast
-                || sourceChoice != sourceChoiceLast;
-
-        ampChoiceLast = ampChoice;
-        centerChoiceLast = centerChoice;
-        sourceChoiceLast = sourceChoice;
-
-        return temp;
-    }
-
-    public int selectAndLoadPathFiles() {
-        finalChoice = 0;
-        m_pf.usedPathFiles.clear();
-        if (ampChoice != 0 && centerChoice == 10 && sourceChoice == 20)
-            finalChoice = ampChoice;
-
-        if (ampChoice == 0 && centerChoice != 10 && sourceChoice == 20)
-            finalChoice = centerChoice;
-
-        if (ampChoice == 0 && centerChoice == 10 && sourceChoice != 20)
-            finalChoice = sourceChoice;
-
-        if (finalChoice != 0) {
-
-            m_pf.setFilenames(finalChoice);
-
-            m_pf.loadPathFiles(m_pf.usedPathFiles);
+            //    rearLayout.addNumber("BatteryVolts", () -> RobotController.getBatteryVoltage());
 
         }
 
-        return finalChoice;
+        public boolean checkChoiceChange() {
 
-    }
+                ampChoice = m_ampStartChooser.getSelected();// 0 start
+                centerChoice = m_centerStartChooser.getSelected();// 10 start
+                sourceChoice = m_sourceStartChooser.getSelected();// 20 start
+
+                boolean temp = ampChoice != ampChoiceLast || centerChoice != centerChoiceLast
+                                || sourceChoice != sourceChoiceLast;
+
+                ampChoiceLast = ampChoice;
+                centerChoiceLast = centerChoice;
+                sourceChoiceLast = sourceChoice;
+
+                return temp;
+        }
+
+        public int selectAndLoadPathFiles() {
+                finalChoice = 0;
+                m_pf.usedPathFiles.clear();
+                if (ampChoice != 0 && centerChoice == 10 && sourceChoice == 20)
+                        finalChoice = ampChoice;
+
+                if (ampChoice == 0 && centerChoice != 10 && sourceChoice == 20)
+                        finalChoice = centerChoice;
+
+                if (ampChoice == 0 && centerChoice == 10 && sourceChoice != 20)
+                        finalChoice = sourceChoice;
+
+                if (finalChoice != 0) {
+
+                        m_pf.setFilenames(finalChoice);
+
+                        m_pf.loadPathFiles(m_pf.usedPathFiles);
+
+                }
+
+                return finalChoice;
+
+        }
 
 }

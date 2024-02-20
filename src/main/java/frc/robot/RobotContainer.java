@@ -95,8 +95,6 @@ public class RobotContainer {
                                                 fieldCentric,
                                                 keepAngle));
 
-                // m_elevator.setDefaultCommand(m_elevator.positionHold());
-
                 // m_shooterAngle.setDefaultCommand(m_shooterAngle.positionHold());
 
         }
