@@ -11,17 +11,14 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.shuffleboard.EventImportance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.CameraConstants;
 import frc.robot.commands.CommandFactory;
-import frc.robot.commands.DoNothing;
 import frc.robot.commands.Drive.AlignToTagSetShootSpeed;
 import frc.robot.commands.Drive.TeleopSwerve;
-import frc.robot.commands.Pathplanner.SetStartByAlliance;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.ShooterAngleSubsystem;
@@ -37,10 +34,10 @@ public class RobotContainer {
         final ShooterSubsystem m_shooter = new ShooterSubsystem();
 
         public final PathFactory m_pf = new PathFactory(m_swerve);
-        public final AutoFactory m_af = new AutoFactory(m_pf);
+
         final ShooterAngleSubsystem m_shooterAngle = new ShooterAngleSubsystem();
         public final LimelightVision m_llv = new LimelightVision();
-
+        public final AutoFactory m_af = new AutoFactory(m_pf, m_swerve);
         final CommandFactory m_cf = new CommandFactory(m_pf, m_af, "ss", m_swerve, m_shooter, m_shooterAngle, m_intake,
                         m_llv);
 
@@ -49,8 +46,6 @@ public class RobotContainer {
         private final CommandXboxController codriver = new CommandXboxController(1);
 
         final CommandJoystick tstjs = new CommandJoystick(2);
-
-        // private final SendableChooser<Command> autoChooser;
 
         public RobotContainer() {
 
@@ -61,11 +56,6 @@ public class RobotContainer {
                 setDefaultCommands();
 
                 registerNamedCommands();
-
-                // Build an auto chooser. This will use Commands.none() as the default option.
-                // autoChooser = AutoBuilder.buildAutoChooser();
-
-                // SmartDashboard.putData("Auto Chooser", autoChooser);
 
                 configureBindings();
                 // Set the scheduler to log Shuffleboard events for command initialize,
@@ -111,24 +101,9 @@ public class RobotContainer {
 
         private void registerNamedCommands() {
                 // Register Named Commands
-                NamedCommands.registerCommand("LimelightSetStartPose1",
-                                new SetStartByAlliance(m_swerve, "CentOneP1"));
-                NamedCommands.registerCommand("LookForNote",
-                                Commands.runOnce(() -> m_swerve.setLookForNote()));
-                NamedCommands.registerCommand("SetAngleSpeed1",
-                                Commands.runOnce(() -> SmartDashboard.putString("AngleSpeed1", "")));
-                NamedCommands.registerCommand("SetAngleSpeed2",
-                                Commands.runOnce(() -> SmartDashboard.putString("AngleSpeed2", "")));
-                NamedCommands.registerCommand("SetAngleSpeed3",
-                                Commands.runOnce(() -> SmartDashboard.putString("AngleSpeed3", "")));
-                NamedCommands.registerCommand("SetAngleSpeed4",
-                                Commands.runOnce(() -> SmartDashboard.putString("AngleSpeed4", "")));
-                NamedCommands.registerCommand("ShootNote",
-                                Commands.runOnce(() -> SmartDashboard.putString("ShootNote", "")));
+
                 NamedCommands.registerCommand("RunIntake",
                                 Commands.runOnce(() -> SmartDashboard.putString("RunIntake", "")));
-                NamedCommands.registerCommand("StopShooter",
-                                Commands.runOnce(() -> SmartDashboard.putString("StopShooter", "")));
 
         }
 
@@ -209,11 +184,6 @@ public class RobotContainer {
                 // codriver.x()
                 // codriver.b()
 
-        }
-
-        public Command getTestPathCommand() {
-                return new DoNothing();
-                // return autoChooser.getSelected();
         }
 
 }

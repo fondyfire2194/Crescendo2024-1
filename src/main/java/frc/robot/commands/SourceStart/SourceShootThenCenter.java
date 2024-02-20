@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.AutoFactory;
+import frc.robot.PathFactory;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.Pathplanner.RunPPath;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -40,6 +41,7 @@ public class SourceShootThenCenter extends SequentialCommandGroup {
         public SourceShootThenCenter(
                         CommandFactory cf,
                         AutoFactory af,
+                        PathFactory pf,
                         SwerveSubsystem swerve,
                         IntakeSubsystem intake,
                         ShooterSubsystem shooter,
@@ -59,13 +61,13 @@ public class SourceShootThenCenter extends SequentialCommandGroup {
 
                                                 // move to decision on pickup based on rear sensors and camera
 
-                                                new RunPPath(swerve, af.activePaths.get(0), false).asProxy(),
+                                                new RunPPath(swerve, pf.activePaths.get(0), false).asProxy(),
 
                                                 Commands.runOnce(() -> cf.decideNextPickup()),
 
-                                                cf.moveAndPickup(af.activePaths.get(1)),
+                                                cf.moveAndPickup(pf.activePaths.get(1)),
 
-                                                new RunPPath(swerve, af.activePaths.get(2), false).asProxy(),
+                                                new RunPPath(swerve, pf.activePaths.get(2), false).asProxy(),
 
                                                 cf.shootNote(),
 

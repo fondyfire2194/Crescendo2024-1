@@ -3,9 +3,9 @@
   "robotLength": 1.0,
   "holonomicMode": true,
   "pathFolders": [
-    "CentOne",
     "Amp Start",
-    "SourceSubwoofer",
+    "CentOne",
+    "Source",
     "TestFolder"
   ],
   "autoFolders": [

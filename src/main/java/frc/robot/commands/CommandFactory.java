@@ -21,8 +21,8 @@ import frc.robot.AutoFactory;
 import frc.robot.Constants.CameraConstants;
 import frc.robot.LimelightHelpers;
 import frc.robot.PathFactory;
-import frc.robot.commands.AmpStart.LeaveZone;
-import frc.robot.commands.CenterStart.CenterStartCommand1;
+import frc.robot.commands.CenterStart.CenterStartShoot4;
+import frc.robot.commands.Drive.DriveToPosition;
 import frc.robot.commands.Pathplanner.RunPPath;
 import frc.robot.commands.SourceStart.SourceShootThenCenter;
 import frc.robot.commands.Vision.LimelightSetStartPose;
@@ -89,7 +89,7 @@ public class CommandFactory {
 
             // amp side starts
             case 1:
-                return new LeaveZone(this, m_af, m_swerve);
+                return new DriveToPosition(m_swerve, 1);
             case 2:
                 return new DoNothing();
             case 3:
@@ -97,40 +97,40 @@ public class CommandFactory {
 
             // center starts
             case 11:
-                return new CenterStartCommand1(
+                return new CenterStartShoot4(
                         this,
                         m_af,
+                        m_pf,
                         m_swerve,
                         m_intake,
                         m_shooter,
                         m_shooterAngle,
                         m_llName).withName("CC1");
-            case 12:
-                return new DoNothing();
-
-            case 13:
-                return new DoNothing();
 
             // source side starts
 
             case 21:
-                return new LeaveZone(this, m_af, m_swerve);
+                return new DriveToPosition(m_swerve, 1);
             case 22:
                 return new SourceShootThenCenter(
                         this,
                         m_af,
+                        m_pf,
                         m_swerve,
                         m_intake,
                         m_shooter,
                         m_shooterAngle)
-                        .withName("SourceCenter");
+                        .withName("SourceCenterOuter");
             case 23:
-                return new SourceShootThenCenter(this,
-                        m_af, m_swerve,
+                return new SourceShootThenCenter(
+                        this,
+                        m_af,
+                        m_pf,
+                        m_swerve,
                         m_intake,
                         m_shooter,
                         m_shooterAngle)
-                        .withName("SourceCenter");
+                        .withName("SourceCenterInnerOne");
             default:
                 return new DoNothing();
 
@@ -140,7 +140,7 @@ public class CommandFactory {
     public Command setStartPoseWithLimeLight() {
 
         return new LimelightSetStartPose(
-                m_llName, m_swerve, m_af.activePaths.get(0).getPreviewStartingHolonomicPose());
+                m_llName, m_swerve, m_pf.activePaths.get(0).getPreviewStartingHolonomicPose());
 
     }
 
@@ -178,7 +178,7 @@ public class CommandFactory {
         return new ConditionalCommand(
 
                 new SequentialCommandGroup(
-                       new DoNothing(),
+                        new DoNothing(),
                         new WaitCommand(1)),
                 new DoNothing(), () -> runAll);
     }

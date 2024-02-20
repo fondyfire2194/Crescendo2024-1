@@ -117,6 +117,9 @@
         "Drivetrain": {
           "open": true
         }
+      },
+      "SmartDashboard": {
+        "open": true
       }
     }
   },

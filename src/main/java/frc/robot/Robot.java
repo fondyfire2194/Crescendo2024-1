@@ -4,14 +4,11 @@
 
 package frc.robot;
 
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.Constants.CameraConstants;
 
 public class Robot extends TimedRobot {
 
@@ -22,6 +19,12 @@ public class Robot extends TimedRobot {
   private double m_disableStartTime;
 
   private double brakeOffTime = 3;
+
+  private double m_startDelay;
+
+  private double startTime;
+
+  private boolean autoHasRun;
 
   @Override
   public void robotInit() {
@@ -36,23 +39,22 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    SmartDashboard.putNumber("APL", m_robotContainer.m_pf.activePaths.size());
+
     m_robotContainer.m_shooter.testjs = (-m_robotContainer.tstjs.getThrottle() + 1) / 2;
   }
 
   @Override
   public void disabledInit() {
     CommandScheduler.getInstance().cancelAll();
-
+    autoHasRun = false;
   }
 
   @Override
   public void disabledPeriodic() {
 
-    if (m_robotContainer.m_af.checkChoiceChange())
-    m_robotContainer.m_af.validStartChoice =
-    m_robotContainer.m_af.selectAndLoadPathFiles();
-
+    if (m_robotContainer.m_af.checkChoiceChange()) {
+      m_robotContainer.m_af.validStartChoice = m_robotContainer.m_af.selectAndLoadPathFiles();
+    }
     // turn off drive brakes if they are on and robotis not moving
     // allows easier manual pushing of robot
 
@@ -65,14 +67,6 @@ public class Robot extends TimedRobot {
       }
     }
 
-    SmartDashboard.putString("CCPRS",
-        LimelightHelpers.getCameraPose3d_RobotSpace(CameraConstants.frontRightCamera.camname).toPose2d().toString());
-
-    SmartDashboard.putNumberArray("CTGT",
-        LimelightHelpers.getCameraPose_TargetSpace(CameraConstants.frontRightCamera.camname));
-
-        double hb = LimelightHelpers.getLimelightNTDouble(CameraConstants.rearCamera.camname, "hb");
-        SmartDashboard.putNumber("HB", hb);
   }
 
   @Override
@@ -84,10 +78,16 @@ public class Robot extends TimedRobot {
 
     m_robotContainer.m_swerve.setIdleMode(false);
 
-    m_autonomousCommand = m_robotContainer.getTestPathCommand();
+    m_startDelay = m_robotContainer.m_af.m_startDelayChooser.getSelected();
 
-    if (m_autonomousCommand != null) {
+    startTime = Timer.getFPGATimestamp();
+
+    m_autonomousCommand = m_robotContainer.m_cf.getAutonomusCommand();
+
+    if (!autoHasRun && Timer.getFPGATimestamp() > startTime + m_startDelay
+        && m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
+      autoHasRun = true;
     }
   }
 

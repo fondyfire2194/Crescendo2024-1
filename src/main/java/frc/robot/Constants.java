@@ -1,5 +1,8 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
+
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
@@ -9,19 +12,11 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.units.Distance;
 import edu.wpi.first.units.Measure;
 import frc.lib.config.SwerveModuleConstants;
-
-import static edu.wpi.first.units.Units.*;
-
-import java.util.Set;
 
 public final class Constants {
 
@@ -241,12 +236,14 @@ public final class Constants {
                         public double pitch;
                         public double yaw;
                         public boolean isUsed = false;
+                        public boolean isActive = false;
 
                         public CameraValues(
                                         String camname,
                                         String ipaddress,
                                         double forward, double side, double up, double roll, double pitch, double yaw,
-                                        boolean isUsed) {
+                                        boolean isUsed,
+                                        boolean isActive) {
                                 this.camname = camname;
                                 this.ipaddress = ipaddress;
                                 this.forward = forward;
@@ -256,21 +253,25 @@ public final class Constants {
                                 this.pitch = pitch;
                                 this.yaw = yaw;
                                 this.isUsed = isUsed;
+                                this.isActive = isActive;
                         }
 
                 }
 
                 public static CameraValues frontLeftCamera = new CameraValues("limelight-frleft", "10.21.94.5",
                                 1, 2, 3, 4, 5, 6,
-                                true);
+                                true,
+                                false);
 
                 public static CameraValues frontRightCamera = new CameraValues("limelight-frright", "10.21.94.6",
                                 1, 2, 3, 4, 5, 6,
+                                true,
                                 false);
 
                 public static CameraValues rearCamera = new CameraValues("limelight-rear", "10.21.94.10",
                                 1, 2, 3, 4, 5, 6,
-                                true);
+                                true,
+                                false);
 
                 public static final double POSE_AMBIGUITY_CUTOFF = 0.05;
                 public static final double DISTANCE_CUTOFF = 4.0;

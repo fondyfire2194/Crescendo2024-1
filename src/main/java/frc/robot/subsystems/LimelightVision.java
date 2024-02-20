@@ -9,6 +9,7 @@ import java.util.Optional;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -23,9 +24,25 @@ public class LimelightVision extends SubsystemBase {
   boolean showRearCamera = true;
   int columnIndex = 0;
 
+  private double llHeartbeatfl;
+  private double llHeartbeatLastfl;
+  private int samplesfl;
+  public boolean limelightExistsfl;
+
+  private double llHeartbeatfr;
+  private double llHeartbeatLastfr;
+  private int samplesfr;
+  public boolean limelightExistsfr;
+
+  private double llHeartbeatr;
+  private double llHeartbeatLastr;
+  private int samplesr;
+  public boolean limelightExistsr;
+  private int loopctr;
+
   public LimelightVision() {
 
-    if (showFrontLeft) {
+    if (showFrontLeft && CameraConstants.frontLeftCamera.isUsed && limelightExistsfl) {
 
       Shuffleboard.getTab("VisionSubsystem")
           .addString("LLName FL", () -> CameraConstants.frontLeftCamera.camname)
@@ -76,7 +93,8 @@ public class LimelightVision extends SubsystemBase {
           .withSize(4, 1);
     }
 
-    if (CameraConstants.frontRightCamera.isUsed && showFrontRight) {
+    if (showFrontRight && CameraConstants.frontRightCamera.isUsed && limelightExistsfr) {
+
       // front right camera
       columnIndex = 4;
       Shuffleboard.getTab("VisionSubsystem")
@@ -118,7 +136,8 @@ public class LimelightVision extends SubsystemBase {
     }
     // rear camera
 
-    if (showRearCamera) {
+    if (showRearCamera && CameraConstants.rearCamera.isUsed && limelightExistsr) {
+
       columnIndex = 8;
       Shuffleboard.getTab("VisionSubsystem")
           .addString("LLName R", () -> CameraConstants.rearCamera.camname)
@@ -161,6 +180,55 @@ public class LimelightVision extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
+    if (loopctr >= 2)
+      loopctr = 0;
+    loopctr++;
+    if (RobotBase.isReal()) {
+      if (CameraConstants.frontLeftCamera.isUsed && loopctr == 0) {
+        llHeartbeatfl = LimelightHelpers.getLimelightNTDouble(CameraConstants.frontLeftCamera.camname, "hb");
+        if (llHeartbeatfl == llHeartbeatLastfl) {
+          samplesfl += 1;
+        } else {
+          samplesfl = 0;
+          llHeartbeatLastfl = llHeartbeatfl;
+          limelightExistsfl = true;
+        }
+        if (samplesfl > 5)
+          limelightExistsfl = false;
+
+        CameraConstants.frontLeftCamera.isActive = limelightExistsfl;
+      }
+      if (CameraConstants.frontRightCamera.isUsed && loopctr == 1) {
+        llHeartbeatfr = LimelightHelpers.getLimelightNTDouble(CameraConstants.frontRightCamera.camname, "hb");
+        if (llHeartbeatfr == llHeartbeatLastfr) {
+          samplesfr += 1;
+        } else {
+          samplesfr = 0;
+          llHeartbeatLastfr = llHeartbeatfr;
+          limelightExistsfr = true;
+        }
+        if (samplesfr > 5)
+          limelightExistsfr = false;
+
+        CameraConstants.frontRightCamera.isActive = limelightExistsfr;
+      }
+
+      if (CameraConstants.rearCamera.isUsed && loopctr == 2) {
+        llHeartbeatr = LimelightHelpers.getLimelightNTDouble(CameraConstants.rearCamera.camname, "hb");
+        if (llHeartbeatr == llHeartbeatLastr) {
+          samplesr += 1;
+        } else {
+          samplesr = 0;
+          llHeartbeatLastr = llHeartbeatr;
+          limelightExistsr = true;
+        }
+        if (samplesr > 5)
+          limelightExistsr = false;
+
+        CameraConstants.rearCamera.isActive = limelightExistsr;
+      }
+    }
 
   }
 
@@ -208,9 +276,13 @@ public class LimelightVision extends SubsystemBase {
       return "Problem";
   }
 
-  public int getNumberNotesSeen(CameraConstants.CameraValues cam) {
+  public int getNumberNotesSeen() {
     return (int) LimelightHelpers
-        .getLatestResults(cam.camname).targetingResults.targets_Detector.length;
+        .getLatestResults(CameraConstants.rearCamera.camname).targetingResults.targets_Detector.length;
+  }
+
+  public boolean getNoteSeen() {
+    return LimelightHelpers.getTV(CameraConstants.rearCamera.camname);
   }
 
   public int getTagId(CameraConstants.CameraValues cam) {

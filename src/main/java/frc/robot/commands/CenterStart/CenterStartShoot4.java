@@ -24,7 +24,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 /** Add your docs here. */
-public class CenterStartCommand1 extends SequentialCommandGroup {
+public class CenterStartShoot4 extends SequentialCommandGroup {
 
         public PathPlannerPath getPath(String pathname) {
                 return PathPlannerPath.fromPathFile(pathname);
@@ -39,9 +39,10 @@ public class CenterStartCommand1 extends SequentialCommandGroup {
                 return AutoBuilder.pathfindToPose(pose, constraints, 0, 2);
         }
 
-        public CenterStartCommand1(
+        public CenterStartShoot4(
                         CommandFactory cf, 
-                        AutoFactory af,                      
+                        AutoFactory af,   
+                        PathFactory pf,                   
                         SwerveSubsystem swerve,
                         IntakeSubsystem intake,
                         ShooterSubsystem shooter,
@@ -60,21 +61,21 @@ public class CenterStartCommand1 extends SequentialCommandGroup {
 
                                                 cf.shootNote(),
 
-                                                cf.moveAndPickup(af.activePaths.get(0)),
+                                                cf.moveAndPickup(pf.activePaths.get(0)),
 
-                                                new RunPPath(swerve, af.activePaths.get(1), false).asProxy(),
-
-                                                cf.shootNote(),
-
-                                                cf.moveAndPickup(af.activePaths.get(4)),
-
-                                                new RunPPath(swerve, af.activePaths.get(5), false).asProxy(),
+                                                new RunPPath(swerve, pf.activePaths.get(1), false).asProxy(),
 
                                                 cf.shootNote(),
 
-                                                cf.moveAndPickup(af.activePaths.get(2)),
+                                                cf.moveAndPickup(pf.activePaths.get(4)),
 
-                                                new RunPPath(swerve, af.activePaths.get(3), false).asProxy(),
+                                                new RunPPath(swerve, pf.activePaths.get(5), false).asProxy(),
+
+                                                cf.shootNote(),
+
+                                                cf.moveAndPickup(pf.activePaths.get(2)),
+
+                                                new RunPPath(swerve, pf.activePaths.get(3), false).asProxy(),
 
                                                 cf.shootNote(),
 

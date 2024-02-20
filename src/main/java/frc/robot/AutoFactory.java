@@ -4,22 +4,21 @@
 
 package frc.robot;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
-import com.pathplanner.lib.path.PathPlannerPath;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-
+import frc.robot.Constants.CameraConstants;
+import frc.robot.subsystems.SwerveSubsystem;
 
 /** Add your docs here. */
 public class AutoFactory {
 
- 
-
     private final PathFactory m_pf;
 
+    private final SwerveSubsystem m_swerve;
 
     public final SendableChooser<Integer> m_ampStartChooser = new SendableChooser<Integer>();
 
@@ -42,51 +41,68 @@ public class AutoFactory {
 
     public int validStartChoice = 0;
 
-    List<String> usedPathFiles = new ArrayList<>();
+    private int trst;
 
-    public ArrayList<PathPlannerPath> activePaths = new ArrayList<PathPlannerPath>(5);
+    public AutoFactory(PathFactory pf, SwerveSubsystem swerve) {
 
-    public AutoFactory( PathFactory pf) {
-        
         m_pf = pf;
-       
+        m_swerve = swerve;
 
-        m_startDelayChooser.setDefaultOption("Zero Seconds", 0.);
-        m_startDelayChooser.addOption("One Second", 1.);
-        m_startDelayChooser.addOption("Two Seconds", 2.);
-        m_startDelayChooser.addOption("Three Second", 3.);
-        m_startDelayChooser.addOption("Four Seconds", 4.);
-        m_startDelayChooser.addOption("Five Seconds", 4.);
+        m_startDelayChooser.setDefaultOption("0 sec", 0.);
+        m_startDelayChooser.addOption("1 sec", 1.);
+        m_startDelayChooser.addOption("2 sec", 2.);
+        m_startDelayChooser.addOption("3 sec", 3.);
+        m_startDelayChooser.addOption("4 sec", 4.);
+        m_startDelayChooser.addOption("5 sec", 5.);
 
         m_ampStartChooser.setDefaultOption("Not Used", 0);
         m_ampStartChooser.addOption("Leave Zone", 1);
-        m_ampStartChooser.addOption("Not Assigned", 2);
 
         m_centerStartChooser.setDefaultOption("Not Used", 10);
+
         m_centerStartChooser.addOption("Score 4", 11);
-        m_centerStartChooser.addOption("Not Used", 12);
 
         m_sourceStartChooser.setDefaultOption("Not Used", 20);
         m_sourceStartChooser.addOption("LeaveZone", 21);
         m_sourceStartChooser.addOption("ShootThenCenter", 22);
         m_sourceStartChooser.addOption("ShootThenInnerOne", 23);
 
-        // Shuffleboard.getTab("Autonomous").add("DelayChooser", m_startDelayChooser)
-        //         .withSize(2, 1).withPosition(0, 0);
-        // Shuffleboard.getTab("Autonomous").add("AmpStart", m_ampStartChooser)
-        //         .withSize(2, 1).withPosition(2, 0);
-        // Shuffleboard.getTab("Autonomous").add("CenterStart", m_centerStartChooser)
-        //         .withSize(2, 1).withPosition(4, 0);
-        // Shuffleboard.getTab("Autonomous").add("SourceStart", m_sourceStartChooser)
-        //         .withSize(2, 1).withPosition(6, 0);
-        // Shuffleboard.getTab("Autonomous").addNumber("Choice Must Not Be Zero", () -> validStartChoice)
-        //         .withSize(2, 1).withPosition(2, 1);
-        // Shuffleboard.getTab("Autonomous").addBoolean("Valid Choice", () -> validStartChoice != 0)
-        //         .withSize(2, 1).withPosition(4, 1)
-        //         .withProperties(Map.of("colorWhenTrue", "green", "colorWhenFalse", "red"));
+        Shuffleboard.getTab("Autonomous").add("DelayChooser", m_startDelayChooser)
+                .withSize(1, 1).withPosition(9, 0);
+        Shuffleboard.getTab("Autonomous").add("AmpStart", m_ampStartChooser)
+                .withSize(2, 1).withPosition(7, 0);
+        Shuffleboard.getTab("Autonomous").add("CenterStart", m_centerStartChooser)
+                .withSize(2, 1).withPosition(7, 1);
+        Shuffleboard.getTab("Autonomous").add("SourceStart", m_sourceStartChooser)
+                .withSize(2, 1).withPosition(7, 2);
 
-        // Shuffleboard.getTab("Autonomous").addNumber("Number Files", () -> usedPathFiles.size())
-        //         .withSize(2, 1).withPosition(6, 1);
+        Shuffleboard.getTab("Autonomous").addBoolean("Valid Choice", () -> finalChoice != 0)
+                .withSize(1, 1).withPosition(9, 1)
+                .withProperties(Map.of("colorWhenTrue", "green", "colorWhenFalse", "red"));
+
+        ShuffleboardLayout camLayout = Shuffleboard.getTab("Autonomous")
+                .getLayout("Cameras", BuiltInLayouts.kList).withPosition(9, 2)
+                .withSize(1, 2).withProperties(Map.of("Label position", "TOP"));
+
+        camLayout.addBoolean("FrontLeftCamera", () -> CameraConstants.frontLeftCamera.isActive)
+                // .withSize(1, 1).withPosition(8, 0)
+                .withProperties(Map.of("colorWhenTrue", "green", "colorWhenFalse", "red"));
+
+        camLayout.addBoolean("FrontRightCamera", () -> CameraConstants.frontRightCamera.isActive)
+                // .withSize(1, 1).withPosition(8, 1)
+                .withProperties(Map.of("colorWhenTrue", "green", "colorWhenFalse", "red"));
+
+        camLayout.addBoolean("RearCamera", () -> CameraConstants.rearCamera.isActive)
+                // .withSize(1, 1).withPosition(8, 2)
+                .withProperties(Map.of("colorWhenTrue", "green", "colorWhenFalse", "red"));
+
+        ShuffleboardLayout rearLayout = Shuffleboard.getTab("Autonomous")
+                .getLayout("RearValues", BuiltInLayouts.kList).withPosition(0, 0)
+                .withSize(1, 2).withProperties(Map.of("Label position", "TOP"));
+
+        rearLayout.addBoolean("NoteSeen", () -> LimelightHelpers.getTV(CameraConstants.rearCamera.camname));
+        rearLayout.addNumber("LeftSensor", () -> m_swerve.getRearLeftSensorInches());
+        rearLayout.addNumber("RightSensor", () -> m_swerve.getRearRightSensorInches());
 
     }
 
@@ -107,11 +123,8 @@ public class AutoFactory {
     }
 
     public int selectAndLoadPathFiles() {
-
         finalChoice = 0;
-
-        usedPathFiles.clear();
-
+        m_pf.usedPathFiles.clear();
         if (ampChoice != 0 && centerChoice == 10 && sourceChoice == 20)
             finalChoice = ampChoice;
 
@@ -121,12 +134,11 @@ public class AutoFactory {
         if (ampChoice == 0 && centerChoice == 10 && sourceChoice != 20)
             finalChoice = sourceChoice;
 
-        if (finalChoice != 0 && finalChoice == centerChoice) {
+        if (finalChoice != 0) {
 
             m_pf.setFilenames(finalChoice);
 
-            m_pf.loadPathFiles(usedPathFiles);
-
+            m_pf.loadPathFiles(m_pf.usedPathFiles);
 
         }
 
@@ -134,5 +146,4 @@ public class AutoFactory {
 
     }
 
-   
 }

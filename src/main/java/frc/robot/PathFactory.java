@@ -40,12 +40,7 @@ public class PathFactory {
     public ArrayList<PathPlannerPath> activePaths = new ArrayList<PathPlannerPath>(5);
 
     public PathFactory(SwerveSubsystem swerve) {
-
-        PathPlannerPath tempPath = getPath("BasicLeave");
         m_swerve = swerve;
-        for (int i = 0; i < 9; i++)
-            activePaths.add(tempPath);
-
         m_pathOnlyChooser.setDefaultOption("Not Used", 10);
         m_pathOnlyChooser.addOption("Score 4", 11);
         m_pathOnlyChooser.addOption("Not Used", 12);
@@ -58,11 +53,8 @@ public class PathFactory {
 
         setFilenames(choice);
 
-        SmartDashboard.putNumber("AUPL", usedPathFiles.size());
-
         loadPathFiles(usedPathFiles);
 
-        SmartDashboard.putNumber("APAths", activePaths.size());
 
         return choice;
 
@@ -75,9 +67,6 @@ public class PathFactory {
         switch (index) {
 
             // 1-9 amp side start
-            case 1:
-                usedPathFiles.add("BasicLeave");
-                return usedPathFiles;
 
             // 11 -19 center start
             case 11:
@@ -94,22 +83,17 @@ public class PathFactory {
 
             // 21-29 source side start
 
-            case 21:
-                usedPathFiles.add("BasicLeave");
-                return usedPathFiles;
-
             case 22:
                 usedPathFiles.add("SourceToOuterDecision");
                 usedPathFiles.add("SourceOuterPickup");
                 usedPathFiles.add("SourceOuterToShoot");
                 return usedPathFiles;
 
-                case 23:
+            case 23:
                 usedPathFiles.add("SourceToInnerOneDecision");
                 usedPathFiles.add("SourceInner1Pickup");
                 usedPathFiles.add("SourceInner1ToShoot");
                 return usedPathFiles;
-
 
             default:
                 return usedPathFiles;

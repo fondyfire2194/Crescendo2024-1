@@ -47,7 +47,6 @@ import frc.robot.LimelightHelpers;
 import frc.robot.Pref;
 import frc.robot.Robot;
 
-
 public class SwerveSubsystem extends SubsystemBase {
   // The gyro sensor
 
@@ -512,7 +511,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
     swervePoseEstimator.update(getYaw(), getPositions());
 
-    if (CameraConstants.frontLeftCamera.isUsed && LimelightHelpers.getTV(CameraConstants.frontLeftCamera.camname)) {
+    if (CameraConstants.frontLeftCamera.isUsed && CameraConstants.frontLeftCamera.isActive
+        && LimelightHelpers.getTV(CameraConstants.frontLeftCamera.camname)) {
 
       // standard deviations are (distance to nearest apriltag)/2 for x and y and 10
       // degrees for theta
@@ -540,7 +540,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
     }
 
-    if (CameraConstants.frontRightCamera.isUsed && LimelightHelpers.getTV(CameraConstants.frontRightCamera.camname)) {
+    if (CameraConstants.frontRightCamera.isUsed && CameraConstants.frontRightCamera.isActive
+        && LimelightHelpers.getTV(CameraConstants.frontRightCamera.camname)) {
 
       // standard deviations are (distance to nearest apriltag)/2 for x and y and 10
       // degrees for theta
