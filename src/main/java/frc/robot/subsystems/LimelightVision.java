@@ -64,11 +64,6 @@ public class LimelightVision extends SubsystemBase {
           .withSize(1, 1);
 
       Shuffleboard.getTab("VisionSubsystem")
-          .addNumber("Dist To Speaker FL", () -> round2dp(getSpeakerDistance(CameraConstants.frontLeftCamera), 2))
-          .withPosition(columnIndex + 3, 1)
-          .withSize(1, 1);
-
-      Shuffleboard.getTab("VisionSubsystem")
           .addString("BluePose FL",
               () -> LimelightHelpers.getBotPose3d_wpiBlue(CameraConstants.frontLeftCamera.camname).toPose2d()
                   .toString())
@@ -81,7 +76,7 @@ public class LimelightVision extends SubsystemBase {
           .withSize(4, 1);
     }
 
-    if (showFrontRight) {
+    if (CameraConstants.frontRightCamera.isUsed && showFrontRight) {
       // front right camera
       columnIndex = 4;
       Shuffleboard.getTab("VisionSubsystem")
@@ -120,22 +115,6 @@ public class LimelightVision extends SubsystemBase {
           .withPosition(columnIndex + 2, 1)
           .withSize(1, 1);
 
-      Shuffleboard.getTab("VisionSubsystem")
-          .addNumber("Dist To Speaker FR", () -> round2dp(getSpeakerDistance(CameraConstants.frontRightCamera), 2))
-          .withPosition(columnIndex + 3, 1)
-          .withSize(1, 1);
-
-      Shuffleboard.getTab("VisionSubsystem")
-          .addString("BluePose FR",
-              () -> LimelightHelpers.getBotPose3d_wpiBlue(CameraConstants.frontRightCamera.camname).toPose2d()
-                  .toString())
-          .withPosition(columnIndex, 2)
-          .withSize(4, 1);
-
-      Shuffleboard.getTab("VisionSubsystem")
-          .addString("TagPose FR", () -> getTagPose(CameraConstants.frontRightCamera).toPose2d().toString())
-          .withPosition(columnIndex, 3)
-          .withSize(4, 1);
     }
     // rear camera
 
@@ -207,8 +186,6 @@ public class LimelightVision extends SubsystemBase {
   public void setAlignSpeakerPipeline() {
     LimelightHelpers.setPipelineIndex(CameraConstants.frontLeftCamera.camname,
         LLPipelines.pipelines.APRILTAGALIGN.ordinal());
-    LimelightHelpers.setPipelineIndex(CameraConstants.frontRightCamera.camname,
-        LLPipelines.pipelines.APRILTAGALIGN.ordinal());
   }
 
   public int getNumberTagsSeen(CameraConstants.CameraValues cam) {
@@ -264,28 +241,6 @@ public class LimelightVision extends SubsystemBase {
   public double getDistanceFromTag(CameraConstants.CameraValues cam) {
     int tagID = (int) LimelightHelpers.getFiducialID(cam.camname);
     return getTranslationFromTag(cam, tagID).getNorm();
-  }
-
-  public double getSpeakerDistance(CameraConstants.CameraValues cam) {
-
-    // ll-3 Field-of-View: 63.3 x 49.7 degrees
-    if (LimelightHelpers.getTV(cam.camname)) {
-      double targetOffsetAngle_Vertical = LimelightHelpers.getTY(cam.camname);
-      // how many degrees back is your limelight rotated from perfectly vertical?
-      double limelightMountAngleDegrees = cam.pitch;
-      // distance from the center of the Limelight lens to the floor
-      double limelightLensHeightInches = 20.0;
-      // distance from the target to the floor
-      double tagHeightInches = 56.0;
-      double angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
-      double angleToGoalRadians = Math.toRadians(angleToGoalDegrees);
-      // calculate distance
-      double distanceFromLimelightToGoalInches = (tagHeightInches - limelightLensHeightInches)
-          / Math.tan(angleToGoalRadians);
-      return distanceFromLimelightToGoalInches;
-
-    } else
-      return 0;
   }
 
   public boolean hasTarget(CameraConstants.CameraValues cam) {

@@ -73,11 +73,9 @@ public class AlignToTagSetShootSpeed extends Command {
 
     double angleError = LimelightHelpers.getTX(m_camval.camname);
 
-    SmartDashboard.putNumber("ANGERR", angleError);
-
     // get distance for shooter speed and angle
 
-  //  double distanceUsingTag = m_llv.getDistanceFromTag(m_camval);
+    // double distanceUsingTag = m_llv.getDistanceFromTag(m_camval);
 
     // double distanceUsingTrig = m_llv.getSpeakerDistance(m_camval);
 
@@ -91,7 +89,7 @@ public class AlignToTagSetShootSpeed extends Command {
         false,
         true,
         false);
-SmartDashboard.putNumber("ANGROTV", rotationVal);
+
   }
 
   // Called once the command ends or is interrupted.

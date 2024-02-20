@@ -85,13 +85,6 @@ public class SwerveSubsystem extends SubsystemBase {
 
   SwerveModuleState[] lockStates = new SwerveModuleState[4];
 
-  private boolean frontLeftCamisUsed;
-  private boolean frontRightCamisUsed;
-
-  private double flHeartbeatLast;
-
-  private double frHeartbeatLast;
-
   public SwerveSubsystem() {
 
     lockStates[0] = new SwerveModuleState(0, Rotation2d.fromDegrees(45));
@@ -172,81 +165,87 @@ public class SwerveSubsystem extends SubsystemBase {
     zeroGyro();
     resetPoseEstimator(new Pose2d());
 
-    Shuffleboard.getTab("Drivetrain").add(this)
-        .withSize(2, 1).withPosition(0, 0);
+    boolean showSwerve = false;
 
-    Shuffleboard.getTab("Drivetrain").add("SetDriveKp", setDriveKp())
-        .withSize(1, 1).withPosition(5, 0);
+    if (showSwerve) {
 
-    Shuffleboard.getTab("Drivetrain").addNumber("DriveKp", () -> getDriveKp())
-        .withSize(1, 1).withPosition(5, 1);
+      Shuffleboard.getTab("Drivetrain").add(this)
+          .withSize(2, 1).withPosition(0, 0);
 
-    Shuffleboard.getTab("Drivetrain").add("SetDriveFF", setDriveFF())
-        .withSize(1, 1).withPosition(6, 0);
+      Shuffleboard.getTab("Drivetrain").add("SetDriveKp", setDriveKp())
+          .withSize(1, 1).withPosition(5, 0);
 
-    Shuffleboard.getTab("Drivetrain").addNumber("DriveFF%",
-        () -> getDriveFF() * Constants.SwerveConstants.kmaxTheoreticalSpeed)
-        .withSize(1, 1).withPosition(6, 1);
+      Shuffleboard.getTab("Drivetrain").addNumber("DriveKp", () -> getDriveKp())
+          .withSize(1, 1).withPosition(5, 1);
 
-    Shuffleboard.getTab("Drivetrain").add("SetAngleKp", setAngleKp())
-        .withSize(1, 1).withPosition(7, 0);
+      Shuffleboard.getTab("Drivetrain").add("SetDriveFF", setDriveFF())
+          .withSize(1, 1).withPosition(6, 0);
 
-    Shuffleboard.getTab("Drivetrain").addNumber("AngleKp", () -> getAngleKp())
-        .withSize(1, 1).withPosition(7, 1);
+      Shuffleboard.getTab("Drivetrain").addNumber("DriveFF%",
+          () -> getDriveFF() * Constants.SwerveConstants.kmaxTheoreticalSpeed)
+          .withSize(1, 1).withPosition(6, 1);
 
-    Shuffleboard.getTab("Drivetrain").add("SetAlignKp", setAlignKpCommand())
-        .withSize(1, 1).withPosition(8, 0);
+      Shuffleboard.getTab("Drivetrain").add("SetAngleKp", setAngleKp())
+          .withSize(1, 1).withPosition(7, 0);
 
-    Shuffleboard.getTab("Drivetrain").addNumber("AlignKp", () -> getAlignKp())
-        .withSize(1, 1).withPosition(8, 1);
+      Shuffleboard.getTab("Drivetrain").addNumber("AngleKp", () -> getAngleKp())
+          .withSize(1, 1).withPosition(7, 1);
 
-    Shuffleboard.getTab("Drivetrain").add("ResetPose", this.setPoseToX0Y0())
-        .withSize(1, 1).withPosition(2, 0);
+      Shuffleboard.getTab("Drivetrain").add("SetAlignKp", setAlignKpCommand())
+          .withSize(1, 1).withPosition(8, 0);
 
-    Shuffleboard.getTab("Drivetrain").add("PathfindPickup",
+      Shuffleboard.getTab("Drivetrain").addNumber("AlignKp", () -> getAlignKp())
+          .withSize(1, 1).withPosition(8, 1);
 
-        AutoBuilder.pathfindToPose(
-            new Pose2d(2.0, 1.5, Rotation2d.fromDegrees(0)),
+      Shuffleboard.getTab("Drivetrain").add("ResetPose", this.setPoseToX0Y0())
+          .withSize(1, 1).withPosition(2, 0);
+
+      Shuffleboard.getTab("Drivetrain").add("PathfindPickup",
+
+          AutoBuilder.pathfindToPose(
+              new Pose2d(2.0, 1.5, Rotation2d.fromDegrees(0)),
+              new PathConstraints(
+                  3.0, 3.0,
+                  Units.degreesToRadians(360), Units.degreesToRadians(540)),
+              0,
+              2.0))
+          .withSize(1, 1).withPosition(0, 1);
+
+      Shuffleboard.getTab("Drivetrain").add("PathfindScore",
+
+          AutoBuilder.pathfindToPose(
+              new Pose2d(1.15, 1.0, Rotation2d.fromDegrees(180)),
+              new PathConstraints(
+                  3.0, 3.0,
+                  Units.degreesToRadians(360), Units.degreesToRadians(540)),
+              0,
+              0))
+          .withSize(1, 1).withPosition(1, 1);
+
+      Shuffleboard.getTab("Drivetrain").add("On-the-fly path", Commands.runOnce(() -> {
+
+        Pose2d currentPose = this.getPose();
+
+        // The rotation component in these poses represents the direction of travel
+        Pose2d startPos = new Pose2d(currentPose.getTranslation(), new Rotation2d());
+        Pose2d endPos = new Pose2d(currentPose.getTranslation()
+            .plus(new Translation2d(2.0, 0.0)), new Rotation2d());
+
+        List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(startPos, endPos);
+        PathPlannerPath path = new PathPlannerPath(
+            bezierPoints,
             new PathConstraints(
-                3.0, 3.0,
+                3, 3,
                 Units.degreesToRadians(360), Units.degreesToRadians(540)),
-            0,
-            2.0))
-        .withSize(1, 1).withPosition(0, 1);
+            new GoalEndState(0.0, currentPose.getRotation()));
 
-    Shuffleboard.getTab("Drivetrain").add("PathfindScore",
+        path.preventFlipping = true;
 
-        AutoBuilder.pathfindToPose(
-            new Pose2d(1.15, 1.0, Rotation2d.fromDegrees(180)),
-            new PathConstraints(
-                3.0, 3.0,
-                Units.degreesToRadians(360), Units.degreesToRadians(540)),
-            0,
-            0))
-        .withSize(1, 1).withPosition(1, 1);
+        AutoBuilder.followPath(path).schedule();
+      }))
+          .withSize(1, 1).withPosition(2, 1);
 
-    Shuffleboard.getTab("Drivetrain").add("On-the-fly path", Commands.runOnce(() -> {
-
-      Pose2d currentPose = this.getPose();
-
-      // The rotation component in these poses represents the direction of travel
-      Pose2d startPos = new Pose2d(currentPose.getTranslation(), new Rotation2d());
-      Pose2d endPos = new Pose2d(currentPose.getTranslation()
-          .plus(new Translation2d(2.0, 0.0)), new Rotation2d());
-
-      List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(startPos, endPos);
-      PathPlannerPath path = new PathPlannerPath(
-          bezierPoints,
-          new PathConstraints(
-              3, 3,
-              Units.degreesToRadians(360), Units.degreesToRadians(540)),
-          new GoalEndState(0.0, currentPose.getRotation()));
-
-      path.preventFlipping = true;
-
-      AutoBuilder.followPath(path).schedule();
-    }))
-        .withSize(1, 1).withPosition(2, 1);
+    }
 
     setModuleDriveFF();
     setModuleDriveKp();
@@ -505,15 +504,7 @@ public class SwerveSubsystem extends SubsystemBase {
   public double getDistance(String camname) {
 
     // getting x distance to target
-    return 0;// LimelightHelpers.getTargetPose_RobotSpace(camname)[0];
-  }
-
-  public double getArray1(String limelight) {
-    // return PoseEstimator.getEstimatedPosition().getTranslation().getDistance(new
-    // Pose2d(LimelightHelpers.getTargetPose3d_RobotSpace(limelight).getX(),
-    // LimelightHelpers.getTargetPose3d_RobotSpace(limelight).getY()).getTranslation());
-    // getting x distance to target
-    return LimelightHelpers.getTargetPose_RobotSpace(limelight)[1];
+    return LimelightHelpers.getTargetPose_RobotSpace(camname)[0];
   }
 
   @Override
@@ -521,14 +512,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
     swervePoseEstimator.update(getYaw(), getPositions());
 
-    double flHeartbeat = 0;
+    if (CameraConstants.frontLeftCamera.isUsed && LimelightHelpers.getTV(CameraConstants.frontLeftCamera.camname)) {
 
-    if (CameraConstants.frontLeftCamera.isUsed)
-
-      flHeartbeat = LimelightHelpers.getLimelightNTDouble(CameraConstants.frontLeftCamera.camname, "hb");
-
-    if (flHeartbeat != flHeartbeatLast && LimelightHelpers.getTV(CameraConstants.frontLeftCamera.camname)) {
-      flHeartbeatLast = flHeartbeat;
       // standard deviations are (distance to nearest apriltag)/2 for x and y and 10
       // degrees for theta
 
@@ -552,16 +537,10 @@ public class SwerveSubsystem extends SubsystemBase {
               - (LimelightHelpers.getLatency_Capture(CameraConstants.frontLeftCamera.camname) / 1000.0)),
           VecBuilder.fill(getDistance(CameraConstants.frontLeftCamera.camname) / 2,
               getDistance(CameraConstants.frontLeftCamera.camname) / 2, Units.degreesToRadians(10)));
+
     }
 
-    double frHeartbeat = 0;
-
-    if (CameraConstants.frontRightCamera.isUsed)
-
-      frHeartbeat = LimelightHelpers.getLimelightNTDouble(CameraConstants.frontRightCamera.camname, "hb");
-
-    if (frHeartbeat != frHeartbeatLast && LimelightHelpers.getTV(CameraConstants.frontRightCamera.camname)) {
-      flHeartbeatLast = flHeartbeat;
+    if (CameraConstants.frontRightCamera.isUsed && LimelightHelpers.getTV(CameraConstants.frontRightCamera.camname)) {
 
       // standard deviations are (distance to nearest apriltag)/2 for x and y and 10
       // degrees for theta
@@ -578,14 +557,13 @@ public class SwerveSubsystem extends SubsystemBase {
 
       // // if (inAreaRight)
 
-      // swervePoseEstimator.addVisionMeasurement(
-      //     frrightPose,
-      //     (Timer.getFPGATimestamp()
-      //         - (LimelightHelpers.getLatency_Pipeline(CameraConstants.frontRightCamera.camname) / 1000.0)
-      //         - (LimelightHelpers.getLatency_Capture(CameraConstants.frontRightCamera.camname) / 1000.0)),
-      //     VecBuilder.fill(getDistance(CameraConstants.frontRightCamera.camname) / 2,
-      //         getDistance(CameraConstants.frontLeftCamera.camname) / 2, Units.degreesToRadians(10)));
-
+      swervePoseEstimator.addVisionMeasurement(
+          frrightPose,
+          (Timer.getFPGATimestamp()
+              - (LimelightHelpers.getLatency_Pipeline(CameraConstants.frontRightCamera.camname) / 1000.0)
+              - (LimelightHelpers.getLatency_Capture(CameraConstants.frontRightCamera.camname) / 1000.0)),
+          VecBuilder.fill(getDistance(CameraConstants.frontRightCamera.camname) / 2,
+              getDistance(CameraConstants.frontLeftCamera.camname) / 2, Units.degreesToRadians(10)));
     }
 
     field.setRobotPose(getPose());

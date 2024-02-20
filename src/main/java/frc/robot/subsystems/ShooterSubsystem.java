@@ -55,37 +55,44 @@ public class ShooterSubsystem extends SubsystemBase {
     leftEncoder = leftRoller.getEncoder();
     configMotor(leftRoller, leftEncoder, leftController, true);
 
-    // Shuffleboard.getTab("ShooterSubsystem").add(this)
-    //     .withPosition(0, 0).withSize(2, 1);
+    boolean showShooter = false;
 
-    // Shuffleboard.getTab("ShooterSubsystem").addNumber("TestRPMSet", () -> testjs * ShooterConstants.maxShooterMotorRPM)
-    //     .withPosition(0, 1).withSize(1, 1);
+    if (showShooter) {
 
-    // Shuffleboard.getTab("ShooterSubsystem").addNumber("LeftRPM",
-    //     () -> round2dp(getRPMLeft(), 0))
-    //     .withPosition(1, 1).withSize(1, 1);
+      Shuffleboard.getTab("ShooterSubsystem").add(this)
+          .withPosition(0, 0).withSize(2, 1);
 
-    // Shuffleboard.getTab("ShooterSubsystem").addNumber("RightRPM",
-    //     () -> round2dp(getRPMRight(), 0))
-    //     .withPosition(2, 1).withSize(1, 1);
+      Shuffleboard.getTab("ShooterSubsystem")
+          .addNumber("TestRPMSet", () -> testjs * ShooterConstants.maxShooterMotorRPM)
+          .withPosition(0, 1).withSize(1, 1);
 
-    // Shuffleboard.getTab("ShooterSubsystem").add("SetLeftKpKd", setLeftKpKdCommand())
-    //     .withPosition(0, 2).withSize(1, 1);
+      Shuffleboard.getTab("ShooterSubsystem").addNumber("LeftRPM",
+          () -> round2dp(getRPMLeft(), 0))
+          .withPosition(1, 1).withSize(1, 1);
 
-    // Shuffleboard.getTab("ShooterSubsystem").add("SetRightKpKd", setRightKpKdCommand())
-    //     .withPosition(0, 3).withSize(1, 1);
+      Shuffleboard.getTab("ShooterSubsystem").addNumber("RightRPM",
+          () -> round2dp(getRPMRight(), 0))
+          .withPosition(2, 1).withSize(1, 1);
 
-    // Shuffleboard.getTab("ShooterSubsystem").addNumber("LeftAmps", () -> getLeftAmps())
-    //     .withPosition(2, 2).withSize(1, 1);
+      Shuffleboard.getTab("ShooterSubsystem").add("SetLeftKpKd", setLeftKpKdCommand())
+          .withPosition(0, 2).withSize(1, 1);
 
-    // Shuffleboard.getTab("ShooterSubsystem").addNumber("RightAmps", () -> getRightAmps())
-    //     .withPosition(2, 3).withSize(1, 1);
+      Shuffleboard.getTab("ShooterSubsystem").add("SetRightKpKd", setRightKpKdCommand())
+          .withPosition(0, 3).withSize(1, 1);
 
-    // Shuffleboard.getTab("ShooterSubsystem").addBoolean("LeftAtSpeed", () -> leftAtSpeed())
-    //     .withPosition(1, 2).withSize(1, 1);
+      Shuffleboard.getTab("ShooterSubsystem").addNumber("LeftAmps", () -> getLeftAmps())
+          .withPosition(2, 2).withSize(1, 1);
 
-    // Shuffleboard.getTab("ShooterSubsystem").addBoolean("RightAtSpeed", () -> rightAtSpeed())
-    //     .withPosition(1, 3).withSize(1, 1);
+      Shuffleboard.getTab("ShooterSubsystem").addNumber("RightAmps", () -> getRightAmps())
+          .withPosition(2, 3).withSize(1, 1);
+
+      Shuffleboard.getTab("ShooterSubsystem").addBoolean("LeftAtSpeed", () -> leftAtSpeed())
+          .withPosition(1, 2).withSize(1, 1);
+
+      Shuffleboard.getTab("ShooterSubsystem").addBoolean("RightAtSpeed", () -> rightAtSpeed())
+          .withPosition(1, 3).withSize(1, 1);
+
+    }
 
     setLeftKpKd();
     setRightKpKd();

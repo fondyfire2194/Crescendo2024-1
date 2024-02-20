@@ -78,9 +78,6 @@ public class RobotContainer {
 
                 Pref.addMissing();
 
-                // m_swerve.frontLeftCamisUsed=false;
-                // m_swerve.frontRightCamisUsed=false;
-
                 setDefaultCommands();
 
                 registerNamedCommands();

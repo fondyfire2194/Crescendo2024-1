@@ -70,40 +70,45 @@ public class IntakeSubsystem extends SubsystemBase {
 
     setIntakeKp();
 
-    // Shuffleboard.getTab("IntakeSubsystem").add(this)
-    //     .withSize(2, 1)
-    //     .withPosition(0, 0);
+    boolean showIntake = false;
 
-    // Shuffleboard.getTab("IntakeSubsystem").addNumber("ActualRPM",
-    //     () -> round2dp(getRPM(), 0))
-    //     .withSize(1, 1)
-    //     .withPosition(1, 1);
+    if (showIntake) {
 
-    // Shuffleboard.getTab("IntakeSubsystem").addNumber("CommandRPM",
-    //     () -> intakeRPM)
-    //     .withSize(1, 1)
-    //     .withPosition(0, 1);
+      Shuffleboard.getTab("IntakeSubsystem").add(this)
+          .withSize(2, 1)
+          .withPosition(0, 0);
 
-    // Shuffleboard.getTab("IntakeSubsystem").addNumber("NoteSensorInches",
-    //     () -> round2dp(getSensorDistanceInches(), 1))
-    //     .withSize(1, 1)
-    //     .withPosition(0, 2);
+      Shuffleboard.getTab("IntakeSubsystem").addNumber("ActualRPM",
+          () -> round2dp(getRPM(), 0))
+          .withSize(1, 1)
+          .withPosition(1, 1);
 
-    // Shuffleboard.getTab("IntakeSubsystem").addBoolean("NoteSensed", () -> noteAtIntake())
-    //     .withSize(1, 1)
-    //     .withPosition(1, 2)
-    //     .withProperties(Map.of("colorWhenTrue", "green", "colorWhenFalse", "red"));
+      Shuffleboard.getTab("IntakeSubsystem").addNumber("CommandRPM",
+          () -> intakeRPM)
+          .withSize(1, 1)
+          .withPosition(0, 1);
 
-    // Shuffleboard.getTab("IntakeSubsystem").add("SetKpKd", setIntakeKpKdCommand())
-    //     .withSize(1, 1)
-    //     .withPosition(0, 3)
-    //     .withProperties(Map.of("colorWhenTrue", "green", "colorWhenFalse", "red"));
+      Shuffleboard.getTab("IntakeSubsystem").addNumber("NoteSensorInches",
+          () -> round2dp(getSensorDistanceInches(), 1))
+          .withSize(1, 1)
+          .withPosition(0, 2);
 
-    // Shuffleboard.getTab("IntakeSubsystem").addNumber("IntakeAmps",
-    //     () -> round2dp(getAmps(), 1))
-    //     .withSize(1, 1)
-    //     .withPosition(1, 3);
+      Shuffleboard.getTab("IntakeSubsystem").addBoolean("NoteSensed", () -> noteAtIntake())
+          .withSize(1, 1)
+          .withPosition(1, 2)
+          .withProperties(Map.of("colorWhenTrue", "green", "colorWhenFalse", "red"));
 
+      Shuffleboard.getTab("IntakeSubsystem").add("SetKpKd", setIntakeKpKdCommand())
+          .withSize(1, 1)
+          .withPosition(0, 3)
+          .withProperties(Map.of("colorWhenTrue", "green", "colorWhenFalse", "red"));
+
+      Shuffleboard.getTab("IntakeSubsystem").addNumber("IntakeAmps",
+          () -> round2dp(getAmps(), 1))
+          .withSize(1, 1)
+          .withPosition(1, 3);
+
+    }
   }
 
   public double getSensorDistanceInches() {
