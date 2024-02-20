@@ -32,40 +32,28 @@ public class PathFactory {
     int sourceChoice;
     int sourceChoiceLast;
 
-    
     List<String> usedPathFiles = new ArrayList<>();
 
     public ArrayList<PathPlannerPath> activePaths = new ArrayList<PathPlannerPath>(5);
 
     public PathFactory(SwerveSubsystem swerve) {
         m_swerve = swerve;
-    
+
     }
 
     public int selectAndLoadPathFiles(int choice) {
-
         usedPathFiles.clear();
-
         setFilenames(choice);
-
         loadPathFiles(usedPathFiles);
-
-
         return choice;
-
     }
 
     public List<String> setFilenames(int index) {
-
         usedPathFiles.clear();
-
         switch (index) {
-
             // 1-9 amp side start
-
             // 11 -19 center start
             case 11:
-
                 usedPathFiles.add("CentOneP1");
                 usedPathFiles.add("CentOneP1R");
                 usedPathFiles.add("CentOneP2");
@@ -73,17 +61,14 @@ public class PathFactory {
                 usedPathFiles.add("CentOneP3");
                 usedPathFiles.add("CentOneP3R");
                 return usedPathFiles;
-
             // case 12:
 
             // 21-29 source side start
-
             case 22:
                 usedPathFiles.add("SourceToOuterDecision");
                 usedPathFiles.add("SourceOuterPickup");
                 usedPathFiles.add("SourceOuterToShoot");
                 return usedPathFiles;
-
             case 23:
                 usedPathFiles.add("SourceToInnerOneDecision");
                 usedPathFiles.add("SourceInner1Pickup");
@@ -104,23 +89,16 @@ public class PathFactory {
         activePaths.clear();
         for (String i : fileNames) {
             activePaths.add(getPath(i));
-
         }
-
     }
 
     public Command setStartPosebyAlliance(PathPlannerPath path) {
-
         Pose2d temp = path.getPreviewStartingHolonomicPose();
-
         if (DriverStation.getAlliance().isPresent()
-                && DriverStation.getAlliance().get() == DriverStation.Alliance.Red)
-
-        {
+                && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
             return Commands.runOnce(() -> m_swerve.resetPoseEstimator(flipPose(temp)));
         } else
             return Commands.runOnce(() -> m_swerve.resetPoseEstimator(temp));
-
     }
 
     public static Pose2d flipPose(Pose2d pose) {

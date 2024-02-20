@@ -9,9 +9,9 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.GeometryUtil;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.DoNothing;
 import frc.robot.subsystems.SwerveSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -35,7 +35,7 @@ public class RunPPath extends SequentialCommandGroup {
     startPosebyAlliance = GeometryUtil.flipFieldPose(m_path.getPreviewStartingHolonomicPose());
     addCommands(
         new ConditionalCommand(m_swerve.setPose(startPosebyAlliance),
-            new DoNothing(),
+            Commands.none(),
             () -> m_setStartPose),
         AutoBuilder.followPath(m_path));
   }

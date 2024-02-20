@@ -39,7 +39,8 @@ public class SetStartByAlliance extends SequentialCommandGroup {
         new ConditionalCommand(
             m_swerve.setPose(startPosebyAlliance),
             m_swerve.setPose(bluestart),
-            () -> (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red)));
+            () -> (DriverStation.getAlliance().isPresent()
+             && DriverStation.getAlliance().get() == Alliance.Red)));
 
   }
 }

@@ -91,9 +91,9 @@ public class CommandFactory {
             case 1:
                 return new DriveToPosition(m_swerve, 1);
             case 2:
-                return new DoNothing();
+                return Commands.none();
             case 3:
-                return new DoNothing();
+                return Commands.none();
 
             // center starts
             case 11:
@@ -132,7 +132,7 @@ public class CommandFactory {
                         m_shooterAngle)
                         .withName("SourceCenterInnerOne");
             default:
-                return new DoNothing();
+                return Commands.none();
 
         }
     }
@@ -155,7 +155,7 @@ public class CommandFactory {
         {
             return Commands.runOnce(() -> m_swerve.resetPoseEstimator(flipPose(temp)));
         } else
-            return new DoNothing();
+            return Commands.none();
 
     }
 
@@ -169,7 +169,7 @@ public class CommandFactory {
                         // m_holdnote.intakeToNoteSeenCommand(),
                         m_intake.runIntakeCommand().withTimeout(.5)
                                 .andThen(m_intake.stopIntakeCommand())),
-                new DoNothing(),
+                Commands.none(),
                 () -> runAll);
     }
 
@@ -178,14 +178,14 @@ public class CommandFactory {
         return new ConditionalCommand(
 
                 new SequentialCommandGroup(
-                        new DoNothing(),
+                        Commands.none(),
                         new WaitCommand(1)),
-                new DoNothing(), () -> runAll);
+                Commands.none(), () -> runAll);
     }
 
     public Command runShooters(double distance) {
 
-        return new DoNothing();
+        return Commands.none();
     }
 
     private Command distanceShot(double distance) {
