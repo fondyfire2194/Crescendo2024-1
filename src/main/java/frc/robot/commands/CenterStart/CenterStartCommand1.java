@@ -12,12 +12,11 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.AutoFactory;
 import frc.robot.PathFactory;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.Pathplanner.RunPPath;
-import frc.robot.commands.Vision.LimelightSetStartPose;
-import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.HoldNoteSubsystem;
+
 import frc.robot.subsystems.IntakeSubsystem;
 
 import frc.robot.subsystems.ShooterAngleSubsystem;
@@ -40,11 +39,14 @@ public class CenterStartCommand1 extends SequentialCommandGroup {
                 return AutoBuilder.pathfindToPose(pose, constraints, 0, 2);
         }
 
-        public CenterStartCommand1(CommandFactory cf, PathFactory af, String llName,
+        public CenterStartCommand1(
+                        CommandFactory cf, 
+                        AutoFactory af,                      
                         SwerveSubsystem swerve,
-                        ElevatorSubsystem elevator,
-                        IntakeSubsystem intake, HoldNoteSubsystem holdNote, ShooterSubsystem shooter,
-                        ShooterAngleSubsystem shooterAngle) {
+                        IntakeSubsystem intake,
+                        ShooterSubsystem shooter,
+                        ShooterAngleSubsystem shooterAngle ,
+                        String llName) {
 
                 addCommands(
 
@@ -54,7 +56,7 @@ public class CenterStartCommand1 extends SequentialCommandGroup {
 
                                                 // cf.setStartPosebyAlliance(af.activePaths.get(0)),
 
-                                                cf.runShooters(2.2, 50),
+                                               // cf.runShooters(2.2, 50),
 
                                                 cf.shootNote(),
 

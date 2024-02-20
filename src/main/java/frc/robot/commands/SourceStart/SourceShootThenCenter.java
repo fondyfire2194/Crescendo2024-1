@@ -13,14 +13,10 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.PathFactory;
+import frc.robot.AutoFactory;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.Pathplanner.RunPPath;
-import frc.robot.commands.Vision.LimelightSetStartPose;
-import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.HoldNoteSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
-
 import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -43,10 +39,10 @@ public class SourceShootThenCenter extends SequentialCommandGroup {
 
         public SourceShootThenCenter(
                         CommandFactory cf,
-                        PathFactory af,
+                        AutoFactory af,
                         SwerveSubsystem swerve,
-                        ElevatorSubsystem elevator,
-                        IntakeSubsystem intake, HoldNoteSubsystem holdNote, ShooterSubsystem shooter,
+                        IntakeSubsystem intake,
+                        ShooterSubsystem shooter,
                         ShooterAngleSubsystem shooterAngle) {
 
                 addCommands(
@@ -57,7 +53,7 @@ public class SourceShootThenCenter extends SequentialCommandGroup {
 
                                                 // cf.setStartPosebyAlliance(af.activePaths.get(0)),
 
-                                                cf.runShooters(2.2, 50),
+                                               // cf.runShooters(2.2, 50),
 
                                                 cf.shootNote(),
 

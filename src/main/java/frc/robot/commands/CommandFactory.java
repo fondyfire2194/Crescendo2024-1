@@ -17,22 +17,15 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.AutoFactory;
+import frc.robot.Constants.CameraConstants;
 import frc.robot.LimelightHelpers;
 import frc.robot.PathFactory;
-import frc.robot.Constants.CameraConstants;
-import frc.robot.Constants.CameraConstants.CameraValues;
 import frc.robot.commands.AmpStart.LeaveZone;
 import frc.robot.commands.CenterStart.CenterStartCommand1;
-import frc.robot.commands.SourceStart.SourceShootThenCenter;
-import frc.robot.commands.Drive.AlignToTagSetShootSpeed;
-import frc.robot.commands.Drive.TeleopSwerve;
 import frc.robot.commands.Pathplanner.RunPPath;
+import frc.robot.commands.SourceStart.SourceShootThenCenter;
 import frc.robot.commands.Vision.LimelightSetStartPose;
-import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.FeedShooterSubsystem;
-import frc.robot.subsystems.HoldNoteSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.ShooterAngleSubsystem;
@@ -45,17 +38,11 @@ import frc.robot.utils.ShotParameter;
 public class CommandFactory {
     private final SwerveSubsystem m_swerve;
 
-    private final ElevatorSubsystem m_elevator;
-
     private final IntakeSubsystem m_intake;
 
     private final ShooterSubsystem m_shooter;
 
-    private final FeedShooterSubsystem m_shooterFeed;
-
-    private final ShooterAngleSubsystem m_shooterangle;
-
-    private final HoldNoteSubsystem m_holdnote;
+    private final ShooterAngleSubsystem m_shooterAngle;
 
     private final String m_llName;
 
@@ -67,23 +54,23 @@ public class CommandFactory {
 
     private boolean runAll = false;
 
-    public CommandFactory(PathFactory pf, AutoFactory af, String llName, SwerveSubsystem swerve,
-            IntakeSubsystem intake,
-            ElevatorSubsystem elevator,
-            HoldNoteSubsystem holdNote,
-            ShooterAngleSubsystem shooterAngle,
+    public CommandFactory(PathFactory pf,
+            AutoFactory af,
+            String llName,
+            SwerveSubsystem swerve,
             ShooterSubsystem shooter,
-            FeedShooterSubsystem shooterFeed,
+            ShooterAngleSubsystem shooterAngle,
+            IntakeSubsystem intake,
             LimelightVision llv) {
         m_swerve = swerve;
         m_pf = pf;
-        m_elevator = elevator;
+
         m_intake = intake;
-        m_holdnote = holdNote;
+
         m_shooter = shooter;
+        m_shooterAngle = shooterAngle;
         m_llv = llv;
-        m_shooterangle = shooterAngle;
-        m_shooterFeed = shooterFeed;
+
         m_llName = llName;
         m_af = af;
     }
@@ -110,9 +97,14 @@ public class CommandFactory {
 
             // center starts
             case 11:
-                return new CenterStartCommand1(this, m_pf, m_llName, m_swerve, m_elevator, m_intake, m_holdnote,
+                return new CenterStartCommand1(
+                        this,
+                        m_af,
+                        m_swerve,
+                        m_intake,
                         m_shooter,
-                        m_shooterangle).withName("CC1");
+                        m_shooterAngle,
+                        m_llName).withName("CC1");
             case 12:
                 return new DoNothing();
 
@@ -124,11 +116,21 @@ public class CommandFactory {
             case 21:
                 return new LeaveZone(this, m_af, m_swerve);
             case 22:
-                return new SourceShootThenCenter(this, m_pf, m_swerve, m_elevator, m_intake, m_holdnote,
-                        m_shooter, m_shooterangle).withName("SourceCenter");
+                return new SourceShootThenCenter(
+                        this,
+                        m_af,
+                        m_swerve,
+                        m_intake,
+                        m_shooter,
+                        m_shooterAngle)
+                        .withName("SourceCenter");
             case 23:
-                return new SourceShootThenCenter(this, m_pf, m_swerve, m_elevator, m_intake, m_holdnote,
-                        m_shooter, m_shooterangle).withName("SourceCenter");
+                return new SourceShootThenCenter(this,
+                        m_af, m_swerve,
+                        m_intake,
+                        m_shooter,
+                        m_shooterAngle)
+                        .withName("SourceCenter");
             default:
                 return new DoNothing();
 
@@ -164,7 +166,7 @@ public class CommandFactory {
                 new ParallelCommandGroup(
                         new RunPPath(m_swerve, path, true)
                                 .asProxy(),
-                        m_holdnote.intakeToNoteSeenCommand(),
+                        // m_holdnote.intakeToNoteSeenCommand(),
                         m_intake.runIntakeCommand().withTimeout(.5)
                                 .andThen(m_intake.stopIntakeCommand())),
                 new DoNothing(),
@@ -176,36 +178,21 @@ public class CommandFactory {
         return new ConditionalCommand(
 
                 new SequentialCommandGroup(
-                        m_holdnote.feedShooterCommand().withTimeout(.1)
-                                .andThen(m_holdnote.stopHoldNoteCommand()),
+                       new DoNothing(),
                         new WaitCommand(1)),
                 new DoNothing(), () -> runAll);
     }
 
-    public Command runShooters(double distance, double feedRPM) {
+    public Command runShooters(double distance) {
 
-        return new ConditionalCommand(
-
-                new SequentialCommandGroup(
-
-                        distanceShot(distance),
-
-                        new ParallelCommandGroup(
-
-                                m_elevator.positionToIntakeCommand().asProxy(),
-
-                                m_shooterFeed.runFeedBeltsCommand(feedRPM)))
-
-                        .withName("RunShooters"),
-
-                new DoNothing(), () -> runAll);
+        return new DoNothing();
     }
 
     private Command distanceShot(double distance) {
         ShotParameter shot = InterpolatingTable.get(distance);
         return m_shooter.runBothRollersCommand(shot.leftrpm, shot.rightrpm)
-                .alongWith(m_shooterangle.runOnce(
-                        () -> m_shooterangle.smartPositionShooterAngle(shot.angle)));
+                .alongWith(m_shooterAngle.runOnce(
+                        () -> m_shooterAngle.smartPositionShooterAngle(shot.angle)));
 
     }
 
@@ -222,20 +209,6 @@ public class CommandFactory {
         return shot.angle;
     }
 
-    public Command teleopAlignSpeaker(CameraValues camval, CommandXboxController driver) {
-        return new ConditionalCommand(
-                new AlignToTagSetShootSpeed(m_swerve, m_llv, () -> -driver.getLeftY(), () -> driver.getLeftX(),
-                        camval),
-                new TeleopSwerve(
-                        m_swerve,
-                        () -> -driver.getLeftY(),
-                        () -> -driver.getLeftX(),
-                        () -> -driver.getRawAxis(4),
-                        () -> false,
-                        () -> false),
-                () -> LimelightHelpers.getTV(CameraConstants.frontLeftCamera.camname));
-    }
-
     public void decideNextPickup() {
 
         LimelightHelpers.getTV(CameraConstants.rearCamera.camname);
@@ -249,5 +222,4 @@ public class CommandFactory {
         return finalCommand(m_af.finalChoice);
     }
 
-    
 }

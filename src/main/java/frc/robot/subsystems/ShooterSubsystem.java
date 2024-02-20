@@ -43,6 +43,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public double testjs;
 
+public double leftDistanceSpeed;
+
+public double rightDistanceSpeed;
+
   /** Creates a new Shooter. */
   public ShooterSubsystem() {
     rightRoller = new CANSparkMax(Constants.CANIDConstants.rightShooterID, MotorType.kBrushless);

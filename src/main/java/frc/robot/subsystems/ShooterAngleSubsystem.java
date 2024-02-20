@@ -30,6 +30,7 @@ public class ShooterAngleSubsystem extends SubsystemBase {
   private double simPosition;
   private double commandDegrees;
   private double velocitySet;
+public double distanceAngle;
 
   /** Creates a new ShooterAngle. */
   public ShooterAngleSubsystem() {

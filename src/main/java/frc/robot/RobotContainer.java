@@ -6,32 +6,22 @@ package frc.robot;
 
 import java.util.function.BooleanSupplier;
 
-import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.wpilibj.shuffleboard.EventImportance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.CameraConstants;
-import frc.robot.Constants.CameraConstants.CameraValues;
-import frc.robot.Constants.ShooterAngleConstants;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.DoNothing;
 import frc.robot.commands.Drive.AlignToTagSetShootSpeed;
 import frc.robot.commands.Drive.TeleopSwerve;
 import frc.robot.commands.Pathplanner.SetStartByAlliance;
-
-import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.FeedShooterSubsystem;
-import frc.robot.subsystems.HoldNoteSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.ShooterAngleSubsystem;
@@ -46,23 +36,13 @@ public class RobotContainer {
 
         final ShooterSubsystem m_shooter = new ShooterSubsystem();
 
-        // final FeedShooterSubsystem m_shooterFeeder = new FeedShooterSubsystem();
-
-        // final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
-
-        // final HoldNoteSubsystem m_holdNote = new HoldNoteSubsystem();
-
-        // final ShooterAngleSubsystem m_shooterAngle = new ShooterAngleSubsystem();
-
-        // final CommandFactory m_cf = new CommandFactory(m_swerve, m_intake,
-        // m_elevator,
-        // m_holdNote, m_shooterAngle, m_rightShooter, m_leftShooter,m_shooterFeeder);
-
+        public final PathFactory m_pf = new PathFactory(m_swerve);
+        public final AutoFactory m_af = new AutoFactory(m_pf);
+        final ShooterAngleSubsystem m_shooterAngle = new ShooterAngleSubsystem();
         public final LimelightVision m_llv = new LimelightVision();
 
-        public final PathFactory m_pf = new PathFactory(m_swerve);
-
-        public final AutoFactory m_af = new AutoFactory(m_pf);
+        final CommandFactory m_cf = new CommandFactory(m_pf, m_af, "ss", m_swerve, m_shooter, m_shooterAngle, m_intake,
+                        m_llv);
 
         private final CommandXboxController driver = new CommandXboxController(0);
 
@@ -155,8 +135,15 @@ public class RobotContainer {
         private void configureBindings() {
 
                 driver.leftTrigger().whileTrue(
-                                new AlignToTagSetShootSpeed(m_swerve, m_llv, () -> -driver.getLeftY(),
+                                new AlignToTagSetShootSpeed(
+                                                m_swerve,
+                                                m_shooter,
+                                                m_shooterAngle,
+                                                m_llv,
+                                                m_cf,
+                                                () -> -driver.getLeftY(),
                                                 () -> driver.getLeftX(),
+                                                () -> driver.getRightX(),
                                                 CameraConstants.frontLeftCamera));
 
                 SmartDashboard.putData("CommSchd", CommandScheduler.getInstance());
