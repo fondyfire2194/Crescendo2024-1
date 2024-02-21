@@ -21,10 +21,11 @@ import frc.robot.AutoFactory;
 import frc.robot.Constants.CameraConstants;
 import frc.robot.LimelightHelpers;
 import frc.robot.PathFactory;
-import frc.robot.commands.CenterStart.CenterStartShoot4;
+import frc.robot.commands.Autos.CenterStart.CenterStartShoot4;
+import frc.robot.commands.Autos.SourceStart.SourceShootThenCenter;
+import frc.robot.commands.Autos.AmpStart.*;
 import frc.robot.commands.Drive.DriveToPosition;
 import frc.robot.commands.Pathplanner.RunPPath;
-import frc.robot.commands.SourceStart.SourceShootThenCenter;
 import frc.robot.commands.Vision.LimelightSetStartPose;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LimelightVision;
@@ -70,7 +71,6 @@ public class CommandFactory {
         m_shooter = shooter;
         m_shooterAngle = shooterAngle;
         m_llv = llv;
-
         m_llName = llName;
         m_af = af;
     }
@@ -91,10 +91,16 @@ public class CommandFactory {
             case 1:
                 return new DriveToPosition(m_swerve, 1);
             case 2:
-                return Commands.none();
             case 3:
-                return Commands.none();
-
+                return new AmpShootThenCenter(
+                        this,
+                        m_af,
+                        m_pf,
+                        m_swerve,
+                        m_intake,
+                        m_shooter,
+                        m_shooterAngle);
+       
             // center starts
             case 11:
                 return new CenterStartShoot4(
@@ -112,15 +118,6 @@ public class CommandFactory {
             case 21:
                 return new DriveToPosition(m_swerve, 1);
             case 22:
-                return new SourceShootThenCenter(
-                        this,
-                        m_af,
-                        m_pf,
-                        m_swerve,
-                        m_intake,
-                        m_shooter,
-                        m_shooterAngle)
-                        .withName("SourceCenterOuter");
             case 23:
                 return new SourceShootThenCenter(
                         this,
@@ -129,8 +126,8 @@ public class CommandFactory {
                         m_swerve,
                         m_intake,
                         m_shooter,
-                        m_shooterAngle)
-                        .withName("SourceCenterInnerOne");
+                        m_shooterAngle);
+        
             default:
                 return Commands.none();
 

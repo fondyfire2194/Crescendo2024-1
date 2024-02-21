@@ -6,7 +6,6 @@ package frc.robot;
 
 import java.util.Map;
 
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
@@ -56,6 +55,9 @@ public class AutoFactory {
 
                 m_ampStartChooser.setDefaultOption("Not Used", 0);
                 m_ampStartChooser.addOption("Leave Zone", 1);
+                m_ampStartChooser.addOption("ShootOuterInner", 2);
+                m_ampStartChooser.addOption("ShootInnerOuter", 2);
+                
 
                 m_centerStartChooser.setDefaultOption("Not Used", 10);
                 m_centerStartChooser.addOption("Score 4", 11);

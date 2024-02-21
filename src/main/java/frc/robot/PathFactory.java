@@ -12,7 +12,6 @@ import com.pathplanner.lib.util.GeometryUtil;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -52,6 +51,22 @@ public class PathFactory {
         usedPathFiles.clear();
         switch (index) {
             // 1-9 amp side start
+            case 2:
+                usedPathFiles.add("AmpOneStart");
+                usedPathFiles.add("AmpToOuter");
+                usedPathFiles.add("AmpOuterToShoot");
+                usedPathFiles.add("AmpToInner");
+                usedPathFiles.add("AmpInnerToShoot");
+                return usedPathFiles;
+
+            case 3:
+                usedPathFiles.add("AmpOneStart");
+                usedPathFiles.add("AmpToInner");
+                usedPathFiles.add("AmpInnerToShoot");
+                usedPathFiles.add("AmpToOuter");
+                usedPathFiles.add("AmpOuterToShoot");
+                return usedPathFiles;
+
             // 11 -19 center start
             case 11:
                 usedPathFiles.add("CentOneP1");
