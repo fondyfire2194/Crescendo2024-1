@@ -1,3 +1,5 @@
+package frc.robot.commands.Autos.AmpStart;
+
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
@@ -53,23 +55,19 @@ public class AmpShootThenCenter extends SequentialCommandGroup {
 
                                                 // cf.setStartPosebyAlliance(af.activePaths.get(0)),
 
-                                               // cf.runShooters(2.2, 50),
+                                                // cf.runShooters(2.2, 50),
 
                                                 cf.shootNote(),
-
-                                                // move to decision on pickup based on rear sensors and camera
-
-                                                new RunPPath(swerve, pf.activePaths.get(0), false).asProxy(),
-
-                                                Commands.runOnce(() -> cf.decideNextPickup()),
 
                                                 cf.moveAndPickup(pf.activePaths.get(1)),
 
-                                                new RunPPath(swerve, pf.activePaths.get(2), false).asProxy(),
+                                                // cf.runShooters(2.2, 50),
 
                                                 cf.shootNote(),
 
-                                                shooter.stopShooterCommand())
+                                                new RunPPath(swerve, pf.activePaths.get(2), false).asProxy(),
+
+                                                Commands.runOnce(() -> cf.decideNextPickup()))
 
                 );
 

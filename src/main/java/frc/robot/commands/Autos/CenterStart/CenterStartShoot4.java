@@ -40,14 +40,13 @@ public class CenterStartShoot4 extends SequentialCommandGroup {
         }
 
         public CenterStartShoot4(
-                        CommandFactory cf, 
-                        AutoFactory af,   
-                        PathFactory pf,                   
+                        CommandFactory cf,
+                        AutoFactory af,
+                        PathFactory pf,
                         SwerveSubsystem swerve,
                         IntakeSubsystem intake,
                         ShooterSubsystem shooter,
-                        ShooterAngleSubsystem shooterAngle ,
-                        String llName) {
+                        ShooterAngleSubsystem shooterAngle) {
 
                 addCommands(
 
@@ -57,7 +56,7 @@ public class CenterStartShoot4 extends SequentialCommandGroup {
 
                                                 // cf.setStartPosebyAlliance(af.activePaths.get(0)),
 
-                                               // cf.runShooters(2.2, 50),
+                                                // cf.runShooters(2.2, 50),
 
                                                 cf.shootNote(),
 

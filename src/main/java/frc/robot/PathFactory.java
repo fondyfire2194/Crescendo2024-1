@@ -52,20 +52,29 @@ public class PathFactory {
         switch (index) {
             // 1-9 amp side start
             case 2:
-                usedPathFiles.add("AmpOneStart");
-                usedPathFiles.add("AmpToOuter");
-                usedPathFiles.add("AmpOuterToShoot");
-                usedPathFiles.add("AmpToInner");
-                usedPathFiles.add("AmpInnerToShoot");
-                return usedPathFiles;
-
+            
+            usedPathFiles.add("AmpOneStart");
+            usedPathFiles.add("AmpToOuter");
+            usedPathFiles.add("AmpOuterPickup");                
+            usedPathFiles.add("AmpOuterPickupToShoot");
+            usedPathFiles.add("AmpToInner");
+            usedPathFiles.add("AmpInnerPickup");   
+            usedPathFiles.add("AmpInnerPickupToShoot");
+            usedPathFiles.add("AmpOuterToInner");
+            usedPathFiles.add("AmpInnerToOuter");
+            return usedPathFiles;
+            
             case 3:
-                usedPathFiles.add("AmpOneStart");
-                usedPathFiles.add("AmpToInner");
-                usedPathFiles.add("AmpInnerToShoot");
-                usedPathFiles.add("AmpToOuter");
-                usedPathFiles.add("AmpOuterToShoot");
-                return usedPathFiles;
+            usedPathFiles.add("AmpOneStart");
+              usedPathFiles.add("AmpToInner");
+            usedPathFiles.add("AmpInnerPickup");   
+            usedPathFiles.add("AmpInnerPickupToShoot");
+            usedPathFiles.add("AmpToOuter");
+            usedPathFiles.add("AmpOuterPickup");                
+            usedPathFiles.add("AmpOuterPickupToShoot");
+            usedPathFiles.add("AmpOuterToInner");
+            usedPathFiles.add("AmpInnerToOuter");
+            return usedPathFiles;
 
             // 11 -19 center start
             case 11:

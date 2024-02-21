@@ -23,7 +23,7 @@ import frc.robot.LimelightHelpers;
 import frc.robot.PathFactory;
 import frc.robot.commands.Autos.CenterStart.CenterStartShoot4;
 import frc.robot.commands.Autos.SourceStart.SourceShootThenCenter;
-import frc.robot.commands.Autos.AmpStart.*;
+import frc.robot.commands.Autos.AmpStart.AmpShootThenCenter;
 import frc.robot.commands.Drive.DriveToPosition;
 import frc.robot.commands.Pathplanner.RunPPath;
 import frc.robot.commands.Vision.LimelightSetStartPose;
@@ -100,7 +100,7 @@ public class CommandFactory {
                         m_intake,
                         m_shooter,
                         m_shooterAngle);
-       
+
             // center starts
             case 11:
                 return new CenterStartShoot4(
@@ -110,8 +110,7 @@ public class CommandFactory {
                         m_swerve,
                         m_intake,
                         m_shooter,
-                        m_shooterAngle,
-                        m_llName).withName("CC1");
+                        m_shooterAngle).withName("CC1");
 
             // source side starts
 
@@ -127,7 +126,7 @@ public class CommandFactory {
                         m_intake,
                         m_shooter,
                         m_shooterAngle);
-        
+
             default:
                 return Commands.none();
 
