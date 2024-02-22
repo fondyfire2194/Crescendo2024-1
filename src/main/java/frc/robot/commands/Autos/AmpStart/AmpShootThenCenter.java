@@ -67,7 +67,7 @@ public class AmpShootThenCenter extends SequentialCommandGroup {
 
                                                 new RunPPath(swerve, pf.activePaths.get(2), false).asProxy(),
 
-                                                Commands.runOnce(() -> cf.decideNextPickup()))
+                                                Commands.runOnce(() -> cf.decideNextPickup(0)))
 
                 );
 

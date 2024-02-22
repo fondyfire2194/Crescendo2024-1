@@ -19,6 +19,7 @@ import frc.robot.Constants.CameraConstants;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.Drive.AlignToTagSetShootSpeed;
 import frc.robot.commands.Drive.TeleopSwerve;
+import frc.robot.commands.Pathplanner.TrackNoteAndCorrectPath;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.ShooterAngleSubsystem;
@@ -116,6 +117,8 @@ public class RobotContainer {
 
                 NamedCommands.registerCommand("RunIntake",
                                 Commands.runOnce(() -> SmartDashboard.putString("RunIntake", "")));
+                NamedCommands.registerCommand("TrackNote",
+                                new TrackNoteAndCorrectPath(m_swerve));
 
         }
 

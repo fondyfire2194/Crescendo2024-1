@@ -63,7 +63,7 @@ public class SourceShootThenCenter extends SequentialCommandGroup {
 
                                                 new RunPPath(swerve, pf.activePaths.get(0), false).asProxy(),
 
-                                                Commands.runOnce(() -> cf.decideNextPickup()),
+                                                Commands.runOnce(() -> cf.decideNextPickup(0)),
 
                                                 cf.moveAndPickup(pf.activePaths.get(1)),
 
