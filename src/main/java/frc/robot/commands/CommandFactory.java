@@ -205,13 +205,49 @@ public class CommandFactory {
         return shot.angle;
     }
 
-    public void decideNextPickup() {
+    public Command decideNextPickup(int location) {
 
-        LimelightHelpers.getTV(CameraConstants.rearCamera.camname);
+        boolean notePresent = LimelightHelpers.getTV(CameraConstants.rearCamera.camname);
 
-        if (m_swerve.getRearLeftSensorInches() < 20 || m_swerve.getRearRightSensorInches() < 20)
-            CommandScheduler.getInstance().cancel(getAutonomusCommand());
+        double noteSeenAngle = 0;
 
+        if (notePresent)
+            LimelightHelpers.getTX(CameraConstants.rearCamera.camname);
+
+        boolean targetNoteSeen = Math.abs(noteSeenAngle) < 1;
+
+        if (m_swerve.getRearLeftSensorInches() < 20 || m_swerve.getRearRightSensorInches() < 20 || !targetNoteSeen) {
+
+            switch (location) {
+
+                // location 0 is the amp outer so next command moves to inner and tries pickup
+                // there
+                case 0:
+                    return Commands.none();
+
+                // location 1 is the amp inner so next command moves to outer and tries pickup
+                // there
+                case 1:
+                    return Commands.none(); // location 2 is the source outer so next command moves to inner and tries
+                                            // pickup there
+                case 2:
+                    return Commands.none();
+
+                // location 3 is the source inner so next command moves to outer and tries
+                // pickup there
+                case 3:
+                    return Commands.none();
+                // location 4 is the center so next command moves to amp inner and tries
+                // pickup there
+                case 4:
+                    return Commands.none();
+
+                default:
+                    return Commands.none();
+
+            }
+        } else
+            return Commands.none();
     }
 
     public Command getAutonomusCommand() {

@@ -20,7 +20,7 @@ import frc.robot.subsystems.SwerveSubsystem;
 public class PathFactory {
 
     private final SwerveSubsystem m_swerve;
-    int finalChoice = 0;
+    
 
     int ampChoice;
     int ampChoiceLast;

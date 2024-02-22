@@ -3,25 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.156190773920011,
-        "y": 6.75
+        "x": 3.0999785076493245,
+        "y": 5.4860202028096365
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.2153924307848634,
-        "y": 6.819068599675661
+        "x": 4.096539731541004,
+        "y": 5.584689630917723
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.649054998537956,
-        "y": 6.75
+        "x": 5.981125808405465,
+        "y": 4.499325921728767
       },
       "prevControl": {
-        "x": 1.6890056857036806,
-        "y": 6.028702057404115
+        "x": 5.482987718447175,
+        "y": 4.583170946771252
+      },
+      "nextControl": {
+        "x": 6.977687032297142,
+        "y": 4.331587893945019
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.767042457161838,
+        "y": 4.134249037728845
+      },
+      "prevControl": {
+        "x": 6.365936578027003,
+        "y": 4.420390379242297
       },
       "nextControl": null,
       "isLocked": false,
@@ -39,13 +55,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 40.515393990455436,
+    "rotation": 0,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "Amp Start",
+  "folder": "CenterThroughStage",
   "previewStartingState": {
-    "rotation": 46.60600298928221,
+    "rotation": 0.0,
     "velocity": 0
   },
   "useDefaultConstraints": true

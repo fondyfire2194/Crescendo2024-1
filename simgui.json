@@ -116,7 +116,8 @@
         },
         "Drivetrain": {
           "open": true
-        }
+        },
+        "open": true
       },
       "SmartDashboard": {
         "open": true
@@ -124,13 +125,13 @@
     }
   },
   "NetworkTables Info": {
-    "Clients": {
-      "open": true
-    },
     "Connections": {
       "open": true
     },
     "Server": {
+      "open": true
+    },
+    "shuffleboard@1": {
       "open": true
     },
     "visible": true

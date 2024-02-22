@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.800082061702586,
-        "y": 7.439674879349759
+        "x": 3.75,
+        "y": 2.25
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.806510228405074,
-        "y": 7.449541822160567
+        "x": 4.171590115648135,
+        "y": 2.2260718658384517
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Center Side Subwoofer"
     },
     {
       "anchor": {
-        "x": 8.023582970242865,
-        "y": 7.439674879349759
+        "x": 8.281967377058862,
+        "y": 0.75
       },
       "prevControl": {
-        "x": 7.023582970242865,
-        "y": 7.439674879349759
+        "x": 7.790112242136038,
+        "y": 0.8080477216589235
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,19 +34,19 @@
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
-    "maxAngularVelocity": 360.0,
-    "maxAngularAcceleration": 540.0
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
+    "rotation": -1.4688007143858453,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "Amp Start",
+  "folder": "Source",
   "previewStartingState": {
-    "rotation": -3.270487923183557,
+    "rotation": -0.08544417510961264,
     "velocity": 0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

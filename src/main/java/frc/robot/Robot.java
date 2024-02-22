@@ -52,7 +52,9 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
 
-    if (m_robotContainer.m_af.checkChoiceChange()) {
+    boolean checkAutos= m_robotContainer.m_af.checkChoiceChange();
+
+    if (checkAutos) {
       m_robotContainer.m_af.validStartChoice = m_robotContainer.m_af.selectAndLoadPathFiles();
     }
     // turn off drive brakes if they are on and robotis not moving

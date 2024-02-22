@@ -1,10 +1,11 @@
 {
-  "robotWidth": 0.85,
-  "robotLength": 1.0,
+  "robotWidth": 0.64,
+  "robotLength": 0.85,
   "holonomicMode": true,
   "pathFolders": [
     "Amp Start",
     "Center",
+    "CenterThroughStage",
     "Source",
     "TestFolder"
   ],

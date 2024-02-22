@@ -31,7 +31,7 @@ public class ShooterAngleSubsystem extends SubsystemBase {
   private double commandDegrees;
   private double velocitySet;
   public double distanceAngle;
-  public  boolean showShooterAngle = false;
+  public boolean showShooterAngle = false;
 
   /** Creates a new ShooterAngle. */
   public ShooterAngleSubsystem() {
@@ -40,8 +40,6 @@ public class ShooterAngleSubsystem extends SubsystemBase {
     shooterangleController = shooterangleMotor.getPIDController();
     shooterangleEncoder = shooterangleMotor.getEncoder();
     configMotor(shooterangleMotor, shooterangleEncoder, shooterangleController, false);
-
-   
 
     if (showShooterAngle) {
 

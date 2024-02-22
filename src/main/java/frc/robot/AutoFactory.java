@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.CameraConstants;
 import frc.robot.subsystems.SwerveSubsystem;
 
@@ -56,7 +57,7 @@ public class AutoFactory {
                 m_ampStartChooser.setDefaultOption("Not Used", 0);
                 m_ampStartChooser.addOption("Leave Zone", 1);
                 m_ampStartChooser.addOption("ShootOuterInner", 2);
-                m_ampStartChooser.addOption("ShootInnerOuter", 2);
+                m_ampStartChooser.addOption("ShootInnerOuter", 3);
                 
 
                 m_centerStartChooser.setDefaultOption("Not Used", 10);
@@ -135,6 +136,8 @@ public class AutoFactory {
 
                 if (ampChoice == 0 && centerChoice == 10 && sourceChoice != 20)
                         finalChoice = sourceChoice;
+
+                        SmartDashboard.putNumber("FC",finalChoice);
 
                 if (finalChoice != 0) {
 
