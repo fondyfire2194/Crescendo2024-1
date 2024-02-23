@@ -26,6 +26,8 @@ public class Robot extends TimedRobot {
 
   private boolean autoHasRun;
 
+  private boolean firstScan = false;
+
   @Override
   public void robotInit() {
 
@@ -38,6 +40,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
+
     CommandScheduler.getInstance().run();
 
     m_robotContainer.m_shooter.testjs = (-m_robotContainer.tstjs.getThrottle() + 1) / 2;
@@ -52,8 +55,10 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
 
-    boolean checkAutos= m_robotContainer.m_af.checkChoiceChange();
+    boolean checkAutos = firstScan || m_robotContainer.m_af.checkChoiceChange();
 
+    firstScan = true;
+    
     if (checkAutos) {
       m_robotContainer.m_af.validStartChoice = m_robotContainer.m_af.selectAndLoadPathFiles();
     }

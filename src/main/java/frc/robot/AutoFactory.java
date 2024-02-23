@@ -56,17 +56,21 @@ public class AutoFactory {
 
                 m_ampStartChooser.setDefaultOption("Not Used", 0);
                 m_ampStartChooser.addOption("Leave Zone", 1);
-                m_ampStartChooser.addOption("ShootOuterInner", 2);
-                m_ampStartChooser.addOption("ShootInnerOuter", 3);
+                m_ampStartChooser.addOption("Score 3 Center OuterInner", 2);
+                m_ampStartChooser.addOption("Score 3 CenterInnerOuter", 3);
+                m_ampStartChooser.addOption("Score 2 Cemter Middle Stage", 4);
                 
 
                 m_centerStartChooser.setDefaultOption("Not Used", 10);
-                m_centerStartChooser.addOption("Score 4", 11);
+                m_centerStartChooser.addOption("Score 4 Shoot from Subwoofer", 11);
+                m_centerStartChooser.addOption("Score 4 Shoot From Pickup", 12);
+                m_centerStartChooser.addOption("Score 3 Through Stage", 13);
+
 
                 m_sourceStartChooser.setDefaultOption("Not Used", 20);
                 m_sourceStartChooser.addOption("LeaveZone", 21);
-                m_sourceStartChooser.addOption("ShootThenCenter", 22);
-                m_sourceStartChooser.addOption("ShootThenInnerOne", 23);
+                m_sourceStartChooser.addOption("Score 3 Center InnerOuter", 22);
+                m_sourceStartChooser.addOption("Score 3 Center OuterInner", 23);
 
                 Shuffleboard.getTab("Autonomous").add("DelayChooser", m_startDelayChooser)
                                 .withSize(1, 1).withPosition(9, 0);

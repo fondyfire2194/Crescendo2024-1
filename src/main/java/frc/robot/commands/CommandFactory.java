@@ -11,7 +11,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -21,7 +20,7 @@ import frc.robot.AutoFactory;
 import frc.robot.Constants.CameraConstants;
 import frc.robot.LimelightHelpers;
 import frc.robot.PathFactory;
-import frc.robot.commands.Autos.CenterStart.CenterStartShoot4;
+import frc.robot.commands.Autos.CenterStart.CenterStartShoot4FromSubwoofer;
 import frc.robot.commands.Autos.SourceStart.SourceShootThenCenter;
 import frc.robot.commands.Autos.AmpStart.AmpShootThenCenter;
 import frc.robot.commands.Drive.DriveToPosition;
@@ -103,7 +102,7 @@ public class CommandFactory {
 
             // center starts
             case 11:
-                return new CenterStartShoot4(
+                return new CenterStartShoot4FromSubwoofer(
                         this,
                         m_af,
                         m_pf,
@@ -134,10 +133,8 @@ public class CommandFactory {
     }
 
     public Command setStartPoseWithLimeLight() {
-
         return new LimelightSetStartPose(
                 m_llName, m_swerve, m_pf.activePaths.get(0).getPreviewStartingHolonomicPose());
-
     }
 
     public Command setStartPosebyAlliance(PathPlannerPath path) {
@@ -162,7 +159,27 @@ public class CommandFactory {
                 new ParallelCommandGroup(
                         new RunPPath(m_swerve, path, true)
                                 .asProxy(),
-                        // m_holdnote.intakeToNoteSeenCommand(),
+
+                        m_intake.runIntakeCommand().withTimeout(.5)
+                                .andThen(m_intake.stopIntakeCommand())),
+                Commands.none(),
+                () -> runAll);
+    }
+
+    public Command moveAndPickup2() {
+
+        return Commands.none();
+
+    }
+
+    public Command moveAndPickupSetShooter(PathPlannerPath path, double distance) {
+
+        return new ConditionalCommand(
+
+                new ParallelCommandGroup(
+                        new RunPPath(m_swerve, path, true)
+                                .asProxy(),
+
                         m_intake.runIntakeCommand().withTimeout(.5)
                                 .andThen(m_intake.stopIntakeCommand())),
                 Commands.none(),

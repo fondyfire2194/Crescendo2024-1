@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.Autos.SourceStart;
+package frc.robot.commands.Autos.CenterStart;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
@@ -11,19 +11,20 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.AutoFactory;
 import frc.robot.PathFactory;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.Pathplanner.RunPPath;
+
 import frc.robot.subsystems.IntakeSubsystem;
+
 import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 /** Add your docs here. */
-public class SourceShootThenCenter extends SequentialCommandGroup {
+public class CenterStartShoot4FromSubwoofer extends SequentialCommandGroup {
 
         public PathPlannerPath getPath(String pathname) {
                 return PathPlannerPath.fromPathFile(pathname);
@@ -38,7 +39,7 @@ public class SourceShootThenCenter extends SequentialCommandGroup {
                 return AutoBuilder.pathfindToPose(pose, constraints, 0, 2);
         }
 
-        public SourceShootThenCenter(
+        public CenterStartShoot4FromSubwoofer(
                         CommandFactory cf,
                         AutoFactory af,
                         PathFactory pf,
@@ -49,32 +50,38 @@ public class SourceShootThenCenter extends SequentialCommandGroup {
 
                 addCommands(
 
-                               new SequentialCommandGroup(
+                                new SequentialCommandGroup(
 
                                                 cf.setStartPoseWithLimeLight(),
 
                                                 // cf.setStartPosebyAlliance(af.activePaths.get(0)),
 
-                                                cf.runShooters(2.2),
+                                                 cf.runShooters(2.2),
 
                                                 cf.shootNote(),
 
-                                                // move to decision on pickup based on rear sensors and camera
+                                                cf.moveAndPickup(pf.activePaths.get(0)),
 
-                                                new RunPPath(swerve, pf.activePaths.get(0), false).asProxy(),
-
-                                                Commands.runOnce(() -> cf.decideNextPickup(0)),
-
-                                                //Continues here if pickup available
-                                                //otherwise noew sequence atarts and this one ends by requirements
-
-                                                cf.moveAndPickup(pf.activePaths.get(1)),
-
-                                                new RunPPath(swerve, pf.activePaths.get(2), false).asProxy(),
+                                                new RunPPath(swerve, pf.activePaths.get(1), false).asProxy(),
 
                                                 cf.shootNote(),
 
-                                                shooter.stopShooterCommand())
-                );
+                                                cf.moveAndPickup(pf.activePaths.get(4)),
+
+                                                new RunPPath(swerve, pf.activePaths.get(5), false).asProxy(),
+
+                                                cf.shootNote(),
+
+                                                cf.moveAndPickup(pf.activePaths.get(2)),
+
+                                                new RunPPath(swerve, pf.activePaths.get(3), false).asProxy(),
+
+                                                cf.shootNote(),
+
+                                                shooter.stopShooterCommand()
+
+                                ));
+
         }
+
 }

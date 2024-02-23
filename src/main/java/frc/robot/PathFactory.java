@@ -20,7 +20,6 @@ import frc.robot.subsystems.SwerveSubsystem;
 public class PathFactory {
 
     private final SwerveSubsystem m_swerve;
-    
 
     int ampChoice;
     int ampChoiceLast;
@@ -52,29 +51,41 @@ public class PathFactory {
         switch (index) {
             // 1-9 amp side start
             case 2:
-            
-            usedPathFiles.add("AmpOneStart");
-            usedPathFiles.add("AmpToOuter");
-            usedPathFiles.add("AmpOuterPickup");                
-            usedPathFiles.add("AmpOuterPickupToShoot");
-            usedPathFiles.add("AmpToInner");
-            usedPathFiles.add("AmpInnerPickup");   
-            usedPathFiles.add("AmpInnerPickupToShoot");
-            usedPathFiles.add("AmpOuterToInner");
-            usedPathFiles.add("AmpInnerToOuter");
-            return usedPathFiles;
-            
+
+                usedPathFiles.add("AmpOneStart");
+                usedPathFiles.add("AmpToOuter");
+                usedPathFiles.add("AmpOuterPickup");
+                usedPathFiles.add("AmpOuterPickupToShoot");
+                usedPathFiles.add("AmpToInner");
+                usedPathFiles.add("AmpInnerPickup");
+                usedPathFiles.add("AmpInnerPickupToShoot");
+                usedPathFiles.add("AmpOuterToInner");
+                usedPathFiles.add("AmpInnerToOuter");
+                return usedPathFiles;
+
             case 3:
-            usedPathFiles.add("AmpOneStart");
-              usedPathFiles.add("AmpToInner");
-            usedPathFiles.add("AmpInnerPickup");   
-            usedPathFiles.add("AmpInnerPickupToShoot");
-            usedPathFiles.add("AmpToOuter");
-            usedPathFiles.add("AmpOuterPickup");                
-            usedPathFiles.add("AmpOuterPickupToShoot");
-            usedPathFiles.add("AmpOuterToInner");
-            usedPathFiles.add("AmpInnerToOuter");
-            return usedPathFiles;
+                usedPathFiles.add("AmpOneStart");
+                usedPathFiles.add("AmpToInner");
+                usedPathFiles.add("AmpInnerPickup");
+                usedPathFiles.add("AmpInnerPickupToShoot");
+                usedPathFiles.add("AmpToOuter");
+                usedPathFiles.add("AmpOuterPickup");
+                usedPathFiles.add("AmpOuterPickupToShoot");
+                usedPathFiles.add("AmpOuterToInner");
+                usedPathFiles.add("AmpInnerToOuter");
+                return usedPathFiles;
+
+            case 4:
+                usedPathFiles.add("AmpOneStart");
+                usedPathFiles.add("AmpToInner");
+                usedPathFiles.add("AmpInnerPickup");
+                usedPathFiles.add("AmpInnerPickupToShoot");
+                usedPathFiles.add("AmpToOuter");
+                usedPathFiles.add("AmpOuterPickup");
+                usedPathFiles.add("AmpOuterPickupToShoot");
+                usedPathFiles.add("AmpOuterToInner");
+                usedPathFiles.add("AmpInnerToOuter");
+                return usedPathFiles;
 
             // 11 -19 center start
             case 11:
@@ -85,9 +96,28 @@ public class PathFactory {
                 usedPathFiles.add("CentOneP3");
                 usedPathFiles.add("CentOneP3R");
                 return usedPathFiles;
-            // case 12:
-
+            case 12:
+                usedPathFiles.add("CentOneP1");
+                usedPathFiles.add("CentOneP1R");
+                usedPathFiles.add("CentOneP2");
+                usedPathFiles.add("CentOneP2R");
+                usedPathFiles.add("CentOneP3");
+                usedPathFiles.add("CentOneP3R");
+                return usedPathFiles;
+            case 13:
+                usedPathFiles.add("CentOneP1");
+                usedPathFiles.add("CentOneP1R");
+                usedPathFiles.add("CentOneP2");
+                usedPathFiles.add("CentOneP2R");
+                usedPathFiles.add("CentOneP3");
+                usedPathFiles.add("CentOneP3R");
+                return usedPathFiles;
             // 21-29 source side start
+            case 21:
+                usedPathFiles.add("SourceToOuterDecision");
+                usedPathFiles.add("SourceOuterPickup");
+                usedPathFiles.add("SourceOuterToShoot");
+                return usedPathFiles;
             case 22:
                 usedPathFiles.add("SourceToOuterDecision");
                 usedPathFiles.add("SourceOuterPickup");
