@@ -23,7 +23,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 /** Add your docs here. */
-public class AmpShootThenCenter extends SequentialCommandGroup {
+public class AmpShootOuterInner extends SequentialCommandGroup {
 
         public PathPlannerPath getPath(String pathname) {
                 return PathPlannerPath.fromPathFile(pathname);
@@ -38,7 +38,7 @@ public class AmpShootThenCenter extends SequentialCommandGroup {
                 return AutoBuilder.pathfindToPose(pose, constraints, 0, 2);
         }
 
-        public AmpShootThenCenter(
+        public AmpShootOuterInner(
                         CommandFactory cf,
                         AutoFactory af,
                         PathFactory pf,

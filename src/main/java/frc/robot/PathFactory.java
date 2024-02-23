@@ -97,12 +97,9 @@ public class PathFactory {
                 usedPathFiles.add("CentOneP3R");
                 return usedPathFiles;
             case 12:
-                usedPathFiles.add("CentOneP1");
-                usedPathFiles.add("CentOneP1R");
-                usedPathFiles.add("CentOneP2");
-                usedPathFiles.add("CentOneP2R");
                 usedPathFiles.add("CentOneP3");
-                usedPathFiles.add("CentOneP3R");
+                usedPathFiles.add("CentOneP3ToP2");
+                usedPathFiles.add("CentOneP2ToP1");
                 return usedPathFiles;
             case 13:
                 usedPathFiles.add("CentOneP1");
@@ -124,9 +121,16 @@ public class PathFactory {
                 usedPathFiles.add("SourceOuterToShoot");
                 return usedPathFiles;
             case 23:
-                usedPathFiles.add("SourceToInnerOneDecision");
-                usedPathFiles.add("SourceInner1Pickup");
-                usedPathFiles.add("SourceInner1ToShoot");
+            usedPathFiles.add("SourceToInnerOneDecision");
+            usedPathFiles.add("SourceInner1Pickup");
+            usedPathFiles.add("SourceInner1ToShoot");
+            usedPathFiles.add("SourceInner1ToOuter");
+            usedPathFiles.add("SourceToOuterDecision");
+            usedPathFiles.add("SourceOuterPickup");
+            usedPathFiles.add("SourceOuterToShoot");
+            usedPathFiles.add("SourceOuterToInner1");
+           
+                
                 return usedPathFiles;
 
             default:

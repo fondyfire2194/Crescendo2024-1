@@ -81,7 +81,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "CenterThroughStage",
+  "folder": null,
   "previewStartingState": {
     "rotation": 0.0,
     "velocity": 0

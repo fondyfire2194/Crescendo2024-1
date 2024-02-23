@@ -23,7 +23,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 /** Add your docs here. */
-public class SourceShootThenCenter extends SequentialCommandGroup {
+public class CenterInnerNotAvailable extends SequentialCommandGroup {
 
         public PathPlannerPath getPath(String pathname) {
                 return PathPlannerPath.fromPathFile(pathname);
@@ -38,7 +38,7 @@ public class SourceShootThenCenter extends SequentialCommandGroup {
                 return AutoBuilder.pathfindToPose(pose, constraints, 0, 2);
         }
 
-        public SourceShootThenCenter(
+        public CenterInnerNotAvailable(
                         CommandFactory cf,
                         AutoFactory af,
                         PathFactory pf,
@@ -51,22 +51,14 @@ public class SourceShootThenCenter extends SequentialCommandGroup {
 
                                 new SequentialCommandGroup(
 
-                                                cf.setStartPoseWithLimeLight(),
-
-                                                // cf.setStartPosebyAlliance(af.activePaths.get(0)),
-
-                                                cf.runShooters(2.2),
-
-                                                cf.shootNote(),
-
-                                                // move to decision on pickup based on rear sensors and camera
+                                                // move to alternate pickup location
 
                                                 new RunPPath(swerve, pf.activePaths.get(0), false).asProxy(),
 
                                                 cf.decideNextPickup(0),
 
                                                 // Continues here if pickup available
-                                                // otherwise noew sequence atarts and this one ends by requirements
+                                                // otherwise ends
 
                                                 cf.moveAndPickup(pf.activePaths.get(1)),
 

@@ -58,7 +58,7 @@ public class AutoFactory {
                 m_ampStartChooser.addOption("Leave Zone", 1);
                 m_ampStartChooser.addOption("Score 3 Center OuterInner", 2);
                 m_ampStartChooser.addOption("Score 3 CenterInnerOuter", 3);
-                m_ampStartChooser.addOption("Score 2 Cemter Middle Stage", 4);
+                m_ampStartChooser.addOption("Score 2 Cemter Middle Via Stage", 4);
                 
 
                 m_centerStartChooser.setDefaultOption("Not Used", 10);

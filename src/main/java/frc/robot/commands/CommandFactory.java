@@ -22,7 +22,7 @@ import frc.robot.LimelightHelpers;
 import frc.robot.PathFactory;
 import frc.robot.commands.Autos.CenterStart.CenterStartShoot4FromSubwoofer;
 import frc.robot.commands.Autos.SourceStart.SourceShootThenCenter;
-import frc.robot.commands.Autos.AmpStart.AmpShootThenCenter;
+import frc.robot.commands.Autos.AmpStart.AmpShootOuterInner;
 import frc.robot.commands.Drive.DriveToPosition;
 import frc.robot.commands.Pathplanner.RunPPath;
 import frc.robot.commands.Vision.LimelightSetStartPose;
@@ -91,7 +91,7 @@ public class CommandFactory {
                 return new DriveToPosition(m_swerve, 1);
             case 2:
             case 3:
-                return new AmpShootThenCenter(
+                return new AmpShootOuterInner(
                         this,
                         m_af,
                         m_pf,

@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.AutoFactory;
 import frc.robot.PathFactory;
 import frc.robot.commands.CommandFactory;
-import frc.robot.commands.Pathplanner.RunPPath;
 
 import frc.robot.subsystems.IntakeSubsystem;
 
@@ -66,7 +65,6 @@ public class CenterStartShoot4FromPickup extends SequentialCommandGroup {
 
                                                 cf.moveAndPickupSetShooter(pf.activePaths.get(4),3),
 
-                       
                                                 cf.shootNote(),
 
                                                 cf.moveAndPickupSetShooter(pf.activePaths.get(2),3),
