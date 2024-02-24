@@ -155,7 +155,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command stopIntakeCommand() {
-    return this.runOnce(() -> stopMotor());
+    return Commands.runOnce(() -> stopMotor(), this);
   }
 
   public void setIntakeKp() {

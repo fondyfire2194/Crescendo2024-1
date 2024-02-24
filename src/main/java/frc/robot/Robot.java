@@ -103,7 +103,8 @@ public class Robot extends TimedRobot {
 
     startTime = Timer.getFPGATimestamp();
 
-    m_autonomousCommand = m_robotContainer.m_cf.getAutonomusCommand();
+    // m_autonomousCommand = m_robotContainer.m_cf.getAutonomousCommand();
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     if (!autoHasRun && Timer.getFPGATimestamp() > startTime + m_startDelay
         && m_autonomousCommand != null) {
@@ -133,7 +134,6 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-  
   }
 
   @Override

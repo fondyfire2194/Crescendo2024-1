@@ -53,7 +53,7 @@ public class CenterInnerNotAvailable extends SequentialCommandGroup {
 
                                                 // move to alternate pickup location
 
-                                                //new RunPPath(swerve, pf.activePaths.get(0), false).asProxy(),
+                                                //new RunPPath(swerve, pf.activePaths.get(0), false),
 
                                                 cf.decideNextPickup(0),
 
@@ -62,7 +62,7 @@ public class CenterInnerNotAvailable extends SequentialCommandGroup {
 
                                                // cf.moveAndPickup(pf.activePaths.get(1)),
 
-                                               // new RunPPath(swerve, pf.activePaths.get(2), false).asProxy(),
+                                               // new RunPPath(swerve, pf.activePaths.get(2), false),
 
                                                 cf.shootNote(),
 

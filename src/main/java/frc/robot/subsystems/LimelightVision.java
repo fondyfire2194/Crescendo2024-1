@@ -22,7 +22,7 @@ public class LimelightVision extends SubsystemBase {
   public boolean showFrontLeft = false;
   public boolean showFrontRight = false;
   public boolean showRearCamera = false;
-  
+
   int columnIndex = 0;
 
   private double llHeartbeatfl;
@@ -182,9 +182,9 @@ public class LimelightVision extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
-    if (loopctr >= 2)
+    if (loopctr > 2)
       loopctr = 0;
-    loopctr++;
+
     if (RobotBase.isReal()) {
       if (CameraConstants.frontLeftCamera.isUsed && loopctr == 0) {
         llHeartbeatfl = LimelightHelpers.getLimelightNTDouble(CameraConstants.frontLeftCamera.camname, "hb");
@@ -230,6 +230,8 @@ public class LimelightVision extends SubsystemBase {
         CameraConstants.rearCamera.isActive = limelightExistsr;
       }
     }
+
+    loopctr++;
 
   }
 

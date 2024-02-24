@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.CANSparkMaxUtil;
 import frc.lib.util.CANSparkMaxUtil.Usage;
@@ -182,7 +184,7 @@ public boolean showShooter = false;
   }
 
   public Command runBothRollersCommand(double leftRPM, double rightRPM) {
-    return runLeftRollerCommand(leftRPM).alongWith(runRightRollerCommand(rightRPM));
+    return new SequentialCommandGroup(runLeftRollerCommand(leftRPM), runRightRollerCommand(rightRPM));
   }
 
   public double getRPMLeft() {

@@ -86,7 +86,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
   SwerveModuleState[] lockStates = new SwerveModuleState[4];
 
-  public boolean showSwerve =false;
+  public boolean showSwerve=true;
 
   public SwerveSubsystem() {
 
@@ -545,9 +545,9 @@ public class SwerveSubsystem extends SubsystemBase {
       RectanglePoseArea visionCheck = new RectanglePoseArea(robotEstimatedtranslation.plus(band),
           robotEstimatedtranslation.minus(band));
 
-      boolean inArealeft = visionCheck.isPoseWithinArea(frleftPose);
+      boolean inArealeft = false;visionCheck.isPoseWithinArea(frleftPose);
 
-      // if (inArealeft)
+       if (inArealeft)
 
       swervePoseEstimator.addVisionMeasurement(
           frleftPose,
@@ -574,9 +574,9 @@ public class SwerveSubsystem extends SubsystemBase {
       RectanglePoseArea visionCheck = new RectanglePoseArea(robotEstimatedtranslation.plus(band),
           robotEstimatedtranslation.minus(band));
 
-      // boolean inAreaRight = visionCheck.isPoseWithinArea(frrightPose);
+       boolean inAreaRight = false;visionCheck.isPoseWithinArea(frrightPose);
 
-      // // if (inAreaRight)
+       if (inAreaRight)
 
       swervePoseEstimator.addVisionMeasurement(
           frrightPose,

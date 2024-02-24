@@ -51,7 +51,7 @@ public class AmpShootOuterInner extends SequentialCommandGroup {
 
                                 new SequentialCommandGroup(
 
-                                                cf.setStartPoseWithLimeLight(),
+                                              //  cf.setStartPoseWithLimeLight(),
 
                                                 // cf.setStartPosebyAlliance(af.activePaths.get(0)),
 
@@ -65,7 +65,7 @@ public class AmpShootOuterInner extends SequentialCommandGroup {
 
                                                 cf.shootNote(),
 
-                                              //  new RunPPath(swerve, pf.activePaths.get(2), false).asProxy(),
+                                              //  new RunPPath(swerve, pf.activePaths.get(2), false),
 
                                                 Commands.runOnce(() -> cf.decideNextPickup(0)))
 

@@ -61,7 +61,7 @@ public class SourceShootThenCenter extends SequentialCommandGroup {
 
                                                 // move to decision on pickup based on rear sensors and camera
 
-                                               // new RunPPath(swerve, pf.activePaths.get(0), false).asProxy(),
+                                               // new RunPPath(swerve, pf.activePaths.get(0), false),
 
                                                 cf.decideNextPickup(0),
 
@@ -70,7 +70,7 @@ public class SourceShootThenCenter extends SequentialCommandGroup {
 
                                              //   cf.moveAndPickup(pf.activePaths.get(1)),
 
-                                              //  new RunPPath(swerve, pf.activePaths.get(2), false).asProxy(),
+                                              //  new RunPPath(swerve, pf.activePaths.get(2), false),
 
                                                 cf.shootNote(),
 

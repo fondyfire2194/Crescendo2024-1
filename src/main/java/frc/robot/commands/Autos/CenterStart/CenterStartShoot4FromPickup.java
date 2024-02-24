@@ -11,6 +11,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.AutoFactory;
 import frc.robot.PathFactory;
@@ -52,10 +53,11 @@ public class CenterStartShoot4FromPickup extends SequentialCommandGroup {
 
                                 new SequentialCommandGroup(
 
-                                                cf.setStartPoseWithLimeLight(),
+                                                // cf.setStartPoseWithLimeLight(),
 
-                                                cf.setStartPosebyAlliance(
-                                                                pf.pathMaps.get(centerpaths.CentOneP3.toString())),
+                                                Commands.runOnce(() -> swerve.resetPoseEstimator(
+                                                                pf.pathMaps.get(centerpaths.CentOneP1.toString())
+                                                                                .getPreviewStartingHolonomicPose())),
 
                                                 cf.setShooters(2.2),
 

@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.AutoFactory;
@@ -149,22 +150,21 @@ public class CommandFactory {
         {
             return Commands.runOnce(() -> m_swerve.resetPoseEstimator(flipPose(temp)));
         } else
-            return Commands.none();
+            return Commands.runOnce(() -> m_swerve.resetPoseEstimator(temp));
 
     }
 
     public Command moveAndPickup(PathPlannerPath path) {
 
-        return new ConditionalCommand(
+        return
 
-                new ParallelCommandGroup(
-                        new RunPPath(m_swerve, path, true)
-                                .asProxy(),
+        new ParallelCommandGroup(
+                new RunPPath(m_swerve, path, false),
+                new SequentialCommandGroup(
+                        Commands.runOnce(() -> m_intake.runIntake(250)),
+                        new WaitCommand(1),
+                        Commands.runOnce(() -> m_intake.stopMotor())));
 
-                        m_intake.runIntakeCommand().withTimeout(.5)
-                                .andThen(m_intake.stopIntakeCommand())),
-                Commands.none(),
-                () -> runAll);
     }
 
     public Command moveAndPickup2() {
@@ -179,7 +179,7 @@ public class CommandFactory {
 
                 new ParallelCommandGroup(
                         new RunPPath(m_swerve, path, true)
-                                .asProxy(),
+                                ,
 
                         m_intake.runIntakeCommand().withTimeout(.5)
                                 .andThen(m_intake.stopIntakeCommand())),
@@ -199,7 +199,7 @@ public class CommandFactory {
 
     public Command setShooters(double distance) {
 
-        return Commands.none();
+        return m_shooter.runBothRollersCommand(500, 500);
     }
 
     private Command distanceShot(double distance) {
@@ -268,7 +268,7 @@ public class CommandFactory {
             return Commands.none();
     }
 
-    public Command getAutonomusCommand() {
+    public Command getAutonomousCommand() {
         return finalCommand(m_af.finalChoice);
     }
 

@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.GeometryUtil;
 import java.util.HashMap;
@@ -34,7 +35,6 @@ public class PathFactory {
     public boolean ampFilesOK;
     public boolean centerFilesOK;
     public boolean sourceFilesOK;
-
 
     public HashMap<String, PathPlannerPath> pathMaps = new HashMap<String, PathPlannerPath>();
 
@@ -72,8 +72,8 @@ public class PathFactory {
             pathMaps.put(a.name(), getPath(a.name()));
         }
 
-        PathPlannerPath test =  pathMaps.get(amppaths.A_S2N1.toString());
-        PathPlannerPath test1 =  pathMaps.get(amppaths.A_CN1DToCN2D.toString());
+        PathPlannerPath test = pathMaps.get(amppaths.A_S2N1.toString());
+        PathPlannerPath test1 = pathMaps.get(amppaths.A_CN1DToCN2D.toString());
 
         SmartDashboard.putNumber("TSTL", test.numPoints());
         SmartDashboard.putNumber("TSTL1", test1.numPoints());
@@ -103,6 +103,10 @@ public class PathFactory {
     public void linkCenterPaths() {
         pathMaps.clear();
         for (centerpaths c : centerpaths.values()) {
+            // if (DriverStation.getAlliance().isPresent()
+            // && DriverStation.getAlliance().get() == DriverStation.Alliance.Red)
+            // pathMaps.put(c.name(), getPath(c.name()).flipPath());
+            // else
             pathMaps.put(c.name(), getPath(c.name()));
         }
     }
