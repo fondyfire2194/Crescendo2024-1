@@ -59,13 +59,11 @@ public class AutoFactory {
                 m_ampStartChooser.addOption("Score 3 Center OuterInner", 2);
                 m_ampStartChooser.addOption("Score 3 CenterInnerOuter", 3);
                 m_ampStartChooser.addOption("Score 2 Cemter Middle Via Stage", 4);
-                
 
                 m_centerStartChooser.setDefaultOption("Not Used", 10);
                 m_centerStartChooser.addOption("Score 4 Shoot from Subwoofer", 11);
                 m_centerStartChooser.addOption("Score 4 Shoot From Pickup", 12);
                 m_centerStartChooser.addOption("Score 3 Through Stage", 13);
-
 
                 m_sourceStartChooser.setDefaultOption("Not Used", 20);
                 m_sourceStartChooser.addOption("LeaveZone", 21);
@@ -109,7 +107,8 @@ public class AutoFactory {
                 rearLayout.addNumber("LeftSensor", () -> m_swerve.getRearLeftSensorInches());
                 rearLayout.addNumber("RightSensor", () -> m_swerve.getRearRightSensorInches());
 
-            //    rearLayout.addNumber("BatteryVolts", () -> RobotController.getBatteryVoltage());
+                // rearLayout.addNumber("BatteryVolts", () ->
+                // RobotController.getBatteryVoltage());
 
         }
 
@@ -131,7 +130,6 @@ public class AutoFactory {
 
         public int selectAndLoadPathFiles() {
                 finalChoice = 0;
-                m_pf.usedPathFiles.clear();
                 if (ampChoice != 0 && centerChoice == 10 && sourceChoice == 20)
                         finalChoice = ampChoice;
 
@@ -141,18 +139,24 @@ public class AutoFactory {
                 if (ampChoice == 0 && centerChoice == 10 && sourceChoice != 20)
                         finalChoice = sourceChoice;
 
-                        SmartDashboard.putNumber("FC",finalChoice);
+                SmartDashboard.putNumber("FC", finalChoice);
 
-                if (finalChoice != 0) {
-
-                        m_pf.setFilenames(finalChoice);
-
-                        m_pf.loadPathFiles(m_pf.usedPathFiles);
-
+                if (finalChoice > 0 && finalChoice < 10) {                     
+                        m_pf.linkAmpPaths();
+                        SmartDashboard.putNumber("LENGTHAmp", m_pf.pathMaps.size());
                 }
 
-                return finalChoice;
+                if (finalChoice > 10 && finalChoice < 20) {                     
+                        m_pf.linkCenterPaths();
+                        SmartDashboard.putNumber("LENGTHCenter", m_pf.pathMaps.size());
+                }
+                if (finalChoice > 20 && finalChoice < 30) {                     
+                        m_pf.linkSourcePaths();
+                        SmartDashboard.putNumber("LENGTHSource", m_pf.pathMaps.size());
+                }
 
+
+                return finalChoice;
         }
 
 }

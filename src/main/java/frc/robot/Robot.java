@@ -7,8 +7,10 @@ package frc.robot;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.PathFactory.amppaths;
 
 public class Robot extends TimedRobot {
 
@@ -26,7 +28,7 @@ public class Robot extends TimedRobot {
 
   private boolean autoHasRun;
 
-  private boolean firstScan = false;
+  private boolean firstScan = true;;
 
   @Override
   public void robotInit() {
@@ -50,6 +52,14 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
     CommandScheduler.getInstance().cancelAll();
     autoHasRun = false;
+
+    boolean testamp = m_robotContainer.m_pf.checkAmpFilesExist();
+    SmartDashboard.putBoolean("TestAmp", testamp);
+    boolean testcenter = m_robotContainer.m_pf.checkCenterFilesExist();
+    SmartDashboard.putBoolean("TestCenter", testcenter);
+    boolean testsource = m_robotContainer.m_pf.checkSourceFilesExist();
+    SmartDashboard.putBoolean("TestSource", testsource);
+
   }
 
   @Override
@@ -57,8 +67,8 @@ public class Robot extends TimedRobot {
 
     boolean checkAutos = firstScan || m_robotContainer.m_af.checkChoiceChange();
 
-    firstScan = true;
-    
+    firstScan = false;
+
     if (checkAutos) {
       m_robotContainer.m_af.validStartChoice = m_robotContainer.m_af.selectAndLoadPathFiles();
     }

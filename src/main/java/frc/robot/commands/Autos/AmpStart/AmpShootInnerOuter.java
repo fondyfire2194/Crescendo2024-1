@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.AutoFactory;
 import frc.robot.PathFactory;
+import frc.robot.PathFactory.amppaths;
+import frc.robot.PathFactory.decisionpoints;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.Pathplanner.RunPPath;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -53,24 +55,45 @@ public class AmpShootInnerOuter extends SequentialCommandGroup {
 
                                                 cf.setStartPoseWithLimeLight(),
 
-                                                // cf.setStartPosebyAlliance(af.activePaths.get(0)),
+                                                cf.setStartPosebyAlliance(
+                                                                pf.pathMaps.get(amppaths.A_S2N1.toString())),
 
-                                                // cf.runShooters(2.2, 50),
-
-                                                cf.shootNote(),
-
-                                                cf.moveAndPickup(pf.activePaths.get(1)),
-
-                                                // cf.runShooters(2.2, 50),
+                                                cf.setShooters(2.2),
 
                                                 cf.shootNote(),
 
-                                                new RunPPath(swerve, pf.activePaths.get(2), false).asProxy(),
+                                                cf.moveAndPickup(pf.pathMaps.get(amppaths.A_S2N1.toString())),
 
-                                                Commands.runOnce(() -> cf.decideNextPickup(0)))
+                                                cf.setShooters(2.2),
+
+                                                new RunPPath(swerve, pf.pathMaps.get(amppaths.A_N1ToCN1D.toString()),
+                                                                false),
+
+                                                cf.decideNextPickup(decisionpoints.CN1.ordinal()),
+
+                                                cf.moveAndPickup(pf.pathMaps.get(amppaths.A_CN1DToPU.toString())),
+
+                                                cf.setShooters(2.2),
+
+                                                new RunPPath(swerve, pf.pathMaps.get(amppaths.A_CN1ToShoot.toString()),
+                                                                false),
+                                                cf.shootNote(),
+                                                
+                                                cf.moveAndPickup(pf.pathMaps.get(amppaths.A_N1ToCN2D.toString())),
+
+                                                cf.decideNextPickup(decisionpoints.CN2.ordinal()),
+
+                                                cf.moveAndPickup(pf.pathMaps.get(amppaths.A_CN2DToPU.toString())),
+
+                                                cf.setShooters(2.2),
+
+                                                new RunPPath(swerve, pf.pathMaps.get(amppaths.A_CN2ToShoot.toString()),
+                                                                false),
+                                                cf.shootNote())
+
+
 
                 );
-
         }
 
 }

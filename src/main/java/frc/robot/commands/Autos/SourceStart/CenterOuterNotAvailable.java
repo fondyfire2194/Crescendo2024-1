@@ -53,16 +53,16 @@ public class CenterOuterNotAvailable extends SequentialCommandGroup {
 
                                                 // move to alternate pickup location
 
-                                                new RunPPath(swerve, pf.activePaths.get(0), false).asProxy(),
+                                         //       new RunPPath(swerve, pf.activePaths.get(0), false).asProxy(),
 
                                                 cf.decideNextPickup(0),
 
                                                 // Continues here if pickup available
                                                 // otherwise ends
 
-                                                cf.moveAndPickup(pf.activePaths.get(1)),
+                                           //     cf.moveAndPickup(pf.activePaths.get(1)),
 
-                                                new RunPPath(swerve, pf.activePaths.get(2), false).asProxy(),
+                                              //  new RunPPath(swerve, pf.activePaths.get(2), false).asProxy(),
 
                                                 cf.shootNote(),
 

@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.AutoFactory;
 import frc.robot.Constants.CameraConstants;
+import frc.robot.PathFactory.amppaths;
 import frc.robot.LimelightHelpers;
 import frc.robot.PathFactory;
 import frc.robot.commands.Autos.CenterStart.CenterStartShoot4FromSubwoofer;
@@ -134,7 +135,7 @@ public class CommandFactory {
 
     public Command setStartPoseWithLimeLight() {
         return new LimelightSetStartPose(
-                m_llName, m_swerve, m_pf.activePaths.get(0).getPreviewStartingHolonomicPose());
+                m_llName, m_swerve, m_pf.pathMaps.get(amppaths.A_S2N1.name()).getPreviewStartingHolonomicPose());
     }
 
     public Command setStartPosebyAlliance(PathPlannerPath path) {
@@ -196,7 +197,7 @@ public class CommandFactory {
                 Commands.none(), () -> runAll);
     }
 
-    public Command runShooters(double distance) {
+    public Command setShooters(double distance) {
 
         return Commands.none();
     }

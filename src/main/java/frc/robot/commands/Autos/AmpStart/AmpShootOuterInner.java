@@ -59,13 +59,13 @@ public class AmpShootOuterInner extends SequentialCommandGroup {
 
                                                 cf.shootNote(),
 
-                                                cf.moveAndPickup(pf.activePaths.get(1)),
+                                              //  cf.moveAndPickup(pf.activePaths.get(1)),
 
                                                 // cf.runShooters(2.2, 50),
 
                                                 cf.shootNote(),
 
-                                                new RunPPath(swerve, pf.activePaths.get(2), false).asProxy(),
+                                              //  new RunPPath(swerve, pf.activePaths.get(2), false).asProxy(),
 
                                                 Commands.runOnce(() -> cf.decideNextPickup(0)))
 

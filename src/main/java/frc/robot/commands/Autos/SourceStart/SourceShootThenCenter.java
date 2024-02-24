@@ -55,22 +55,22 @@ public class SourceShootThenCenter extends SequentialCommandGroup {
 
                                                 // cf.setStartPosebyAlliance(af.activePaths.get(0)),
 
-                                                cf.runShooters(2.2),
+                                                cf.setShooters(2.2),
 
                                                 cf.shootNote(),
 
                                                 // move to decision on pickup based on rear sensors and camera
 
-                                                new RunPPath(swerve, pf.activePaths.get(0), false).asProxy(),
+                                               // new RunPPath(swerve, pf.activePaths.get(0), false).asProxy(),
 
                                                 cf.decideNextPickup(0),
 
                                                 // Continues here if pickup available
                                                 // otherwise noew sequence atarts and this one ends by requirements
 
-                                                cf.moveAndPickup(pf.activePaths.get(1)),
+                                             //   cf.moveAndPickup(pf.activePaths.get(1)),
 
-                                                new RunPPath(swerve, pf.activePaths.get(2), false).asProxy(),
+                                              //  new RunPPath(swerve, pf.activePaths.get(2), false).asProxy(),
 
                                                 cf.shootNote(),
 

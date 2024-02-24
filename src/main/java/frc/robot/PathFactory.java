@@ -4,14 +4,15 @@
 
 package frc.robot;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.GeometryUtil;
+import java.util.HashMap;
+import java.io.File;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -30,124 +31,105 @@ public class PathFactory {
     int sourceChoice;
     int sourceChoiceLast;
 
-    List<String> usedPathFiles = new ArrayList<>();
-
-    public ArrayList<PathPlannerPath> activePaths = new ArrayList<PathPlannerPath>(5);
+    public HashMap<String, PathPlannerPath> pathMaps = new HashMap<String, PathPlannerPath>();
 
     public PathFactory(SwerveSubsystem swerve) {
         m_swerve = swerve;
-
     }
 
-    public int selectAndLoadPathFiles(int choice) {
-        usedPathFiles.clear();
-        setFilenames(choice);
-        loadPathFiles(usedPathFiles);
-        return choice;
+    public enum amppaths {
+        A_CN1DToCN2D,
+        A_CN1DToPU,
+        A_CN1ToShoot,
+        A_CN2DToCN1D,
+        A_CN2DToPU,
+        A_CN2ToShoot,
+        A_CN3DToPU,
+        A_N1ToCN1D,
+        A_N1ToCN2D,
+        A_S2N1,
+        A_SToCN3D;
     }
 
-    public List<String> setFilenames(int index) {
-        usedPathFiles.clear();
-        switch (index) {
-            // 1-9 amp side start
-            case 2:
-
-                usedPathFiles.add("AmpOneStart");
-                usedPathFiles.add("AmpToOuter");
-                usedPathFiles.add("AmpOuterPickup");
-                usedPathFiles.add("AmpOuterPickupToShoot");
-                usedPathFiles.add("AmpToInner");
-                usedPathFiles.add("AmpInnerPickup");
-                usedPathFiles.add("AmpInnerPickupToShoot");
-                usedPathFiles.add("AmpOuterToInner");
-                usedPathFiles.add("AmpInnerToOuter");
-                return usedPathFiles;
-
-            case 3:
-                usedPathFiles.add("AmpOneStart");
-                usedPathFiles.add("AmpToInner");
-                usedPathFiles.add("AmpInnerPickup");
-                usedPathFiles.add("AmpInnerPickupToShoot");
-                usedPathFiles.add("AmpToOuter");
-                usedPathFiles.add("AmpOuterPickup");
-                usedPathFiles.add("AmpOuterPickupToShoot");
-                usedPathFiles.add("AmpOuterToInner");
-                usedPathFiles.add("AmpInnerToOuter");
-                return usedPathFiles;
-
-            case 4:
-                usedPathFiles.add("AmpOneStart");
-                usedPathFiles.add("AmpToInner");
-                usedPathFiles.add("AmpInnerPickup");
-                usedPathFiles.add("AmpInnerPickupToShoot");
-                usedPathFiles.add("AmpToOuter");
-                usedPathFiles.add("AmpOuterPickup");
-                usedPathFiles.add("AmpOuterPickupToShoot");
-                usedPathFiles.add("AmpOuterToInner");
-                usedPathFiles.add("AmpInnerToOuter");
-                return usedPathFiles;
-
-            // 11 -19 center start
-            case 11:
-                usedPathFiles.add("CentOneP1");
-                usedPathFiles.add("CentOneP1R");
-                usedPathFiles.add("CentOneP2");
-                usedPathFiles.add("CentOneP2R");
-                usedPathFiles.add("CentOneP3");
-                usedPathFiles.add("CentOneP3R");
-                return usedPathFiles;
-            case 12:
-                usedPathFiles.add("CentOneP3");
-                usedPathFiles.add("CentOneP3ToP2");
-                usedPathFiles.add("CentOneP2ToP1");
-                return usedPathFiles;
-            case 13:
-                usedPathFiles.add("CentOneP1");
-                usedPathFiles.add("CentOneP1R");
-                usedPathFiles.add("CentOneP2");
-                usedPathFiles.add("CentOneP2R");
-                usedPathFiles.add("CentOneP3");
-                usedPathFiles.add("CentOneP3R");
-                return usedPathFiles;
-            // 21-29 source side start
-            case 21:
-                usedPathFiles.add("SourceToOuterDecision");
-                usedPathFiles.add("SourceOuterPickup");
-                usedPathFiles.add("SourceOuterToShoot");
-                return usedPathFiles;
-            case 22:
-                usedPathFiles.add("SourceToOuterDecision");
-                usedPathFiles.add("SourceOuterPickup");
-                usedPathFiles.add("SourceOuterToShoot");
-                return usedPathFiles;
-            case 23:
-            usedPathFiles.add("SourceToInnerOneDecision");
-            usedPathFiles.add("SourceInner1Pickup");
-            usedPathFiles.add("SourceInner1ToShoot");
-            usedPathFiles.add("SourceInner1ToOuter");
-            usedPathFiles.add("SourceToOuterDecision");
-            usedPathFiles.add("SourceOuterPickup");
-            usedPathFiles.add("SourceOuterToShoot");
-            usedPathFiles.add("SourceOuterToInner1");
-           
-                
-                return usedPathFiles;
-
-            default:
-                return usedPathFiles;
+    public boolean checkAmpFilesExist() {
+        int valid = 0;
+        for (amppaths a : amppaths.values()) {
+            if (new File(Filesystem.getDeployDirectory(), "pathplanner/paths/" + a.name() + ".path").isFile())
+                valid++;
+            SmartDashboard.putNumber("Valid", valid);
         }
+        return valid == amppaths.values().length;
+    }
 
+    public void linkAmpPaths() {
+        pathMaps.clear();
+        for (amppaths a : amppaths.values()) {
+            pathMaps.put(a.name(), getPath(a.name()));
+        }
+    }
+
+    public enum centerpaths {
+        CenterToCenterDecision,
+        CentOneP1,
+        CentOneP1R,
+        CentOneP2,
+        CentOneP2R,
+        CentOneP2ToP1,
+        CentOneP3,
+        CentOneP3R,
+        CentOneP3ToP2;
+    }
+
+    public boolean checkCenterFilesExist() {
+        int valid = 0;
+        for (centerpaths a : centerpaths.values()) {
+            if (new File(Filesystem.getDeployDirectory(), "pathplanner/paths/" + a.name() + ".path").isFile())
+                valid++;
+        }
+        return valid == centerpaths.values().length;
+    }
+
+    public void linkCenterPaths() {
+        pathMaps.clear();
+        for (centerpaths c : centerpaths.values()) {
+            pathMaps.put(c.name(), getPath(c.name()));
+        }
+    }
+
+    public enum sourcepaths {
+        SourceInner1Pickup,
+        SourceInner1ToShoot,
+        SourceOuterPickup,
+        SourceOuterPickupToShoot,
+        SourceOuterToInnerDecision,
+        SourceToOuterDecision;
+    }
+
+    public boolean checkSourceFilesExist() {
+        int valid = 0;
+        for (sourcepaths a : sourcepaths.values()) {
+            if (new File(Filesystem.getDeployDirectory(), "pathplanner/paths/" + a.toString() + ".path").isFile())
+                valid++;
+        }
+        return valid == sourcepaths.values().length;
+    }
+
+    public void linkSourcePaths() {
+        pathMaps.clear();
+        for (sourcepaths s : sourcepaths.values()) {
+            pathMaps.put(s.toString(), getPath(s.toString()));
+        }
+    }
+
+    public enum decisionpoints {
+        CN1,
+        CN2, CN3,
+        CN4,
+        CN5;
     }
 
     public PathPlannerPath getPath(String pathname) {
         return PathPlannerPath.fromPathFile(pathname);
-    }
-
-    public void loadPathFiles(List<String> fileNames) {
-        activePaths.clear();
-        for (String i : fileNames) {
-            activePaths.add(getPath(i));
-        }
     }
 
     public Command setStartPosebyAlliance(PathPlannerPath path) {

@@ -14,9 +14,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.AutoFactory;
 import frc.robot.PathFactory;
+import frc.robot.PathFactory.centerpaths;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.Pathplanner.RunPPath;
-
 import frc.robot.subsystems.IntakeSubsystem;
 
 import frc.robot.subsystems.ShooterAngleSubsystem;
@@ -54,27 +54,31 @@ public class CenterStartShoot4FromSubwoofer extends SequentialCommandGroup {
 
                                                 cf.setStartPoseWithLimeLight(),
 
-                                                // cf.setStartPosebyAlliance(af.activePaths.get(0)),
+                                                cf.setStartPosebyAlliance(
+                                                                pf.pathMaps.get(centerpaths.CentOneP1.toString())),
 
-                                                 cf.runShooters(2.2),
-
-                                                cf.shootNote(),
-
-                                                cf.moveAndPickup(pf.activePaths.get(0)),
-
-                                                new RunPPath(swerve, pf.activePaths.get(1), false).asProxy(),
+                                                cf.setShooters(2.2),
 
                                                 cf.shootNote(),
 
-                                                cf.moveAndPickup(pf.activePaths.get(4)),
+                                                cf.moveAndPickup(pf.pathMaps.get(centerpaths.CentOneP1R.toString())),
 
-                                                new RunPPath(swerve, pf.activePaths.get(5), false).asProxy(),
+                                                new RunPPath(swerve, pf.pathMaps.get(centerpaths.CentOneP2.toString()),
+                                                                false),
 
                                                 cf.shootNote(),
 
-                                                cf.moveAndPickup(pf.activePaths.get(2)),
+                                                cf.moveAndPickup(pf.pathMaps.get(centerpaths.CentOneP2.toString())),
 
-                                                new RunPPath(swerve, pf.activePaths.get(3), false).asProxy(),
+                                                new RunPPath(swerve, pf.pathMaps.get(centerpaths.CentOneP2R.toString()),
+                                                                false),
+
+                                                cf.shootNote(),
+
+                                                cf.moveAndPickup(pf.pathMaps.get(centerpaths.CentOneP3.toString())),
+
+                                                new RunPPath(swerve, pf.pathMaps.get(centerpaths.CentOneP3R.toString()),
+                                                                false),
 
                                                 cf.shootNote(),
 
