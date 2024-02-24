@@ -70,42 +70,43 @@ public class AutoFactory {
                 m_sourceStartChooser.addOption("Score 3 Center InnerOuter", 22);
                 m_sourceStartChooser.addOption("Score 3 Center OuterInner", 23);
 
+                Shuffleboard.getTab("Autonomous").add("AmpStart", m_ampStartChooser)
+                                .withSize(3, 1).withPosition(0, 0);
+
+                Shuffleboard.getTab("Autonomous").add("CenterStart", m_centerStartChooser)
+                                .withSize(3, 1).withPosition(3, 0);
+
+                Shuffleboard.getTab("Autonomous").add("SourceStart", m_sourceStartChooser)
+                                .withSize(3, 1).withPosition(6, 0);
+
                 Shuffleboard.getTab("Autonomous").add("DelayChooser", m_startDelayChooser)
                                 .withSize(1, 1).withPosition(9, 0);
-                Shuffleboard.getTab("Autonomous").add("AmpStart", m_ampStartChooser)
-                                .withSize(2, 1).withPosition(7, 0);
-                Shuffleboard.getTab("Autonomous").add("CenterStart", m_centerStartChooser)
-                                .withSize(2, 1).withPosition(7, 1);
-                Shuffleboard.getTab("Autonomous").add("SourceStart", m_sourceStartChooser)
-                                .withSize(2, 1).withPosition(7, 2);
 
                 Shuffleboard.getTab("Autonomous").addBoolean("Valid Choice", () -> finalChoice != 0)
-                                .withSize(1, 1).withPosition(9, 1)
+                                .withSize(10, 1).withPosition(0, 1)
                                 .withProperties(Map.of("colorWhenTrue", "green", "colorWhenFalse", "red"));
 
                 ShuffleboardLayout camLayout = Shuffleboard.getTab("Autonomous")
-                                .getLayout("Cameras", BuiltInLayouts.kList).withPosition(9, 2)
+                                .getLayout("Cameras", BuiltInLayouts.kList).withPosition(0, 2)
                                 .withSize(1, 2).withProperties(Map.of("Label position", "TOP"));
 
                 camLayout.addBoolean("FrontLeftCamera", () -> CameraConstants.frontLeftCamera.isActive)
-                                // .withSize(1, 1).withPosition(8, 0)
                                 .withProperties(Map.of("colorWhenTrue", "green", "colorWhenFalse", "red"));
 
                 camLayout.addBoolean("FrontRightCamera", () -> CameraConstants.frontRightCamera.isActive)
-                                // .withSize(1, 1).withPosition(8, 1)
                                 .withProperties(Map.of("colorWhenTrue", "green", "colorWhenFalse", "red"));
 
                 camLayout.addBoolean("RearCamera", () -> CameraConstants.rearCamera.isActive)
-                                // .withSize(1, 1).withPosition(8, 2)
                                 .withProperties(Map.of("colorWhenTrue", "green", "colorWhenFalse", "red"));
 
-                ShuffleboardLayout rearLayout = Shuffleboard.getTab("Autonomous")
-                                .getLayout("RearValues", BuiltInLayouts.kList).withPosition(0, 0)
-                                .withSize(1, 2).withProperties(Map.of("Label position", "TOP"));
+                       
+                ShuffleboardLayout fileCheckLayout = Shuffleboard.getTab("Autonomous")
+                .getLayout("PathFilesOK", BuiltInLayouts.kList).withPosition(1, 2)
+                .withSize(1, 2).withProperties(Map.of("Label position", "TOP"));         
 
-                rearLayout.addBoolean("NoteSeen", () -> LimelightHelpers.getTV(CameraConstants.rearCamera.camname));
-                rearLayout.addNumber("LeftSensor", () -> m_swerve.getRearLeftSensorInches());
-                rearLayout.addNumber("RightSensor", () -> m_swerve.getRearRightSensorInches());
+               fileCheckLayout.addBoolean("AmpFiles", ()->m_pf.ampFilesOK);
+               fileCheckLayout.addBoolean("CenterFiles", ()->m_pf.centerFilesOK);
+               fileCheckLayout.addBoolean("SourceFiles", ()->m_pf.sourceFilesOK);
 
                 // rearLayout.addNumber("BatteryVolts", () ->
                 // RobotController.getBatteryVoltage());
@@ -141,20 +142,21 @@ public class AutoFactory {
 
                 SmartDashboard.putNumber("FC", finalChoice);
 
-                if (finalChoice > 0 && finalChoice < 10) {                     
+                if (finalChoice > 0 && finalChoice < 10) {
                         m_pf.linkAmpPaths();
                         SmartDashboard.putNumber("LENGTHAmp", m_pf.pathMaps.size());
+                
                 }
 
-                if (finalChoice > 10 && finalChoice < 20) {                     
+                if (finalChoice > 10 && finalChoice < 20) {
                         m_pf.linkCenterPaths();
-                        SmartDashboard.putNumber("LENGTHCenter", m_pf.pathMaps.size());
+                  
+        
                 }
-                if (finalChoice > 20 && finalChoice < 30) {                     
+                if (finalChoice > 20 && finalChoice < 30) {
                         m_pf.linkSourcePaths();
                         SmartDashboard.putNumber("LENGTHSource", m_pf.pathMaps.size());
                 }
-
 
                 return finalChoice;
         }

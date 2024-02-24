@@ -4,13 +4,17 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.CANBus.CANBusStatus;
+
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.PathFactory.amppaths;
+import frc.robot.PathFactory.centerpaths;
 
 public class Robot extends TimedRobot {
 
@@ -53,12 +57,11 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().cancelAll();
     autoHasRun = false;
 
-    boolean testamp = m_robotContainer.m_pf.checkAmpFilesExist();
-    SmartDashboard.putBoolean("TestAmp", testamp);
-    boolean testcenter = m_robotContainer.m_pf.checkCenterFilesExist();
-    SmartDashboard.putBoolean("TestCenter", testcenter);
-    boolean testsource = m_robotContainer.m_pf.checkSourceFilesExist();
-    SmartDashboard.putBoolean("TestSource", testsource);
+    m_robotContainer.m_pf.ampFilesOK = m_robotContainer.m_pf.checkAmpFilesExist();
+    m_robotContainer.m_pf.centerFilesOK = m_robotContainer.m_pf.checkCenterFilesExist();
+    m_robotContainer.m_pf.sourceFilesOK = m_robotContainer.m_pf.checkSourceFilesExist();
+
+    Shuffleboard.selectTab("Autonomous");
 
   }
 
@@ -71,6 +74,7 @@ public class Robot extends TimedRobot {
 
     if (checkAutos) {
       m_robotContainer.m_af.validStartChoice = m_robotContainer.m_af.selectAndLoadPathFiles();
+
     }
     // turn off drive brakes if they are on and robotis not moving
     // allows easier manual pushing of robot
@@ -128,6 +132,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+
+  
   }
 
   @Override

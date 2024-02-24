@@ -31,6 +31,11 @@ public class PathFactory {
     int sourceChoice;
     int sourceChoiceLast;
 
+    public boolean ampFilesOK;
+    public boolean centerFilesOK;
+    public boolean sourceFilesOK;
+
+
     public HashMap<String, PathPlannerPath> pathMaps = new HashMap<String, PathPlannerPath>();
 
     public PathFactory(SwerveSubsystem swerve) {
@@ -66,6 +71,12 @@ public class PathFactory {
         for (amppaths a : amppaths.values()) {
             pathMaps.put(a.name(), getPath(a.name()));
         }
+
+        PathPlannerPath test =  pathMaps.get(amppaths.A_S2N1.toString());
+        PathPlannerPath test1 =  pathMaps.get(amppaths.A_CN1DToCN2D.toString());
+
+        SmartDashboard.putNumber("TSTL", test.numPoints());
+        SmartDashboard.putNumber("TSTL1", test1.numPoints());
     }
 
     public enum centerpaths {
