@@ -11,15 +11,12 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.AutoFactory;
 import frc.robot.PathFactory;
 import frc.robot.PathFactory.centerpaths;
 import frc.robot.commands.CommandFactory;
-import frc.robot.commands.Pathplanner.RunPPath;
 import frc.robot.subsystems.IntakeSubsystem;
-
 import frc.robot.subsystems.ShooterAngleSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -55,27 +52,26 @@ public class CenterStartShoot4FromPickup extends SequentialCommandGroup {
 
                                                 // cf.setStartPoseWithLimeLight(),
 
-                                                Commands.runOnce(() -> swerve.resetPoseEstimator(
-                                                                pf.pathMaps.get(centerpaths.CentOneP1.toString())
-                                                                                .getPreviewStartingHolonomicPose())),
+                                                cf.setStartPosebyAlliance(
+                                                                pf.pathMaps.get(centerpaths.C_SToN3.toString())),
 
                                                 cf.setShooters(2.2),
 
                                                 cf.shootNote(),
 
-                                                cf.moveAndPickup(pf.pathMaps.get(centerpaths.CentOneP3ToP2.toString())),
+                                                cf.moveAndPickup(pf.pathMaps.get(centerpaths.C_SToN3.toString())),
 
                                                 cf.setShooters(2.2),
 
                                                 cf.shootNote(),
 
-                                                cf.moveAndPickup(pf.pathMaps.get(centerpaths.CentOneP2ToP1.toString())),
+                                                cf.moveAndPickup(pf.pathMaps.get(centerpaths.C_N3ToN2.toString())),
 
                                                 cf.setShooters(3),
 
                                                 cf.shootNote(),
 
-                                                cf.moveAndPickup(pf.pathMaps.get(centerpaths.CentOneP3.toString())),
+                                                cf.moveAndPickup(pf.pathMaps.get(centerpaths.C_N2ToN1.toString())),
 
                                                 cf.setShooters(3),
 

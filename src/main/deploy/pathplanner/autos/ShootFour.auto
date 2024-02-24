@@ -14,7 +14,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "CentOneP1"
+            "pathName": "C_SToN2"
           }
         },
         {
@@ -26,7 +26,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "CentOneP1R"
+            "pathName": "C_N2ToS"
           }
         },
         {
@@ -38,7 +38,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "CentOneP3"
+            "pathName": "C_SToN3"
           }
         },
         {
@@ -62,7 +62,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "CentOneP2"
+            "pathName": "C_SToN1"
           }
         },
         {
@@ -74,7 +74,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "CentOneP2R"
+            "pathName": "C_N1ToS"
           }
         },
         {

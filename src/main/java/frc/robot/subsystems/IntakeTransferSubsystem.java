@@ -17,7 +17,6 @@ import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -31,7 +30,7 @@ import frc.robot.Constants.CANIDConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Pref;
 
-public class IntakeSubsystem extends SubsystemBase {
+public class IntakeTransferSubsystem extends SubsystemBase {
 
   CANSparkMax intakeMotor;
   SparkPIDController intakeController;
@@ -41,13 +40,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public boolean showIntake = false;
 
-  private final TimeOfFlight m_detectNoteSensor = new TimeOfFlight(CANIDConstants.intakeDistanceSensorID);
-  private boolean lookForNote;
-  private double lookForNoteStartTime;
-
+ 
   /** Creates a new Intake. */
-  public IntakeSubsystem() {
-    m_detectNoteSensor.setRangingMode(RangingMode.Short, 40);
+  public IntakeTransferSubsystem() {
     intakeMotor = new CANSparkMax(Constants.CANIDConstants.intakeID, MotorType.kBrushless);
     intakeController = intakeMotor.getPIDController();
     intakeEncoder = intakeMotor.getEncoder();
@@ -91,16 +86,7 @@ public class IntakeSubsystem extends SubsystemBase {
           .withSize(1, 1)
           .withPosition(0, 1);
 
-      Shuffleboard.getTab("IntakeSubsystem").addNumber("NoteSensorInches",
-          () -> round2dp(getSensorDistanceInches(), 1))
-          .withSize(1, 1)
-          .withPosition(0, 2);
-
-      Shuffleboard.getTab("IntakeSubsystem").addBoolean("NoteSensed", () -> noteAtIntake())
-          .withSize(1, 1)
-          .withPosition(1, 2)
-          .withProperties(Map.of("colorWhenTrue", "green", "colorWhenFalse", "red"));
-
+    
       Shuffleboard.getTab("IntakeSubsystem").add("SetKpKd", setIntakeKpKdCommand())
           .withSize(1, 1)
           .withPosition(0, 3)
@@ -112,10 +98,6 @@ public class IntakeSubsystem extends SubsystemBase {
           .withPosition(1, 3);
 
     }
-  }
-
-  public double getSensorDistanceInches() {
-    return Units.metersToInches(m_detectNoteSensor.getRange() / 1000);
   }
 
   public void stopMotor() {
@@ -137,18 +119,6 @@ public class IntakeSubsystem extends SubsystemBase {
       intakeMotor.setVoltage(rpm * 12 / IntakeConstants.maxIntakeMotorRPM);
   }
 
-  public boolean noteAtIntake() {
-    return getSensorDistanceInches() < IntakeConstants.noteSensedInches
-        || lookForNote && Timer.getFPGATimestamp() > lookForNoteStartTime + 5;
-  }
-
-  public Command intakeToSensorCommand() {
-    lookForNote = true;
-    lookForNoteStartTime = Timer.getFPGATimestamp();
-    return Commands.run(() -> runIntake(Pref.getPref("Intk2SensorRPM")), this)
-        .until(() -> noteAtIntake())
-        .andThen(new SequentialCommandGroup(new WaitCommand(.3), stopIntakeCommand()));
-  }
 
   public Command feedShooterCommand() {
     return Commands.runOnce(() -> runIntake(Pref.getPref("Intk2ShtrRPM")), this)

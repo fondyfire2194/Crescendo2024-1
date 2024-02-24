@@ -43,17 +43,17 @@ public class PathFactory {
     }
 
     public enum amppaths {
-        A_CN1DToCN2D,
-        A_CN1DToPU,
+        A_CN1ToCN2,
+        A_CN1ToPU,
         A_CN1ToShoot,
-        A_CN2DToCN1D,
-        A_CN2DToPU,
+        A_CN2ToCN1,
+        A_CN2ToPU,
         A_CN2ToShoot,
-        A_CN3DToPU,
-        A_N1ToCN1D,
-        A_N1ToCN2D,
+        A_CN3ToPU,
+        A_N1ToCN1,
+        A_N1ToCN2,
         A_S2N1,
-        A_SToCN3D;
+        A_SToCN3;
     }
 
     public boolean checkAmpFilesExist() {
@@ -71,24 +71,17 @@ public class PathFactory {
         for (amppaths a : amppaths.values()) {
             pathMaps.put(a.name(), getPath(a.name()));
         }
-
-        PathPlannerPath test = pathMaps.get(amppaths.A_S2N1.toString());
-        PathPlannerPath test1 = pathMaps.get(amppaths.A_CN1DToCN2D.toString());
-
-        SmartDashboard.putNumber("TSTL", test.numPoints());
-        SmartDashboard.putNumber("TSTL1", test1.numPoints());
     }
 
     public enum centerpaths {
-        CenterToCenterDecision,
-        CentOneP1,
-        CentOneP1R,
-        CentOneP2,
-        CentOneP2R,
-        CentOneP2ToP1,
-        CentOneP3,
-        CentOneP3R,
-        CentOneP3ToP2;
+        C_N1ToS,
+        C_N2ToN1,
+        C_N2ToS,
+        C_N3ToN2,
+        C_N3ToS,
+        C_SToN1,
+        C_SToN2,
+        C_SToN3;
     }
 
     public boolean checkCenterFilesExist() {

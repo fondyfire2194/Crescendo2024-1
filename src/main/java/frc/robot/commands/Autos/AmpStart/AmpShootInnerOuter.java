@@ -65,12 +65,12 @@ public class AmpShootInnerOuter extends SequentialCommandGroup {
 
                                                 cf.setShooters(2.2),
 
-                                                new RunPPath(swerve, pf.pathMaps.get(amppaths.A_N1ToCN1D.toString()),
+                                                new RunPPath(swerve, pf.pathMaps.get(amppaths.A_N1ToCN1.toString()),
                                                                 false),
 
                                                 cf.decideNextPickup(decisionpoints.CN1.ordinal()),
 
-                                                cf.moveAndPickup(pf.pathMaps.get(amppaths.A_CN1DToPU.toString())),
+                                                cf.moveAndPickup(pf.pathMaps.get(amppaths.A_CN1ToPU.toString())),
 
                                                 cf.setShooters(2.2),
 
@@ -78,11 +78,11 @@ public class AmpShootInnerOuter extends SequentialCommandGroup {
                                                                 false),
                                                 cf.shootNote(),
                                                 
-                                                cf.moveAndPickup(pf.pathMaps.get(amppaths.A_N1ToCN2D.toString())),
+                                                cf.moveAndPickup(pf.pathMaps.get(amppaths.A_N1ToCN2.toString())),
 
                                                 cf.decideNextPickup(decisionpoints.CN2.ordinal()),
 
-                                                cf.moveAndPickup(pf.pathMaps.get(amppaths.A_CN2DToPU.toString())),
+                                                cf.moveAndPickup(pf.pathMaps.get(amppaths.A_CN2ToPU.toString())),
 
                                                 cf.setShooters(2.2),
 

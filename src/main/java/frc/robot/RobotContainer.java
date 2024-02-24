@@ -63,8 +63,6 @@ public class RobotContainer {
 
                 registerNamedCommands();
 
-                showOnShuffleboard();
-
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData("Auto Chooser", autoChooser);
                 configureBindings();
@@ -107,17 +105,6 @@ public class RobotContainer {
 
         }
 
-        private void showOnShuffleboard() {
-
-                m_swerve.showSwerve = true;
-                m_shooter.showShooter = false;
-                m_shooterAngle.showShooterAngle = false;
-                m_intake.showIntake = false;
-                m_llv.showFrontLeft = true;
-                m_llv.showFrontRight = false;
-                m_llv.showRearCamera = false;
-
-        }
 
         private void registerNamedCommands() {
                 // Register Named Commands
